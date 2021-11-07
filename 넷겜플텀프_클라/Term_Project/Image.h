@@ -41,3 +41,5 @@ static CImage img_Bullet_Monster_Idle;
 
 static CImage img_wall_Long;
 static CImage img_wall_Middle;
+
+static CImage img_Login;

@@ -1,33 +1,37 @@
 ﻿  main.cpp
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(67,19): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(128,11): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(129,11): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(198,40): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(287,45): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(330,42): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(343,49): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(410,82): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(410,66): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(466,19): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(508,84): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(508,63): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(510,86): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(510,65): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(516,82): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(516,60): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(518,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(518,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(527,45): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(527,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(533,47): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(533,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(538,46): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(538,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(542,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(542,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(547,47): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(547,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(173,20): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(173,12): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\Term_Project\main.cpp(172,23): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
-  Term_Project.vcxproj -> C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\x64\Debug\Term_Project.exe
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(80,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(138,7): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(139,7): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(206,37): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(337,27): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(380,24): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(393,31): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(461,67): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(461,51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(522,13): warning C4244: '=': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(571,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(571,56): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(573,77): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(573,56): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(579,79): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(579,58): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(581,79): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(581,58): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(586,71): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(586,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(588,66): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(588,44): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(599,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(599,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(605,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(605,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(610,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(610,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(614,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(614,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(619,39): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(619,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(181,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(181,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\Term_Project\main.cpp(180,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
+  Term_Project.vcxproj -> C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\x64\Debug\Term_Project.exe
