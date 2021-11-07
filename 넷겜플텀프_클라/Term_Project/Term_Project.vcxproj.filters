@@ -30,6 +30,12 @@
     <ClInclude Include="Obstacle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
+    <ClInclude Include="Network.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+>>>>>>> bd35982f805b508162779f5d003104e66d415c7e
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
