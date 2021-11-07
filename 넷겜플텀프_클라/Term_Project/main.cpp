@@ -16,13 +16,16 @@
 #include "State.h"
 #include "Define.h"
 #include "Obstacle.h"
+#include "Network.h"
 
 using namespace std;
 
 HINSTANCE g_hInst;
-LPCTSTR lpszClass = L"Window Class Name";
-LPCTSTR lpszWindowName = L"Term Project";
+LPCTSTR lpszClass = "Window Class Name";
+LPCTSTR lpszWindowName = "Term Project";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+
+//#define NETWORK  //네트워크 기능 켜기
 
 // 시간을 구하기 위한 변수들
 LARGE_INTEGER g_tSecond;
@@ -35,8 +38,14 @@ int stage = 0;  //0이명 로그인 화면
 // id창에 글자가 있을때 엔터 누르면(서버에 송신) 게임 시작
 //////////////////////////
 
+bool InitClient();
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
+#ifdef NETWORK
+	if (!InitClient())
+		return 1;
+#endif
 	HWND hWnd;
 	MSG Message;
 	WNDCLASSEX WndClass;
@@ -222,8 +231,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
 		else if ((TCHAR)wParam == VK_RETURN) {
 			if (str_len != 0) {
-				stage = 1;
+#ifdef NETWORK
 				//id 서버로 보내고 로비로
+				memcpy(buf, str, str_len);
+				retval = send(sock, buf, strlen(buf), 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send()");
+					break;
+				}
+				//데이터 받기
+				retval = recvn(sock, buf, retval, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("recv()");
+					break;
+				}
+				else if (retval == 0)
+					break;
+#endif
+				stage = 1;
 			}
 		}
 		else
@@ -649,29 +674,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 void LoadImage()
 {
 	//id입력창
-	img_Login.Load(L"white.png");
+	img_Login.Load("white.png");
 	//버튼
-	img_ButtonUp.Load(L"button_up.png");
-	img_ButtonDown.Load(L"button_down.png");
+	img_ButtonUp.Load("button_up.png");
+	img_ButtonDown.Load("button_down.png");
 
 	//총알
-	img_Bullet.Load(L"bullet.png");
-	img_Bullet_Coll.Load(L"bullet_coll.png");
-	img_Bomb.Load(L"bomb.png");
-	img_Bomb_Coll.Load(L"bomb_coll.png");
+	img_Bullet.Load("bullet.png");
+	img_Bullet_Coll.Load("bullet_coll.png");
+	img_Bomb.Load("bomb.png");
+	img_Bomb_Coll.Load("bomb_coll.png");
 
 
 	//배경
-	img_bg.Load(L"background_grass.png");
+	img_bg.Load("background_grass.png");
 	img_bg_width = img_bg.GetWidth();
 	img_bg_height = img_bg.GetHeight();
 
 	//발판
-	img_wall.Load(L"block_grass.png");
+	img_wall.Load("block_grass.png");
 
 	//몬스터
-	img_Bomb_Monster_Attack.Load(L"monster_bomb1.png");
-	img_Bomb_Monster_Idle.Load(L"monster_bomb_idle.png");
+	img_Bomb_Monster_Attack.Load("monster_bomb1.png");
+	img_Bomb_Monster_Idle.Load("monster_bomb_idle.png");
 
 	//img_Bullet_Monster_Attack.Load();
 	//img_Bullet_Monster_Idle.Load();
@@ -679,11 +704,11 @@ void LoadImage()
 
 
 	//플레이어
-	frog_idle.Load(L"frog_idle.png");
-	frog_move.Load(L"frog_move.png");
-	frog_jump.Load(L"frog_jump.png");
-	frog_fall.Load(L"frog_fall.png");
-	frog_attack.Load(L"frog_attack.png");
+	frog_idle.Load("frog_idle.png");
+	frog_move.Load("frog_move.png");
+	frog_jump.Load("frog_jump.png");
+	frog_fall.Load("frog_fall.png");
+	frog_attack.Load("frog_attack.png");
 
 }
 
@@ -697,4 +722,22 @@ bool CollisionHelper(RECT r1, RECT r2)
 	return true;
 }
 
+bool InitClient() {
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return false;
 
+	//socket()
+	sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (sock == INVALID_SOCKET)  err_quit("socket()");
+
+	//connect()
+	ZeroMemory(&serveraddr, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
+	serveraddr.sin_port = htons(SERVERPORT);
+	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR) {
+		err_quit("connet()");
+	}
+	return true;
+}
