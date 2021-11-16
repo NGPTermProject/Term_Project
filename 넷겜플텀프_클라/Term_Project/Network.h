@@ -50,9 +50,6 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 	return (len - left);
 }
 
-int retval;
-char buf[BUFSIZE + 1];
-
-WSAData wsa;
 SOCKET sock;
 SOCKADDR_IN serveraddr;
+
