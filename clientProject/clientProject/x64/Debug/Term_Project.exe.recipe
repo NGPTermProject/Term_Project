@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+<<<<<<< HEAD
+      <FullPath>C:\Users\82109\Documents\카카오톡 받은 파일\넷겜플텀프_클라\x64\Debug\Term_Project.exe</FullPath>
+=======
+      <FullPath>C:\Users\오성훈\Desktop\git\GitHub\Term_Project\넷겜플텀프_클라\x64\Debug\Term_Project.exe</FullPath>
+>>>>>>> bd35982f805b508162779f5d003104e66d415c7e
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles />
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>
