@@ -39,6 +39,7 @@ int stage = 0;  //0이면 로그인 화면
 cs_packet_login csLogin;
 sc_login_ok scLogin;
 cs_put_button csPutButton;
+sc_move scMove;
 int str_len;
 
 bool InitClient();
@@ -46,6 +47,7 @@ void SendID();
 void RecvID();
 void CheckID(sc_login_ok);
 void SendKey(int, bool);
+void RecvPlayerPos(Player&, float&);
 ///////////////////////////////////////
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
@@ -424,6 +426,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				{
 #ifdef NETWORK
 					SendKey(VK_LEFT, TRUE);
+					RecvPlayerPos();
 #else
 					p.state = PLAYER::MOVE;
 					p.dir = P_DIR_LEFT;
@@ -440,6 +443,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				{
 #ifdef NETWORK
 					SendKey(VK_RIGHT, TRUE);
+					RecvPlayerPos();
 #else
 					p.state = PLAYER::MOVE;
 					p.dir = P_DIR_RIGHT;
@@ -754,4 +758,23 @@ void SendKey(int key, bool IsPush) {
 	if (retval == SOCKET_ERROR) {
 		err_display("send()");
 	}
+}
+
+void RecvPlayerPos(Player& p, float& vel) {
+	char buf[BUFSIZE];
+	int retval = recv(sock, buf, sizeof(sc_move), 0);
+	if (retval == SOCKET_ERROR) {
+		exit(1);
+	}
+	buf[retval] = '\0';
+	scMove = *(sc_move*)buf;
+
+	p.state = PLAYER::MOVE;
+	p.dir = scMove.dir;
+	p.x = scMove.x;
+	if (p.dir == P_DIR_RIGHT)
+		vel = 10;
+	else
+		vel -= 10;
+
 }
