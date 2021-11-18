@@ -35,6 +35,8 @@ sc_recv_keyinfo keyinfo;
 CRITICAL_SECTION cs;
 
 short client_id;
+bool c_left[2];
+bool c_right[2];
 int main()
 {
 	//server.InitServer();
@@ -80,6 +82,8 @@ int main()
 		err_display(err_num);
 	}
 
+	InitializeCriticalSection(&cs);
+
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
@@ -102,9 +106,13 @@ int main()
 		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
 
 	}
-
-
-
+	DeleteCriticalSection(&cs);
+	
+	closesocket(server_socket);
+	
+	WSACleanup();
+	
+	return 0;
 }
 
 
@@ -132,9 +140,28 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			//EnterCriticalSection(&cs);
 			client_id = keyinfo.id;
+			//cout << keyinfo.id << endl;
+			if (client_id == keyinfo.id) {
+				c_left[client_id] = keyinfo.left;
+				c_right[client_id] = keyinfo.right;
+			}
 			//LeaveCriticalSection(&cs);
 			if (keyinfo.jump == true) {
 				player[client_id].Jump();
+			}
+
+			if (c_left[client_id] == true) {
+				if (player[client_id].getVely() == 0)
+					player[client_id].SwitchState(PLAYER::MOVE);
+				player[client_id].setDir(32);
+				player[client_id].move(-(300 * 0.016f));
+			}
+
+			if (c_right[client_id] == true) {
+				if (player[client_id].getVely() == 0)
+					player[client_id].SwitchState(PLAYER::MOVE);
+				player[client_id].setDir(0);
+				player[client_id].move((300 * 0.016f));
 			}
 
 			player[client_id].UpdateGravity();
@@ -219,21 +246,27 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].setPlayerRanding(780);
 			}
 
+
 			
 			//LeaveCriticalSection(&cs);
 
 			//sc_p.anim = player[Client_Count].getAnim();
 			//sc_p.imageCount = player[Client_Count].getImageCount();
-
-			sc_p[client_id].id = client_id;
+			
+			sc_p[client_id].id = client_id;	
 			sc_p[client_id].state = player[client_id].getState();
 			sc_p[client_id].x = player[client_id].getPos().x;
 			sc_p[client_id].y = player[client_id].getPos().y;
+			sc_p[client_id].dir = player[client_id].getDir();
 			sc_p[client_id].jumpCount = player[client_id].getJumpCount();
+			
 
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
-	
+			
+			c_left[client_id] = false;
+			c_right[client_id] = false;
+
 		}
 		StartTime = NowTime;
 	}
@@ -266,7 +299,7 @@ void err_quit(const char* msg)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpmsgbuf, 0, NULL
 	);
-	MessageBox(NULL, (LPCTSTR)lpmsgbuf, (LPCSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpmsgbuf,(LPCWSTR)msg, MB_ICONERROR);
 	LocalFree(lpmsgbuf);
 	exit(-1);
 }

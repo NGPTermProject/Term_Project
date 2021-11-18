@@ -126,9 +126,10 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 
 		for (int i = 0; i < 2; ++i) {
 			p[p_info[i].id].setState(p_info[i].state);
-			p[p_info[i].id].setisRanding(p_info[i].isRanding);
 			p[p_info[i].id].setPos(p_info[i].x, p_info[i].y);
 			p[p_info[i].id].setJumpCount(p_info[i].jumpCount);
+			p[p_info[i].id].setDir(p_info[i].dir);
+
 		}
 	//	recvn(sock, (char*)&hero, sizeof(hero), 0);
 	//	recvn(sock, (char*)&boss, sizeof(boss), 0);
@@ -255,23 +256,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 
 		case 1:
-			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
-			keyinfo.jump = false;
-			keyinfo.left = false;
-			keyinfo.right = false;
 
-			//for (int i = 0; i < 2; ++i) {
-			//	p[i].UpdateGravity();
-			//	p[i].animation();
-			//}
-			//p[MyId].UpdateGravity();
+		
+			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+
 			for(int i =0 ; i< 2 ; ++i )
 				p[i].animation();
 
-			//cout << "~~~" << endl;
 
-			///////////////////// 이미지 애니메이션///////////////////////////////
-			//Monster 애니메이션
 			for (int i = 0; i < m_monster.size(); ++i) {
 				m_monster[i].animation();
 			}
@@ -280,99 +272,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				vec_bullet[i].animation();
 
-				//if (vec_bullet[i].isColl && vec_bullet[i].anim == 0)
-				//	vec_bullet.erase(vec_bullet.begin() + i);
-
 			}
 			for (int i = 0; i < m_obstacle.size(); ++i) {
 				m_obstacle[i].animation();
 			}
-
-			//for (int i = 0; i < m_obstacle.size(); ++i) {
-			//	m_obstacle[i].animation();
-			//	if (p.CollsionByObstacle(m_obstacle[i])) {
-			//		m_map.clear();
-			//	}
-			//	m_obstacle[i].Move();
-
-			//}
-			//for (int i = 0; i < vec_bullet.size(); ++i) {
-			//	vec_bullet[i].Update();
-			//	if (p.CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
-			//		vec_bullet[i].setisColl(true);
-			//		m_map.clear();
-			//	}
-			//}
-			////하강 시작 && 발판 착지
-			//if (p.getVely() > 0 || p.getisRanding()) {
-			//	if (p.getVely() > 0) p.SwitchState(PLAYER::FALL);
-			//	int check = 0;
-			//	int b_check = 0;
-			//	
-			//		////서버 코드에서 버튼 state가 둘다 1 일때 다음 스테이지.
-
-			//		//for (int i = 0; i < 2; ++i)
-			//		//	if (m_button[i].getState() == 1)
-			//		//	{
-			//		//		b_check++;
-			//		//	}
-			//		//if (b_check == 2)
-			//		//	m_button[0].x = 200;
-			//		//else
-			//		//	b_check = 0;
-
-
-			//	for (int i = 0; i < m_map.size(); ++i) {
-			//		if (p.getVely() > 600) p.setCollisonHelperY(8);
-			//		else p.setCollisonHelperY(0);
-
-			//		if (p.FallingCollsionOtherObject(m_map[i]))
-			//		{
-			//			p.setPlayerRanding(m_map[i].y - 32);
-			//			check++;
-			//		}
-			//	}
-
-			//	for (int i = 0; i < 2; ++i) {
-			//		// 플레이어 버른 누름
-			//		if (p.FallingCollsionOtherObject(m_static_map[i]))
-			//		{
-			//			p.setPlayerRanding(m_static_map[i].y - 16);
-			//			m_static_map[i].setState(true);
-			//			check++;
-			//		}
-			//		// 안누름
-			//		else {
-			//			m_static_map[i].setState(false);
-			//		}
-			//	}
-
-
-			//	for (int i = 2; i <m_static_map.size(); ++i) {
-			//		if (p.getVely() > 600) p.setCollisonHelperY(8);
-			//		else p.setCollisonHelperY(0);
-
-			//		if (p.FallingCollsionOtherObject(m_static_map[i]))
-			//		{
-			//			p.setPlayerRanding(m_static_map[i].y - 32);
-			//			check++;
-			//		}
-			//	}
-
-			//	if (check == 0) {
-			//		p.setGravity();
-			//	}
-			//	else check = 0;
-			//}
-
-			//// 땅 착지     
-			//if (p.getPos().y > 780) {
-			//	p.setPlayerRanding(780);
-			//}
-
-			//if (stage != 0) {
-			//	p.Move();
-			//}
 
 
 			break;
@@ -394,16 +297,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					keyinfo.jump = true;
 				}
 				break;
-			case VK_SHIFT:
-				vec_bullet.push_back(m_monster[0].Attack());
-				vec_bullet.push_back(m_monster[1].Attack());
-
+			case VK_LEFT:
+				keyinfo.left = true;
+				break;
+			case VK_RIGHT:
+				keyinfo.right = true;
 				break;
 			}
 			break;
 		}
+		break;
 	case WM_KEYUP:
-		//p.SwitchState(PLAYER::IDLE);
+		if (wParam == VK_LEFT) {
+			keyinfo.left = false;
+
+		}
+		if (wParam == VK_RIGHT) {
+			keyinfo.right = false;
+
+		}
+		keyinfo.jump = false;
 		break;
 	
 	case WM_LBUTTONDOWN:

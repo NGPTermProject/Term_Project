@@ -115,12 +115,13 @@ struct cs_send_player_id {
 struct cs_send_player {
 	short id;
 	int state;
-	//int anim;
-	//int imageCount;
-	bool isRanding;
+	
+	
 	float x;
 	float y;
+	
 	int jumpCount;
+	int dir;
 };
 
 struct cs_send_keyinfo {
@@ -130,3 +131,92 @@ struct cs_send_keyinfo {
 	bool jump = false;
 };
 #pragma pack(pop)
+
+
+
+
+//for (int i = 0; i < m_obstacle.size(); ++i) {
+//	m_obstacle[i].animation();
+//	if (p.CollsionByObstacle(m_obstacle[i])) {
+//		m_map.clear();
+//	}
+//	m_obstacle[i].Move();
+
+//}
+//for (int i = 0; i < vec_bullet.size(); ++i) {
+//	vec_bullet[i].Update();
+//	if (p.CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
+//		vec_bullet[i].setisColl(true);
+//		m_map.clear();
+//	}
+//}
+////하강 시작 && 발판 착지
+//if (p.getVely() > 0 || p.getisRanding()) {
+//	if (p.getVely() > 0) p.SwitchState(PLAYER::FALL);
+//	int check = 0;
+//	int b_check = 0;
+//	
+//		////서버 코드에서 버튼 state가 둘다 1 일때 다음 스테이지.
+
+//		//for (int i = 0; i < 2; ++i)
+//		//	if (m_button[i].getState() == 1)
+//		//	{
+//		//		b_check++;
+//		//	}
+//		//if (b_check == 2)
+//		//	m_button[0].x = 200;
+//		//else
+//		//	b_check = 0;
+
+
+//	for (int i = 0; i < m_map.size(); ++i) {
+//		if (p.getVely() > 600) p.setCollisonHelperY(8);
+//		else p.setCollisonHelperY(0);
+
+//		if (p.FallingCollsionOtherObject(m_map[i]))
+//		{
+//			p.setPlayerRanding(m_map[i].y - 32);
+//			check++;
+//		}
+//	}
+
+//	for (int i = 0; i < 2; ++i) {
+//		// 플레이어 버른 누름
+//		if (p.FallingCollsionOtherObject(m_static_map[i]))
+//		{
+//			p.setPlayerRanding(m_static_map[i].y - 16);
+//			m_static_map[i].setState(true);
+//			check++;
+//		}
+//		// 안누름
+//		else {
+//			m_static_map[i].setState(false);
+//		}
+//	}
+
+
+//	for (int i = 2; i <m_static_map.size(); ++i) {
+//		if (p.getVely() > 600) p.setCollisonHelperY(8);
+//		else p.setCollisonHelperY(0);
+
+//		if (p.FallingCollsionOtherObject(m_static_map[i]))
+//		{
+//			p.setPlayerRanding(m_static_map[i].y - 32);
+//			check++;
+//		}
+//	}
+
+//	if (check == 0) {
+//		p.setGravity();
+//	}
+//	else check = 0;
+//}
+
+//// 땅 착지     
+//if (p.getPos().y > 780) {
+//	p.setPlayerRanding(780);
+//}
+
+//if (stage != 0) {
+//	p.Move();
+//}

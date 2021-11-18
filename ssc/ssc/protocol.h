@@ -115,10 +115,13 @@ struct sc_send_player_id {
 struct sc_send_player {
 	short id;
 	int state;
-	bool isRanding;
+	
+	
 	float x;
 	float y;
+	
 	int jumpCount;
+	int dir;
 };
 struct sc_recv_keyinfo {
 	short id;
