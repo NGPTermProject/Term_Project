@@ -42,12 +42,21 @@ cs_put_button csPutButton;
 sc_move scMove;
 int str_len;
 
+MAP m_map[10];   //사용자가 클릭한 발판
+MAP m_static_map[100];  //기존에 설치되 있던 발판
+int m_count = 0;  //현재 설치된 사용자 설치 발판 수
+int m_max_count = 5; //설치할 수 있는 최대 발판 수
+int block_count = 3;  //기존에 설치된 발판의 개수
+
 bool InitClient();
 void SendID();
 void RecvID();
 void CheckID(sc_login_ok);
 void SendKey(int, bool);
 void RecvPlayerPos(Player&, float&);
+bool CheckObjectCollision(float x, float y);
+void SendObjectInfo();
+void RecvObjectInfo();
 ///////////////////////////////////////
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
@@ -195,11 +204,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	// Map
 
-	static MAP m_map[10];
-	static MAP m_static_map[100];
 	static MAP m_button[2];
-	static int m_count = 0;
-	static int m_max_count = 5;
+
 	// 충돌 박스 
 	static RECT p_rect;
 
@@ -283,7 +289,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		m_static_map[2].x = 500;
 		m_static_map[2].y = 150;
-		block_count = 3;
 
 		//Monster
 		m_monster[0].x = 300;
@@ -534,12 +539,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		p.speed = 300.f;
 		break;
 	case WM_LBUTTONDOWN:
+#ifdef NETWORK
+		if (m_count != m_max_count) {
+			if (CheckObjectCollision(LOWORD(lParam), HIWORD(lParam))) {
+				SendObjectInfo();
+				m_map[m_count].x = LOWORD(lParam);
+				m_map[m_count].y = HIWORD(lParam);
+				m_count++;
+				InvalidateRect(hWnd, NULL, false);
+			}
+		}
+#else
 		if (m_count != m_max_count) {
 			m_map[m_count].x = LOWORD(lParam);
 			m_map[m_count].y = HIWORD(lParam);
 			m_count++;
 		}
 		InvalidateRect(hWnd, NULL, false);
+#endif
 		break;
 
 	case WM_PAINT:
@@ -776,5 +793,29 @@ void RecvPlayerPos(Player& p, float& vel) {
 		vel = 10;
 	else
 		vel -= 10;
+
+}
+
+bool CheckObjectCollision(float x, float y) {
+	for (int i = 0; i < m_count; ++i) {
+		if (m_map[i].x - 48 <= x && x <= m_map[i].x + 48 &&
+			m_map[i].y - 16 <= y && y <= m_map[i].y + 16) {
+			return false;
+		}
+	}
+	for (int i = 0; i < block_count; ++i) {
+		if (m_static_map[i].x - 48 <= x && x <= m_static_map[i].x + 48 &&
+			m_static_map[i].y - 16 <= y && y <= m_static_map[i].y + 16) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void SendObjectInfo() {
+
+}
+
+void RecvObjectInfo() {
 
 }
