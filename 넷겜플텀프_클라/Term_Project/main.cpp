@@ -40,6 +40,7 @@ cs_packet_login csLogin;
 sc_login_ok scLogin;
 cs_put_button csPutButton;
 sc_move scMove;
+cs_mouse_input csMouse;
 int str_len;
 
 MAP m_map[10];   //사용자가 클릭한 발판
@@ -809,11 +810,17 @@ bool CheckObjectCollision(float x, float y) {
 			return false;
 		}
 	}
+	csMouse.packet_type = CS_MOUSE_INPUT;
+	csMouse.x = x;
+	csMouse.y = y;
 	return true;
 }
 
 void SendObjectInfo() {
-
+	int retval = send(sock, (char*)&csMouse, sizeof(csMouse), 0);
+	if (retval == SOCKET_ERROR) {
+		err_display("send()");
+	}
 }
 
 void RecvObjectInfo() {
