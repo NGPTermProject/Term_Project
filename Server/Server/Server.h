@@ -8,8 +8,9 @@ class Server
 private:
 	std::vector<SOCKET> Wait_Queue;
 	bool				StartFlag;
-	HANDLE				PThread;
 
+	HANDLE				PlayerThread;
+	HANDLE				GameThread;
 public:
 	Server();
 	~Server();
@@ -22,12 +23,13 @@ public:
 	void LobbyServer();
 	DWORD WINAPI InitServer();
 	static DWORD WINAPI ProcessThread(LPVOID arg);
-
 	void InGame();
 
 	void UpdateStatus();
 	void UpdateCollision();
+	// 패킷 함수
 
+	void Send_Login_Ok(int id);
 
 
 };

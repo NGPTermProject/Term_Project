@@ -126,22 +126,16 @@ DWORD WINAPI Server::InitServer()
 			ip_addr, ntohs(c_addr.sin_port));
 		
 
-
+		// Wait_Queue에 사이즈가 2면 게임 시작 패킷 전송.
 		if (Wait_Queue.size() == 2) {
 			// 게임 시작
 			StartFlag = true;
 
 			for (int i = 0; i < Wait_Queue.size(); ++i) {
-				int ret = send(Wait_Queue[i], (char*)&StartFlag, sizeof(StartFlag), 0);
-				if (ret == SOCKET_ERROR) {
-					std::cout << "size == 2 error \n";
-					int err_num = WSAGetLastError();
-					err_display(err_num);
-				}
+				Send_Login_Ok(i);
 
-
-				PThread = CreateThread(NULL, 0, ProcessThread, (LPVOID)Wait_Queue[i], 0, NULL);
-				if (PThread == NULL) closesocket(c_socket);
+				PlayerThread = CreateThread(NULL, 0, ProcessThread, (LPVOID)Wait_Queue[i], 0, NULL);
+				if (PlayerThread == NULL) closesocket(c_socket);
 
 
 			}
@@ -180,8 +174,18 @@ DWORD WINAPI Server::ProcessThread(LPVOID arg)
 	getpeername(c_socket, (SOCKADDR*)&c_addr, &c_addrlen);
 
 	//클라이언트와 데이터 통신
+	while (1) {
 
+
+
+
+
+	}
 	return 0;
+}
+void Server::UpdateStatus()
+{
+
 }
 
 void Server::LoginServer()
@@ -193,13 +197,27 @@ void Server::LobbyServer()
 
 }
 
-void Server::UpdateStatus()
+
+
+void Server::UpdateCollision()
 {
 
 }
 
-void Server::UpdateCollision()
+void Server::Send_Login_Ok(int id)
 {
+	sc_login_ok packet;
+	packet.id = id;
+	packet.size = sizeof(packet);
+	packet.packet_type = SC_PACKET_LOGIN_OK;
+	packet.x = 0;
+	packet.y = 0;
+	int ret = send(Wait_Queue[id], (char*)&packet, sizeof(packet), 0);
+	if (ret == SOCKET_ERROR) {
+		std::cout << "size == 2 error \n";
+		int err_num = WSAGetLastError();
+		err_display(err_num);
+	}
 
 }
 
