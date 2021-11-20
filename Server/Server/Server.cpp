@@ -4,7 +4,7 @@
 
 Server::Server()
 {
-
+	StartFlag = false;
 }
 
 Server::~Server()
@@ -66,7 +66,10 @@ int Server::recvn(SOCKET s, char* buf, int len, int flags)
 
 }
 
-int Server::InitServer()
+
+
+
+DWORD WINAPI Server::InitServer()
 {
 	WSADATA wsa;
 	SOCKADDR_IN sock_addr;
@@ -86,15 +89,99 @@ int Server::InitServer()
 		int err_num = WSAGetLastError();
 		err_display(err_num);
 	}
-	int ret = listen(server_socket, SOMAXCONN);
+	 ret = listen(server_socket, SOMAXCONN);
 	if (SOCKET_ERROR == ret) {
 		std::cout << "listen Error\n";
 		int err_num = WSAGetLastError();
 		err_display(err_num);
 	}
 
-	return 1;
 
+	SOCKET c_socket;
+	SOCKADDR_IN c_addr;
+	int c_addrlen;
+
+	while (1) {
+		// accept
+		c_addrlen = sizeof(c_addr);
+		c_socket = accept(server_socket, reinterpret_cast<sockaddr*>(&c_addr), &c_addrlen);
+		if (c_socket == INVALID_SOCKET) {
+			std::cout << "accept error\n";
+			int err_num = WSAGetLastError();
+			err_display(err_num);
+		}
+
+		// 대기 큐에 플레이어 저장
+		Wait_Queue.push_back(c_socket);
+
+		// 로그인 완료.
+
+
+
+		char ip_addr[100];
+		inet_ntop(AF_INET, &c_addr.sin_addr, ip_addr, 100);
+
+		// 접속한 클라이언트 정보 출력
+		printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s, 포트 번호=%d\n",
+			ip_addr, ntohs(c_addr.sin_port));
+		
+
+
+		if (Wait_Queue.size() == 2) {
+			// 게임 시작
+			StartFlag = true;
+
+			for (int i = 0; i < Wait_Queue.size(); ++i) {
+				int ret = send(Wait_Queue[i], (char*)&StartFlag, sizeof(StartFlag), 0);
+				if (ret == SOCKET_ERROR) {
+					std::cout << "size == 2 error \n";
+					int err_num = WSAGetLastError();
+					err_display(err_num);
+				}
+
+
+				PThread = CreateThread(NULL, 0, ProcessThread, (LPVOID)Wait_Queue[i], 0, NULL);
+				if (PThread == NULL) closesocket(c_socket);
+
+
+			}
+
+			std::cout << "Exit Lobby Thread\n";
+			ExitThread(0);
+		}
+		else {
+			for (int i = 0; i < Wait_Queue.size(); ++i) {
+				ret = send(Wait_Queue[i], (char*)&StartFlag, sizeof(StartFlag), 0);
+				if (ret == SOCKET_ERROR) {
+					std::cout << "size =! 2 error \n";
+					int err_num = WSAGetLastError();
+					err_display(err_num);
+				}
+
+			}
+		}
+
+	}
+
+}
+
+DWORD WINAPI Server::ProcessThread(LPVOID arg)
+{
+	std::cout << "ProcesThread Running\n";
+
+	SOCKET c_socket = (SOCKET)arg;
+	SOCKADDR_IN c_addr;
+
+	int ret;
+	int c_addrlen;
+
+	//클라이언트 정보 얻기.
+	c_addrlen = sizeof(c_addr);
+	getpeername(c_socket, (SOCKADDR*)&c_addr, &c_addrlen);
+
+	//클라이언트와 데이터 통신
+
+	return 0;
 }
 
 void Server::LoginServer()
@@ -103,6 +190,7 @@ void Server::LoginServer()
 
 void Server::LobbyServer()
 {
+
 }
 
 void Server::UpdateStatus()
