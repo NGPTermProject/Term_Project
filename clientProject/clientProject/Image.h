@@ -92,7 +92,6 @@ void LoadImage()
 	player_jump.Load("frog_jump.png");
 	player_fall.Load("frog_fall.png");
 
-
 	//Àå¾Ö¹°
 	img_cutting_blade.Load("cutting_blade.png");
 	img_Obs_960_96_Up.Load("Obs960x96_Up.png");

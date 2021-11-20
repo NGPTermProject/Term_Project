@@ -4,6 +4,7 @@
 
 Server::Server()
 {
+	GameThread = CreateThread(NULL, 0, GameThread, NULL, 0, NULL);
 	StartFlag = false;
 }
 
@@ -140,8 +141,8 @@ DWORD WINAPI Server::InitServer()
 				}
 
 
-				PThread = CreateThread(NULL, 0, ProcessThread, (LPVOID)Wait_Queue[i], 0, NULL);
-				if (PThread == NULL) closesocket(c_socket);
+				PlayerThread = CreateThread(NULL, 0, ProcessThread, (LPVOID)Wait_Queue[i], 0, NULL);
+				if (PlayerThread == NULL) closesocket(c_socket);
 
 
 			}
