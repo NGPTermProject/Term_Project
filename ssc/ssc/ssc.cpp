@@ -31,14 +31,18 @@ HANDLE hThread;
 int Client_Count = -1;
 sc_send_player_id p_id;
 sc_send_player sc_p[2];
+sc_obstacle sc_obs[2];
+
 sc_recv_keyinfo keyinfo;
 CRITICAL_SECTION cs;
-sc_put_object put;
 short client_id;
 bool c_left[2];
 bool c_right[2];
+sc_put_object put[2];
+sc_button sc_b;
 int main()
 {
+
 	//server.InitServer();
 	player.push_back(Player(200, 600, 0));
 	player.push_back(Player(400 , 600, 1));
@@ -51,6 +55,11 @@ int main()
 
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
+	sc_obs[0].x = 100;
+	sc_obs[0].y = 500;
+	sc_obs[1].x = 300;
+	sc_obs[1].y = 500;
+
 
 	m_monster.push_back(Monster(MONSTER::PLANT, 200, 100));
 	m_monster.push_back(Monster(MONSTER::PIG, 500, 100));
@@ -138,36 +147,25 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 		deltaTime = NowTime - StartTime;
 		if (deltaTime >= 10) {
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
-			//EnterCriticalSection(&cs);
+			if (keyinfo.isClick) {
+				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
+				for (int i = 0; i < 2; ++i) {
+					put[i].isClick = true;
+					put[i].x = keyinfo.x;
+					put[i].y = keyinfo.y;
+				}
+			}
+
+			EnterCriticalSection(&cs);
 			client_id = keyinfo.id;
-			//cout << keyinfo.id << endl;
-
-			put.isClick = keyinfo.isClick;
-			put.x = keyinfo.x;
-			put.y = keyinfo.y;
-
 			if (client_id == keyinfo.id) {
 				c_left[client_id] = keyinfo.left;
 				c_right[client_id] = keyinfo.right;
 			}
-			//LeaveCriticalSection(&cs);
-			if (keyinfo.jump == true) {
-				player[client_id].Jump();
-			}
+			LeaveCriticalSection(&cs);
 
-			if (c_left[client_id] == true) {
-				if (player[client_id].getVely() == 0)
-					player[client_id].SwitchState(PLAYER::MOVE);
-				player[client_id].setDir(32);
-				player[client_id].move(-(300 * 0.016f));
-			}
 
-			if (c_right[client_id] == true) {
-				if (player[client_id].getVely() == 0)
-					player[client_id].SwitchState(PLAYER::MOVE);
-				player[client_id].setDir(0);
-				player[client_id].move((300 * 0.016f));
-			}
+
 
 			player[client_id].UpdateGravity();
 			
@@ -221,11 +219,25 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					{
 						player[client_id].setPlayerRanding(m_static_map[i].y - 16);
 						m_static_map[i].setState(true);
+						EnterCriticalSection(&cs);
+						//for (int j = 0; j < 2; ++j) {
+							put[client_id].isPush[i] = true;
+						//}
+						LeaveCriticalSection(&cs);
+
 						check++;
 					}
 					// 안누름
 					else {
 						m_static_map[i].setState(false);
+						EnterCriticalSection(&cs);
+
+						//for (int j = 0; j < 2; ++j) {
+							//if(!put[(client_id +1 )% 2].isPush[i])
+								put[client_id].isPush[i] = false;
+						//}
+						LeaveCriticalSection(&cs);
+
 					}
 				}
 
@@ -251,6 +263,34 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].setPlayerRanding(780);
 			}
 
+			if (keyinfo.jump == true) {
+				player[client_id].Jump();
+			}
+
+			if (c_left[client_id] == true) {
+				if (player[client_id].getVely() == 0)
+					player[client_id].SwitchState(PLAYER::MOVE);
+				player[client_id].setDir(32);
+				player[client_id].move(-(300 * 0.016f));
+			}
+
+			if (c_right[client_id] == true) {
+				if (player[client_id].getVely() == 0)
+					player[client_id].SwitchState(PLAYER::MOVE);
+				player[client_id].setDir(0);
+				player[client_id].move((300 * 0.016f));
+			}
+
+			EnterCriticalSection(&cs);
+			for (int i = 0; i < m_obstacle.size(); ++i) {
+				if (m_obstacle[i].type == OBSTACLE::BLADE) {
+					m_obstacle[i].Move();
+					sc_obs[i].x = m_obstacle[i].getPosX();
+					sc_obs[i].y = m_obstacle[i].getPosY();
+
+				}
+			}
+			LeaveCriticalSection(&cs);
 
 			
 			//LeaveCriticalSection(&cs);
@@ -264,12 +304,22 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			sc_p[client_id].y = player[client_id].getPos().y;
 			sc_p[client_id].dir = player[client_id].getDir();
 			sc_p[client_id].jumpCount = player[client_id].getJumpCount();
-			
+
+				for (int i = 0; i < 2; ++i) {
+					if (put[client_id].isPush[i]) {
+						put[(client_id + 1) % 2].isPush[i] = true;
+					}
+				}
 
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
+			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
+			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
+			//send(clientSock, (char*)&sc_b, sizeof(sc_b), 0);
 
-			send(clientSock, (char*)&put, sizeof(put), 0);
+			put[client_id].isClick = false;
+			//for (int i = 0; i < 2; ++i)
+			//	put[client_id].isPush[i] = false;
 			//if (keyinfo.isClick) {
 			//	sc_put_object put;
 			//	put.x = keyinfo.x;

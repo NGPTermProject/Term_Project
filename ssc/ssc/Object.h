@@ -38,7 +38,14 @@ public:
 	 void Move() {
 		 x += 1;
 	 }
-
+	 float getPosX()
+	 {
+		 return x;
+	 }
+	 float getPosY()
+	 {
+		 return y;
+	 }
 	 Obstacle();
 	 Obstacle(int m_type ,  float m_x, float m_y) {
 

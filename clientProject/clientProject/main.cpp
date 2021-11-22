@@ -50,6 +50,13 @@ cs_send_player p_info[2];
 cs_send_keyinfo keyinfo;
 sc_put_object put;
 vector<Map> m_map;
+vector<Obstacle> m_obstacle;
+Map m_button[2];
+vector<Map> m_static_map;
+
+cs_obstacle cs_obs[2];
+
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -118,6 +125,7 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
 
+
 	//PlayerID 전달.
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
 	MyId = id.id;
@@ -135,11 +143,27 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 
 		}
 
+		recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
+		{
+			for (int i = 0; i < 2; ++i) {
+				m_obstacle[i].x = cs_obs[i].x;
+				m_obstacle[i].y = cs_obs[i].y;
+
+			}
+		}
 
 		recvn(sock, (char*)&put, sizeof(put), 0);
 		if (put.isClick) {
 			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
 		}
+		for (int i = 0; i < 2; ++i)
+			m_static_map[i].setState(put.isPush[i]);
+	/*	sc_button bt;
+		recvn(sock, (char*)&bt, sizeof(bt), 0);
+		for (int i = 0; i < 2; ++i)
+			m_static_map[i].setState(bt.isPush[i]);*/
+
+
 	//	recvn(sock, (char*)&hero, sizeof(hero), 0);
 	//	recvn(sock, (char*)&boss, sizeof(boss), 0);
 
@@ -158,14 +182,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBRUSH hBrush, oldBrush;
 
 
-	static vector<Map> m_static_map;
-	static Map m_button[2];
 	
 	// 충돌 박스 
 
 	static vector<Monster> m_monster;
 	static vector<Bullet> vec_bullet;
-	static vector<Obstacle> m_obstacle;
 
 
 	// 물리
@@ -174,7 +195,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	
 	RECT rect = { 675, 450, 825, 465 }; // 글을 쓸 공간 지정
-
+	static int map_current_count = 0;
+	static int map_max_count = 5;
 
 	// 지역변수는 메시지가 발생할 때마다 초기화되므로 값을 계속 유지하기 위해서 static 사용
 	static TCHAR str[512];
@@ -243,12 +265,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_static_map.push_back(Map(MAP::PLAT, 200, 150));
 		m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
 		m_static_map.push_back(Map(MAP::PLAT, 500, 150));
-
-
+	
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
 
-	//	static Obstacle obstacle(OBSTACLE::BLADE, 100, 500);
+//	static Obstacle obstacle(OBSTACLE::BLADE, 100, 500);
 //		static Obstacle obstacle_map(OBSTACLE::MIDDLE_UP, 100, 500);
 		//Monster
 		m_monster.push_back(Monster(MONSTER::PLANT, 200, 100));
@@ -329,11 +350,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	
 	case WM_LBUTTONDOWN:
-		if (m_map.size()-1 != 5) {
+		if (map_current_count != map_max_count) {
 			keyinfo.isClick = true;
 			keyinfo.x = LOWORD(lParam);
 			keyinfo.y = HIWORD(lParam);
-
+			map_current_count++;
 			//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
 			//InvalidateRect(hWnd, NULL, false);
 		}

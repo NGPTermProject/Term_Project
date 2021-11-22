@@ -70,14 +70,6 @@ struct sc_move {
 };
 
 
-struct sc_put_object {
-	unsigned char size;
-	char packet_type;
-	float x,y;
-	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
-	bool isClick;
-};
-
 
 struct sc_remove_object {
 	unsigned char size;
@@ -131,9 +123,30 @@ struct cs_send_keyinfo {
 	bool right = false;
 	bool jump = false;
 	bool isClick = false;
-	float x = 0 ;
+	float x = 0;
 	float y = 0;
 };
+
+struct cs_obstacle {
+	float x;
+	float y; 
+};
+
+struct sc_button {
+	bool isPush[2];
+};
+
+struct sc_put_object {
+	unsigned char size;
+	char packet_type;
+	float x, y;
+	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
+	bool isClick;
+	bool isPush[2];
+};
+
+
+
 #pragma pack(pop)
 
 
