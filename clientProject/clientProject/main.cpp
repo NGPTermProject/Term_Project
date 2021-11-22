@@ -17,13 +17,16 @@
 #include "Define.h"
 #include "Object.h"
 #include "Network.h"
+#include "protocol.h"
 
 using namespace std;
 
+
 HINSTANCE g_hInst;
-LPCTSTR lpszClass = "Window Class Name";
-LPCTSTR lpszWindowName = "Term Project";
+LPCTSTR lpszClass = L"Window Class Name";
+LPCTSTR lpszWindowName = L"Term Project";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+DWORD WINAPI Recv_Thread(LPVOID arg);
 
 
 //#define NETWORK  //네트워크 기능 켜기
@@ -33,13 +36,20 @@ LARGE_INTEGER g_tSecond;
 LARGE_INTEGER g_tTime;
 float         g_fDeltaTime;
 
-int stage = 0;  //0이면 로그인 화면
+int stage = 1;  //0이면 로그인 화면
+short MyId;
 //////////////////////////
 // 로그인 화면에서 키보드 입력하면 id창에 입력
 // id창에 글자가 있을때 엔터 누르면(서버에 송신) 게임 시작
 //////////////////////////
+vector<Player> p;
 
 bool InitClient();
+cs_send_player_id id;
+cs_send_player p_info[2];
+cs_send_keyinfo keyinfo;
+sc_put_object put;
+vector<Map> m_map;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -74,6 +84,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
+	CreateThread(NULL, 0, Recv_Thread, NULL, 0, NULL);
+
 	while (GetMessage(&Message, 0, 0, 0)) {
 		TranslateMessage(&Message);
 		DispatchMessage(&Message);
@@ -81,7 +93,61 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return Message.wParam;
 }
 
-bool CollisionHelper(RECT, RECT);
+
+DWORD WINAPI Recv_Thread(LPVOID arg)
+{
+	// send, recv 함수 출력값 저장용
+	int retval;
+
+	// 윈속 초기화
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		return 1;
+
+	// socket()
+	sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (sock == INVALID_SOCKET) err_quit("socket()");
+
+	// connect()
+	SOCKADDR_IN serveraddr;
+	ZeroMemory(&serveraddr, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
+	serveraddr.sin_port = htons(SERVERPORT);
+	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+	if (retval == SOCKET_ERROR) err_quit("connect()");
+
+
+	//PlayerID 전달.
+	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
+	MyId = id.id;
+	keyinfo.id = id.id;
+	cout << MyId << endl;
+	while (1) {
+
+		recvn(sock, (char*)&p_info, sizeof(p_info), 0);
+
+		for (int i = 0; i < 2; ++i) {
+			p[p_info[i].id].setState(p_info[i].state);
+			p[p_info[i].id].setPos(p_info[i].x, p_info[i].y);
+			p[p_info[i].id].setJumpCount(p_info[i].jumpCount);
+			p[p_info[i].id].setDir(p_info[i].dir);
+
+		}
+
+
+		recvn(sock, (char*)&put, sizeof(put), 0);
+		if (put.isClick) {
+			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
+		}
+	//	recvn(sock, (char*)&hero, sizeof(hero), 0);
+	//	recvn(sock, (char*)&boss, sizeof(boss), 0);
+
+	}
+	closesocket(sock);
+	//exit(1);
+}
+
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -92,7 +158,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBRUSH hBrush, oldBrush;
 
 
-	static vector<Map> m_map;
 	static vector<Map> m_static_map;
 	static Map m_button[2];
 	
@@ -107,8 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static LARGE_INTEGER tTime;
 	static int block_count;
 
-	static Player p(230,600);
-
+	
 	RECT rect = { 675, 450, 825, 465 }; // 글을 쓸 공간 지정
 
 
@@ -116,43 +180,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static TCHAR str[512];
 
 	switch (uMsg) {
-		if (stage == 0) {
-	case WM_CHAR:  // 키보드 입력
-		int                str_len;
-		str_len = lstrlen(str);
-
-		if ((TCHAR)wParam == '\b') // 백 스페이스일 경우
-			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
-		else if ((TCHAR)wParam == VK_RETURN) {
-			if (str_len != 0) {
-#ifdef NETWORK
-				//id 서버로 보내고 로비로
-				memcpy(buf, str, str_len);
-				retval = send(sock, buf, strlen(buf), 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				//데이터 받기
-				retval = recvn(sock, buf, retval, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("recv()");
-					break;
-				}
-				else if (retval == 0)
-					break;
-#endif
-				stage = 1;
-			}
-		}
-		else
-		{
-			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
-			str[str_len] = (TCHAR)wParam;
-			str[str_len + 1] = 0;
-		}
-		break;
-		}
+//		if (stage == 0) {
+//	case WM_CHAR:  // 키보드 입력
+//		int                str_len;
+//		str_len = lstrlen(str);
+//
+//		if ((TCHAR)wParam == '\b') // 백 스페이스일 경우
+//			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
+//		else if ((TCHAR)wParam == VK_RETURN) {
+//			if (str_len != 0) {
+//#ifdef NETWORK
+//				//id 서버로 보내고 로비로
+//				memcpy(buf, str, str_len);
+//				retval = send(sock, buf, strlen(buf), 0);
+//				if (retval == SOCKET_ERROR) {
+//					err_display("send()");
+//					break;
+//				}
+//				//데이터 받기
+//				retval = recvn(sock, buf, retval, 0);
+//				if (retval == SOCKET_ERROR) {
+//					err_display("recv()");
+//					break;
+//				}
+//				else if (retval == 0)
+//					break;
+//#endif
+//				stage = 1;
+//			}
+//		}
+//		else
+//		{
+//			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
+//			str[str_len] = (TCHAR)wParam;
+//			str[str_len + 1] = 0;
+//		}
+//		break;
+//		}
 	case WM_CREATE:
 
 		// QueryPerformanceCounter(&tTime);
@@ -166,8 +230,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		LoadImage();
 
+		p.push_back(Player(200 , 600, 0));
+		p.push_back(Player(400 , 600, 1));
+
+
 
 		// 여기 부분에 추가.
+
 
 		m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
 		m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
@@ -188,7 +257,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		SetTimer(hWnd, 1, 1, NULL);
 		//
-
+		//InitClient();
 		break;
 
 	case WM_TIMER:
@@ -196,11 +265,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case 1:
 
-			p.UpdateGravity();
-			p.animation();
+		
+			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			keyinfo.isClick = false;
 
-			///////////////////// 이미지 애니메이션///////////////////////////////
-			//Monster 애니메이션
+			for(int i =0 ; i< 2 ; ++i )
+				p[i].animation();
+
+
 			for (int i = 0; i < m_monster.size(); ++i) {
 				m_monster[i].animation();
 			}
@@ -209,101 +281,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 				vec_bullet[i].animation();
 
-				if (vec_bullet[i].isColl && vec_bullet[i].anim == 0)
-					vec_bullet.erase(vec_bullet.begin() + i);
-
 			}
-
 			for (int i = 0; i < m_obstacle.size(); ++i) {
-				if (p.CollsionByObstacle(m_obstacle[i])) {
-					m_map.clear();
-				}
-				m_obstacle[i].Move();
 				m_obstacle[i].animation();
-
 			}
-			for (int i = 0; i < vec_bullet.size(); ++i) {
-				vec_bullet[i].Update();
-				if (p.CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
-					vec_bullet[i].setisColl(true);
-					m_map.clear();
-				}
-			}
-			//하강 시작 && 발판 착지
-			if (p.getVely() > 0 || p.getisRanding()) {
-				if (p.getVely() > 0) p.SwitchState(PLAYER::FALL);
-				int check = 0;
-				int b_check = 0;
-				
-					////서버 코드에서 버튼 state가 둘다 1 일때 다음 스테이지.
-
-					//for (int i = 0; i < 2; ++i)
-					//	if (m_button[i].getState() == 1)
-					//	{
-					//		b_check++;
-					//	}
-					//if (b_check == 2)
-					//	m_button[0].x = 200;
-					//else
-					//	b_check = 0;
-
-
-				for (int i = 0; i < m_map.size(); ++i) {
-					if (p.getVely() > 600) p.setCollisonHelperY(8);
-					else p.setCollisonHelperY(0);
-
-					if (p.FallingCollsionOtherObject(m_map[i]))
-					{
-						p.setPlayerRanding(m_map[i].y - 32);
-						check++;
-					}
-				}
-
-				for (int i = 0; i < 2; ++i) {
-					// 플레이어 버른 누름
-					if (p.FallingCollsionOtherObject(m_static_map[i]))
-					{
-						p.setPlayerRanding(m_static_map[i].y - 16);
-						m_static_map[i].setState(true);
-						check++;
-					}
-					// 안누름
-					else {
-						m_static_map[i].setState(false);
-					}
-				}
-
-
-				for (int i = 2; i <m_static_map.size(); ++i) {
-					if (p.getVely() > 600) p.setCollisonHelperY(8);
-					else p.setCollisonHelperY(0);
-
-					if (p.FallingCollsionOtherObject(m_static_map[i]))
-					{
-						p.setPlayerRanding(m_static_map[i].y - 32);
-						check++;
-					}
-				}
-
-				if (check == 0) {
-					p.setGravity();
-				}
-				else check = 0;
-			}
-
-			// 땅 착지     
-			if (p.getPos().y > 780) {
-				p.setPlayerRanding(780);
-			}
-
-
-
-
-
-			if (stage != 0) {
-				p.Move();
-			}
-
 
 
 			break;
@@ -321,26 +302,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			switch (wParam)
 			{
 			case VK_SPACE:
-				if (p.getJumpCount() < 2) {
-					p.Jump();
+				if (p[MyId].getJumpCount() < 2) {
+					keyinfo.jump = true;
 				}
 				break;
-			case VK_SHIFT:
-				vec_bullet.push_back(m_monster[0].Attack());
-				vec_bullet.push_back(m_monster[1].Attack());
-
+			case VK_LEFT:
+				keyinfo.left = true;
+				break;
+			case VK_RIGHT:
+				keyinfo.right = true;
 				break;
 			}
 			break;
 		}
+		break;
 	case WM_KEYUP:
-		p.SwitchState(PLAYER::IDLE);
+		if (wParam == VK_LEFT) {
+			keyinfo.left = false;
+
+		}
+		if (wParam == VK_RIGHT) {
+			keyinfo.right = false;
+
+		}
+		keyinfo.jump = false;
 		break;
 	
 	case WM_LBUTTONDOWN:
 		if (m_map.size()-1 != 5) {
-			m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
-			InvalidateRect(hWnd, NULL, false);
+			keyinfo.isClick = true;
+			keyinfo.x = LOWORD(lParam);
+			keyinfo.y = HIWORD(lParam);
+
+			//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
+			//InvalidateRect(hWnd, NULL, false);
 		}
 		break;
 
@@ -361,9 +356,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		else {
 
-
-
-
 			//다른 오브젝트 발판 그리기
 			for (int i = 0; i < m_map.size(); ++i)
 				m_map[i].draw(memdc1);
@@ -376,7 +368,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 			//플레이어 그리기
-			p.draw(memdc1);
+			for (int i = 0; i < p.size(); ++i) {
+				p[i].draw(memdc1);
+			}
 
 
 			for (int i = 0; i < vec_bullet.size(); ++i) {
@@ -387,40 +381,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				m_obstacle[i].draw(memdc1);
 			}
 
-
-
-
 		}
-
-
-
-
-		// --- RECT 테스트 ---
-
-		//for (int i = 0; i < bullet_count; ++i) {
-		//    Rectangle(memdc1, b_rect[i].left, b_rect[i].top, b_rect[i].right, b_rect[i].bottom);
-		//}
-
-		//for (int i = 0; i < MONSTER_AMOUNT; ++i) {
-		//    Rectangle(memdc1, m_rect[i].left, m_rect[i].top, m_rect[i].right, m_rect[i].bottom);
-		//}
-
-		//for (int i = 0; i < OBS_SERO_COUNT; ++i) {
-		//    Rectangle(memdc1, obs_s_rect[i].left, obs_s_rect[i].top, obs_s_rect[i].right, obs_s_rect[i].bottom);
-		//}
-
-		//for (int i = 0; i < OBS_GARO_COUNT; ++i) {
-		//    Rectangle(memdc1, obs_g_rect[i].left, obs_g_rect[i].top, obs_g_rect[i].right, obs_g_rect[i].bottom);
-		//}
-
-		//Rectangle(memdc1, p.x -16, p.y - 16, p.x + 16, p.y+ 16);
-
-		//for (int i = 0; i < w_rect_count; ++i) {            
-		//    Rectangle(memdc1, w_rect[i].left, w_rect[i].top, w_rect[i].right, w_rect[i].bottom);
-		//}
-
-		// --- RECT 테스트 ---
-
 
 		BitBlt(hdc, 0, 0, Window_Size_X, Window_Size_Y, memdc1, 0, 0, SRCCOPY);
 		if (stage == 0) //id입력
