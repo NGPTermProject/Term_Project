@@ -37,11 +37,20 @@ sc_put_object put;
 short client_id;
 bool c_left[2];
 bool c_right[2];
+
+struct BLOCK {
+	float x = -1;
+	float y = -1;
+};
+
+BLOCK block[10];
+int cnt=0;
+
 int main()
 {
 	//server.InitServer();
 	player.push_back(Player(200, 600, 0));
-	player.push_back(Player(400 , 600, 1));
+	player.push_back(Player(400, 600, 1));
 	m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
 	m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
 	m_static_map.push_back(Map(MAP::PLAT, 200, 150));
@@ -100,18 +109,18 @@ int main()
 		}
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
 
-	
+
 		Client_Count++;
 
 		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
 
 	}
 	DeleteCriticalSection(&cs);
-	
+
 	closesocket(server_socket);
-	
+
 	WSACleanup();
-	
+
 	return 0;
 }
 
@@ -138,6 +147,9 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 		deltaTime = NowTime - StartTime;
 		if (deltaTime >= 10) {
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			block[cnt].x = keyinfo.x;
+			block[cnt].y = keyinfo.y;
+
 			//EnterCriticalSection(&cs);
 			client_id = keyinfo.id;
 			//cout << keyinfo.id << endl;
@@ -170,8 +182,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 
 			player[client_id].UpdateGravity();
-			
-			
+
+
 			//EnterCriticalSection(&cs);
 			//cout << "?" << endl;
 
@@ -252,23 +264,28 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 
 
-			
+
 			//LeaveCriticalSection(&cs);
 
 			//sc_p.anim = player[Client_Count].getAnim();
 			//sc_p.imageCount = player[Client_Count].getImageCount();
-			
-			sc_p[client_id].id = client_id;	
+
+			sc_p[client_id].id = client_id;
 			sc_p[client_id].state = player[client_id].getState();
 			sc_p[client_id].x = player[client_id].getPos().x;
 			sc_p[client_id].y = player[client_id].getPos().y;
 			sc_p[client_id].dir = player[client_id].getDir();
 			sc_p[client_id].jumpCount = player[client_id].getJumpCount();
-			
+
 
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 
+
+			put.x = block[cnt].x;
+			put.y = block[cnt].y;
+
+			cout << cnt << ", " << block[cnt].x << ", " << block[cnt].y << endl;
 			send(clientSock, (char*)&put, sizeof(put), 0);
 			//if (keyinfo.isClick) {
 			//	sc_put_object put;
@@ -311,7 +328,7 @@ void err_quit(const char* msg)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpmsgbuf, 0, NULL
 	);
-	MessageBox(NULL, (LPCTSTR)lpmsgbuf,(LPCWSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpmsgbuf, (LPCWSTR)msg, MB_ICONERROR);
 	LocalFree(lpmsgbuf);
 	exit(-1);
 }

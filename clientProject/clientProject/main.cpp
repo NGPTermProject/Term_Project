@@ -137,9 +137,9 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 
 
 		recvn(sock, (char*)&put, sizeof(put), 0);
-		if (put.isClick) {
+	//	if (put.isClick) {
 			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
-		}
+	//	}
 	//	recvn(sock, (char*)&hero, sizeof(hero), 0);
 	//	recvn(sock, (char*)&boss, sizeof(boss), 0);
 
@@ -329,14 +329,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	
 	case WM_LBUTTONDOWN:
-		if (m_map.size()-1 != 5) {
+	//	if (m_map.size()-1 != 5) {
 			keyinfo.isClick = true;
 			keyinfo.x = LOWORD(lParam);
 			keyinfo.y = HIWORD(lParam);
 
 			//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
 			//InvalidateRect(hWnd, NULL, false);
-		}
+	//	}
 		break;
 
 	case WM_PAINT:
