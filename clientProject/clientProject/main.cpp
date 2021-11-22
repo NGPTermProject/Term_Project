@@ -48,6 +48,9 @@ bool InitClient();
 cs_send_player_id id;
 cs_send_player p_info[2];
 cs_send_keyinfo keyinfo;
+sc_put_object put;
+vector<Map> m_map;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 #ifdef NETWORK
@@ -131,6 +134,12 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			p[p_info[i].id].setDir(p_info[i].dir);
 
 		}
+
+
+		recvn(sock, (char*)&put, sizeof(put), 0);
+		if (put.isClick) {
+			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
+		}
 	//	recvn(sock, (char*)&hero, sizeof(hero), 0);
 	//	recvn(sock, (char*)&boss, sizeof(boss), 0);
 
@@ -149,7 +158,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBRUSH hBrush, oldBrush;
 
 
-	static vector<Map> m_map;
 	static vector<Map> m_static_map;
 	static Map m_button[2];
 	
@@ -259,6 +267,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			keyinfo.isClick = false;
 
 			for(int i =0 ; i< 2 ; ++i )
 				p[i].animation();
@@ -321,8 +330,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 	case WM_LBUTTONDOWN:
 		if (m_map.size()-1 != 5) {
-			m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
-			InvalidateRect(hWnd, NULL, false);
+			keyinfo.isClick = true;
+			keyinfo.x = LOWORD(lParam);
+			keyinfo.y = HIWORD(lParam);
+
+			//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
+			//InvalidateRect(hWnd, NULL, false);
 		}
 		break;
 

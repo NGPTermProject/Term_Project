@@ -33,7 +33,7 @@ sc_send_player_id p_id;
 sc_send_player sc_p[2];
 sc_recv_keyinfo keyinfo;
 CRITICAL_SECTION cs;
-
+sc_put_object put;
 short client_id;
 bool c_left[2];
 bool c_right[2];
@@ -141,6 +141,11 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			//EnterCriticalSection(&cs);
 			client_id = keyinfo.id;
 			//cout << keyinfo.id << endl;
+
+			put.isClick = keyinfo.isClick;
+			put.x = keyinfo.x;
+			put.y = keyinfo.y;
+
 			if (client_id == keyinfo.id) {
 				c_left[client_id] = keyinfo.left;
 				c_right[client_id] = keyinfo.right;
@@ -263,9 +268,16 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
-			
-			c_left[client_id] = false;
-			c_right[client_id] = false;
+
+			send(clientSock, (char*)&put, sizeof(put), 0);
+			//if (keyinfo.isClick) {
+			//	sc_put_object put;
+			//	put.x = keyinfo.x;
+			//	put.y = keyinfo.y;
+			//	send(clientSock, (char*)&put, sizeof(put), 0);
+			//}
+			//c_left[client_id] = false;
+			//c_right[client_id] = false;
 
 		}
 		StartTime = NowTime;

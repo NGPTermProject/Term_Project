@@ -258,7 +258,15 @@ public:
 	 short id;
 
  public:
-	 
+	 void setDir(int m_dir)
+	 {
+		 dir = m_dir;
+	 }
+
+	 int getDir() 
+	 {
+		 return dir;
+	 }
 
 	 short getID()
 	 {
@@ -356,7 +364,10 @@ public:
 	 }
 
 
-	
+	void move(float m_x)
+	{
+		pos.x += m_x;
+	}
 
 	 bool FallingCollsionOtherObject(Objects obj) {
 		 if (pos.y + imageSizeY / 2 >= obj.y - obj.collsionHelper[0] &&

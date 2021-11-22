@@ -363,7 +363,10 @@ public:
 		 pos.y += (velY + accY) * 0.03f;
 	 }
 
-
+	 void setDir(int m_dir)
+	 {
+		 dir = m_dir;
+	 }
 
 	 void setPlayerRanding(float pos_y)
 	 {

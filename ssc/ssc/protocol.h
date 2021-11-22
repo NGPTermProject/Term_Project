@@ -75,6 +75,7 @@ struct sc_put_object {
 	char packet_type;
 	float x,y;
 	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
+	bool isClick;
 };
 
 
@@ -122,12 +123,18 @@ struct sc_send_player {
 	
 	int jumpCount;
 	int dir;
+
 };
 struct sc_recv_keyinfo {
 	short id;
 	bool left = false;
 	bool right = false;
 	bool jump = false;
+	bool isClick = false;
+	float x;
+	float y;
 };
+
+
 
 #pragma pack(pop)
