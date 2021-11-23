@@ -31,22 +31,10 @@ struct sc_login_ok {
 	unsigned char size;
 	char	packet_type;
 	int		id;
-	//short	x, y;
+	short	x, y;
 };
 
 
-//cs
-struct cs_move {
-	unsigned char size;
-	char packet_type;
-	int type; //왼,오 점프 
-};
-
-struct cs_mouse_input{
-	unsigned char size;
-	char packet_type;
-	float x,y;
-};
 
 struct cs_close_animation{		//애니메이션 동작이 끝났음을 알림. 
 	unsigned char size;
@@ -70,14 +58,6 @@ struct sc_move {
 };
 
 
-struct sc_put_object {
-	unsigned char size;
-	char packet_type;
-	float x,y;
-	short id;
-	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
-	bool isClick;
-};
 
 
 struct sc_remove_object {
@@ -136,6 +116,24 @@ struct sc_recv_keyinfo {
 	float y;
 };
 
+struct sc_obstacle {
+	float x;
+	float y;
+};
+
+struct sc_button {
+	bool isPush[2];
+};
+
+struct sc_put_object {
+	unsigned char size;
+	char packet_type;
+	float x, y;
+	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
+	bool isClick;
+	bool isPush[2];
+
+};
 
 
 #pragma pack(pop)
