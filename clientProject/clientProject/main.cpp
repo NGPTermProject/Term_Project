@@ -18,6 +18,7 @@
 #include "Object.h"
 #include "Network.h"
 #include "protocol.h"
+//#include "Timer.h"
 
 using namespace std;
 
@@ -153,12 +154,13 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 		}
 
 		recvn(sock, (char*)&put, sizeof(put), 0);
-		if (put.isClick) {
+		if (put.isClick){
 			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
 		}
 		for (int i = 0; i < 2; ++i)
 			m_static_map[i].setState(put.isPush[i]);
-	/*	sc_button bt;
+	
+		/*	sc_button bt;
 		recvn(sock, (char*)&bt, sizeof(bt), 0);
 		for (int i = 0; i < 2; ++i)
 			m_static_map[i].setState(bt.isPush[i]);*/
@@ -197,6 +199,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	RECT rect = { 675, 450, 825, 465 }; // 글을 쓸 공간 지정
 	static int map_current_count = 0;
 	static int map_max_count = 5;
+
+	static bool isJumping = false ;
 
 	// 지역변수는 메시지가 발생할 때마다 초기화되므로 값을 계속 유지하기 위해서 static 사용
 	static TCHAR str[512];
@@ -269,14 +273,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
 
-//	static Obstacle obstacle(OBSTACLE::BLADE, 100, 500);
-//		static Obstacle obstacle_map(OBSTACLE::MIDDLE_UP, 100, 500);
-		//Monster
 		m_monster.push_back(Monster(MONSTER::PLANT, 200, 100));
 		m_monster.push_back(Monster(MONSTER::PIG, 500, 100));
 
 
-		SetTimer(hWnd, 1, 1, NULL);
+		//Timer::Reset();
+		SetTimer(hWnd, 1, 10, NULL);
 		//
 		//InitClient();
 		break;
@@ -285,10 +287,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 
 		case 1:
-
 		
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
+			keyinfo.jump = false;
 
 			for(int i =0 ; i< 2 ; ++i )
 				p[i].animation();
@@ -345,6 +347,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (wParam == VK_RIGHT) {
 			keyinfo.right = false;
 
+		}
+		if (wParam == VK_SPACE) {
+			isJumping  = false;
 		}
 		keyinfo.jump = false;
 		break;

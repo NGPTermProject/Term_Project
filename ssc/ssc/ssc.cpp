@@ -96,13 +96,16 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-
-
+	
+	bool flag = TRUE;
+	
 	while (1)
 	{
 		//accept()
 		addrlen = sizeof(clientaddr);
 		client_sock = accept(server_socket, (SOCKADDR*)&clientaddr, &addrlen);
+		setsockopt(client_sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
+
 		if (client_sock == INVALID_SOCKET) {
 			//err_display("accept()");
 			std::cout << "!!!" << std::endl;
@@ -141,10 +144,12 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 	int StartTime = GetTickCount64();
 	int deltaTime;
 
+	//timeGetTime();
 	while (1) {
 		int NowTime = GetTickCount64();
 
 		deltaTime = NowTime - StartTime;
+
 		if (deltaTime >= 10) {
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			if (keyinfo.isClick) {
@@ -164,12 +169,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 			LeaveCriticalSection(&cs);
 
-
-
-
 			player[client_id].UpdateGravity();
-			
-			
+						
 			//EnterCriticalSection(&cs);
 			//cout << "?" << endl;
 
@@ -220,25 +221,26 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 						player[client_id].setPlayerRanding(m_static_map[i].y - 16);
 						m_static_map[i].setState(true);
 						EnterCriticalSection(&cs);
-						//for (int j = 0; j < 2; ++j) {
+
+						if (put[client_id].isPush[i] == put[(client_id + 1) % 2].isPush[i]) {
 							put[client_id].isPush[i] = true;
-						//}
+							put[(client_id + 1) % 2].isPush[i] = true;
+						}
+
 						LeaveCriticalSection(&cs);
 
 						check++;
 					}
-					// 안누름
-					else {
-						m_static_map[i].setState(false);
-						EnterCriticalSection(&cs);
-
-						//for (int j = 0; j < 2; ++j) {
-							//if(!put[(client_id +1 )% 2].isPush[i])
-								put[client_id].isPush[i] = false;
-						//}
-						LeaveCriticalSection(&cs);
-
-					}
+					//else {
+					//	
+					//	m_static_map[i].setState(false);
+					//	EnterCriticalSection(&cs);
+					//	if (put[client_id].isPush[i] == put[(client_id + 1) % 2].isPush[i]) {
+					//		put[client_id].isPush[i] = false;
+					//		put[(client_id + 1) % 2].isPush[i] = false;
+					//	}
+					//	LeaveCriticalSection(&cs);
+					//}
 				}
 
 
@@ -292,11 +294,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 			LeaveCriticalSection(&cs);
 
-			
-			//LeaveCriticalSection(&cs);
 
-			//sc_p.anim = player[Client_Count].getAnim();
-			//sc_p.imageCount = player[Client_Count].getImageCount();
 			
 			sc_p[client_id].id = client_id;	
 			sc_p[client_id].state = player[client_id].getState();
@@ -305,29 +303,17 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			sc_p[client_id].dir = player[client_id].getDir();
 			sc_p[client_id].jumpCount = player[client_id].getJumpCount();
 
-				for (int i = 0; i < 2; ++i) {
-					if (put[client_id].isPush[i]) {
-						put[(client_id + 1) % 2].isPush[i] = true;
-					}
-				}
 
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
-			//send(clientSock, (char*)&sc_b, sizeof(sc_b), 0);
 
+			for (int i = 0; i < 2; ++i) {
+				put[client_id].isPush[i] = false;
+
+			}
 			put[client_id].isClick = false;
-			//for (int i = 0; i < 2; ++i)
-			//	put[client_id].isPush[i] = false;
-			//if (keyinfo.isClick) {
-			//	sc_put_object put;
-			//	put.x = keyinfo.x;
-			//	put.y = keyinfo.y;
-			//	send(clientSock, (char*)&put, sizeof(put), 0);
-			//}
-			//c_left[client_id] = false;
-			//c_right[client_id] = false;
 
 		}
 		StartTime = NowTime;
