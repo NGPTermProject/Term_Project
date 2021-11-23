@@ -1,5 +1,6 @@
 #pragma once
 #include "State.h"
+#include <WS2tcpip.h>
 
 class Objects
 {
@@ -233,7 +234,7 @@ public:
 
  class Player {
  private:
-
+	 SOCKET socket;
 	 Pos pos;
 	 int jumpCount = 0;
 	 int dir = 0;
@@ -261,6 +262,14 @@ public:
 	 void setDir(int m_dir)
 	 {
 		 dir = m_dir;
+	 }
+	 SOCKET getSocket()
+	 {
+		 return socket;
+	 }
+	 void setSocket(SOCKET s)
+	 {
+		 socket = s;
 	 }
 
 	 int getDir() 
@@ -395,6 +404,12 @@ public:
 		 if (anim >= imageSizeX * (imageCount - 1))
 			 anim = 0;
 	 }
+	 Player(SOCKET s, short m_id)
+	 {
+		 socket = s;
+		 id = m_id;
+	 }
+
 
 	 Player(float m_x, float m_y, short m_id)
 	 {

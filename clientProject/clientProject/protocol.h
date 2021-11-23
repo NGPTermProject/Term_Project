@@ -74,6 +74,7 @@ struct sc_put_object {
 	unsigned char size;
 	char packet_type;
 	float x,y;
+	short id;
 	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
 	bool isClick;
 };

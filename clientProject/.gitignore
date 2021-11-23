@@ -1,6 +1,7 @@
 # Prerequisites
 *.d
 *.vs
+*.x64
 # Compiled Object files
 *.slo
 *.lo
@@ -10,8 +11,7 @@
 # Precompiled Headers
 *.gch
 *.pch
-*.ipch
-
+*.tlog
 # Compiled Dynamic libraries
 *.so
 *.dylib

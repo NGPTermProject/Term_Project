@@ -26,6 +26,8 @@ vector<Monster> m_monster;
 vector<Bullet> vec_bullet;
 vector<Obstacle> m_obstacle;
 
+vector<SOCKET> player_socket;
+
 HANDLE hThread;
 
 int Client_Count = -1;
@@ -37,6 +39,8 @@ sc_put_object put;
 short client_id;
 bool c_left[2];
 bool c_right[2];
+
+
 int main()
 {
 	//server.InitServer();
@@ -115,19 +119,36 @@ int main()
 	return 0;
 }
 
+void send_login_ok_packet(int c_id)
+{
+	sc_login_ok packet;
+	packet.id = c_id;
+	packet.size = sizeof(packet);
+	packet.packet_type = SC_PACKET_LOGIN_OK;
+
+	send(player[c_id].getSocket(), reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+}
 
 DWORD WINAPI Client_Thread(LPVOID arg)
 {
 	SOCKET clientSock = (SOCKET)arg;
 
+	
+	
 	int retval;
 
 	// hero.id 송신
 	//p_id.id = 
 	p_id.id = Client_Count;
 	cout << Client_Count << endl;
-	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+	
+	Player pl(clientSock, p_id.id);
 
+	player.push_back(pl);
+
+
+	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+	//send_login_ok_packet(p_id.id);
 
 	int StartTime = GetTickCount64();
 	int deltaTime;
@@ -142,9 +163,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			client_id = keyinfo.id;
 			//cout << keyinfo.id << endl;
 
-			put.isClick = keyinfo.isClick;
-			put.x = keyinfo.x;
-			put.y = keyinfo.y;
+			
 
 			if (client_id == keyinfo.id) {
 				c_left[client_id] = keyinfo.left;
@@ -266,10 +285,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			sc_p[client_id].jumpCount = player[client_id].getJumpCount();
 			
 
-
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 
-			send(clientSock, (char*)&put, sizeof(put), 0);
 			//if (keyinfo.isClick) {
 			//	sc_put_object put;
 			//	put.x = keyinfo.x;
@@ -278,6 +295,15 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			//}
 			//c_left[client_id] = false;
 			//c_right[client_id] = false;
+
+			
+			put.isClick = keyinfo.isClick;
+			put.id = client_id;
+			put.x = keyinfo.x;
+			put.y = keyinfo.y;
+
+			send(clientSock, (char*)&put, sizeof(put), 0);
+
 
 		}
 		StartTime = NowTime;

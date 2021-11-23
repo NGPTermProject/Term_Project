@@ -43,13 +43,17 @@ short MyId;
 // id창에 글자가 있을때 엔터 누르면(서버에 송신) 게임 시작
 //////////////////////////
 vector<Player> p;
+vector<Map> m_map;
 
-bool InitClient();
 cs_send_player_id id;
+
 cs_send_player p_info[2];
 cs_send_keyinfo keyinfo;
 sc_put_object put;
-vector<Map> m_map;
+
+
+
+bool InitClient();
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -137,9 +141,12 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 
 
 		recvn(sock, (char*)&put, sizeof(put), 0);
-		if (put.isClick) {
-			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
-		}
+		
+			if (put.isClick) {
+				m_map.push_back(Map(MAP::PLAT, put.x, put.y));
+			}
+		
+		
 	//	recvn(sock, (char*)&hero, sizeof(hero), 0);
 	//	recvn(sock, (char*)&boss, sizeof(boss), 0);
 
@@ -265,7 +272,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case 1:
 
-		
+			
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
 
