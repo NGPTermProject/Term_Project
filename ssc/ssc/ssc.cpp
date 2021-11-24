@@ -45,7 +45,7 @@ int main()
 
 	//server.InitServer();
 	player.push_back(Player(200, 600, 0));
-	player.push_back(Player(400 , 600, 1));
+	player.push_back(Player(400, 600, 1));
 	m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
 	m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
 	m_static_map.push_back(Map(MAP::PLAT, 200, 150));
@@ -96,9 +96,9 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-	
+
 	bool flag = TRUE;
-	
+
 	while (1)
 	{
 		//accept()
@@ -112,18 +112,18 @@ int main()
 		}
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
 
-	
+
 		Client_Count++;
 
 		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
 
 	}
 	DeleteCriticalSection(&cs);
-	
+
 	closesocket(server_socket);
-	
+
 	WSACleanup();
-	
+
 	return 0;
 }
 
@@ -170,12 +170,17 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			LeaveCriticalSection(&cs);
 
 			player[client_id].UpdateGravity();
-						
+
 			//EnterCriticalSection(&cs);
 			//cout << "?" << endl;
 
 			//for(int i = 0; i < m_obstacle.size(); ++i)
 			//	m_obstacle[i].Move();
+
+			//if (keyinfo.jump) {
+			//	for (int i = 0; i < 2; ++i)
+			//		m_monster[i].Attack();
+			//}
 
 			//for (int i = 0; i < vec_bullet.size(); ++i) {
 			//	vec_bullet[i].Update();
@@ -184,25 +189,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			//		m_map.clear();
 			//	}
 			//}
-
+			//플레이어 점프 상태에서 충돌 처리 부분
 			if (player[client_id].getVely() > 0 || player[client_id].getisRanding()) {
 				if (player[client_id].getVely() > 0) player[client_id].SwitchState(PLAYER::FALL);
 				int check = 0;
-				int b_check = 0;
-
-				////서버 코드에서 버튼 state가 둘다 1 일때 다음 스테이지.
-
-				//for (int i = 0; i < 2; ++i)
-				//	if (m_button[i].getState() == 1)
-				//	{
-				//		b_check++;
-				//	}
-				//if (b_check == 2)
-				//	m_button[0].x = 200;
-				//else
-				//	b_check = 0;
-
-
 				for (int i = 0; i < m_map.size(); ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
@@ -220,27 +210,18 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					{
 						player[client_id].setPlayerRanding(m_static_map[i].y - 16);
 						m_static_map[i].setState(true);
-						EnterCriticalSection(&cs);
 
 						if (put[client_id].isPush[i] == put[(client_id + 1) % 2].isPush[i]) {
+							EnterCriticalSection(&cs);
 							put[client_id].isPush[i] = true;
 							put[(client_id + 1) % 2].isPush[i] = true;
+							LeaveCriticalSection(&cs);
+							//다음스테이지
+							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2])
+								cout << "NextStage" << endl;
 						}
-
-						LeaveCriticalSection(&cs);
-
 						check++;
 					}
-					//else {
-					//	
-					//	m_static_map[i].setState(false);
-					//	EnterCriticalSection(&cs);
-					//	if (put[client_id].isPush[i] == put[(client_id + 1) % 2].isPush[i]) {
-					//		put[client_id].isPush[i] = false;
-					//		put[(client_id + 1) % 2].isPush[i] = false;
-					//	}
-					//	LeaveCriticalSection(&cs);
-					//}
 				}
 
 
@@ -254,7 +235,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 						check++;
 					}
 				}
-
 				if (check == 0) {
 					player[client_id].setGravity();
 				}
@@ -265,10 +245,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].setPlayerRanding(780);
 			}
 
+			// --키입력------------------------------------------///
 			if (keyinfo.jump == true) {
 				player[client_id].Jump();
 			}
-
 			if (c_left[client_id] == true) {
 				if (player[client_id].getVely() == 0)
 					player[client_id].SwitchState(PLAYER::MOVE);
@@ -282,21 +262,20 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].setDir(0);
 				player[client_id].move((300 * 0.016f));
 			}
-
-			EnterCriticalSection(&cs);
+			///-------------------------------------------------///
 			for (int i = 0; i < m_obstacle.size(); ++i) {
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
+					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();
+					LeaveCriticalSection(&cs);
 					sc_obs[i].x = m_obstacle[i].getPosX();
 					sc_obs[i].y = m_obstacle[i].getPosY();
-
 				}
 			}
-			LeaveCriticalSection(&cs);
 
 
-			
-			sc_p[client_id].id = client_id;	
+
+			sc_p[client_id].id = client_id;
 			sc_p[client_id].state = player[client_id].getState();
 			sc_p[client_id].x = player[client_id].getPos().x;
 			sc_p[client_id].y = player[client_id].getPos().y;
@@ -304,6 +283,19 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			sc_p[client_id].jumpCount = player[client_id].getJumpCount();
 
 
+			//int b_check = 0;
+			//for (int i = 0; i < 2; ++i) {
+			//	if (put[client_id].isPush[i]) b_check++;
+			//	if (put[(client_id + 1) % 2].isPush[i]) b_check++;
+
+			//}
+			//if (b_check == 4) {
+			//	cout << "Next Stage" << endl;
+			//}
+			//else {
+			//	b_check = 0;
+			//	cout << b_check << endl;
+			//}
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
@@ -347,7 +339,7 @@ void err_quit(const char* msg)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpmsgbuf, 0, NULL
 	);
-	MessageBox(NULL, (LPCTSTR)lpmsgbuf,(LPCWSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpmsgbuf, (LPCWSTR)msg, MB_ICONERROR);
 	LocalFree(lpmsgbuf);
 	exit(-1);
 }
