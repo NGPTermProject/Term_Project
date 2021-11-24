@@ -1,40 +1,34 @@
+#pragma once
+#include "State.h"
+
 class Objects
 {
 public:
-	 Objects();
-	~ Objects();
+	Objects() {}
+	~Objects() {}
 
 	float x = 0;
 	float y = 0;
 	
 	int anim = 0;
-	int imageSizeX;
-	int imageSizeY;
+	int imageSizeX = 0;
+	int imageSizeY = 0;
 
-	int imageCount;
+	int imageCount = 0;
 
 	int collsionHelper[4];
 
-	void animation();
+	void animation() {
+		anim += imageSizeX;
+		if (anim >= imageSizeX * (imageCount - 1))
+			anim = 0;
+	};
 
-	CImage img;
 
 };
 
- Objects:: Objects()
-{
-}
 
- Objects::~ Objects()
-{
-}
 
- void Objects::animation()
- {
-	 anim += imageSizeX;
-	 if (anim >= imageSizeX * (imageCount - 1))
-		 anim = 0;
- }
 
 
  class Obstacle : public Objects {
@@ -44,20 +38,13 @@ public:
 	 void Move() {
 		 x += 1;
 	 }
-	 void draw(HDC hdc)
+	 float getPosX()
 	 {
-		 if (type == OBSTACLE::BLADE)
-			img_cutting_blade.Draw(hdc,x - imageSizeX / 2, y - imageSizeY / 2, imageSizeX, imageSizeY, anim, 0, imageSizeX, imageSizeY);
-		 if (type == OBSTACLE::LONG_UP)
-			 img_Obs_960_96_Up.Draw(hdc, x - imageSizeX / 2, y - imageSizeY / 2, imageSizeX, imageSizeY);
-		 if (type == OBSTACLE::LONG)
-			 img_Obs_960_96.Draw(hdc, x - imageSizeX / 2, y - imageSizeY / 2, imageSizeX, imageSizeY);
-		 if (type == OBSTACLE::MIDDLE_UP)
-			 img_Obs_544_96_Up.Draw(hdc, x - imageSizeX / 2, y - imageSizeY / 2, imageSizeX, imageSizeY);
-		 if (type == OBSTACLE::MIDDLE)
-			 img_Obs_544_96.Draw(hdc, x - imageSizeX / 2, y - imageSizeY / 2, imageSizeX, imageSizeY);
-		 if (type == OBSTACLE::SHORT)
-			 img_Obs_320_96.Draw(hdc, x - imageSizeX / 2, y - imageSizeY / 2, imageSizeX, imageSizeY);
+		 return x;
+	 }
+	 float getPosY()
+	 {
+		 return y;
 	 }
 	 Obstacle();
 	 Obstacle(int m_type ,  float m_x, float m_y) {
@@ -131,17 +118,7 @@ public:
 		 return state;
 	 }
 
-	 void draw(HDC memdc1)
-	 {
-		 if (type == MAP::BUTTON) {
-			 if(state == false)
-				img_ButtonUp.Draw(memdc1, x - 32, y - 16, 64, 32);
-			 else
-				img_ButtonDown.Draw(memdc1, x - 32, y - 16, 64, 32);
-		 }
-		 if (type == MAP::PLAT)
-			 img_wall.Draw(memdc1, x - 48, y - 16, 96, 32);
-	 }
+	
 	 Map()
 	 {
 
@@ -227,23 +204,7 @@ public:
 		 return isColl;
 	 }
 
-	 void draw(HDC hdc)
-	 {
-		 if (type == MONSTER::PIG) {
-			 if (isColl)
-				 img_Bomb_Coll.Draw(hdc, x - 32, y - 32, 64, 64, anim, 0, 64, 64);
-			 else {
-				 img_Bomb.Draw(hdc, x - 32, y - 32, 64, 64, anim, 0, 64, 64);
-			 }
-		 }
-		 else if (type == MONSTER::PLANT) {
-			 if (isColl)
-				 img_Bullet_Coll.Draw(hdc, x - 12, y - 12, 24, 24);
-			 else {
-				 img_Bullet.Draw(hdc, x - 12, y - 12, 24, 24, anim, 0, 24, 24);
-			 }
-		 }
-	 }
+
 
 	 void Move()
 	 {
@@ -301,44 +262,62 @@ public:
 	 float accY = PLAYER_GRAVITY;
 	 float velY = 0;
 
+	 short id;
 
-
-	 short id = -1;
  public:
+	 void setDir(int m_dir)
+	 {
+		 dir = m_dir;
+	 }
 
-	 void setID(short m_id)
+	 int getDir() 
+	 {
+		 return dir;
+	 }
+
+	 short getID()
+	 {
+		 return id;
+	 }
+	 int getState()
+	 {
+		 return state;
+	 }
+	 int getAnim()
+	 {
+		 return anim;
+	 }
+	 int getImageCount()
+	 {
+		 return imageCount;
+	 }
+	 bool getisRanding()
+	 {
+		 return isRanding;
+	 }
+	 Pos getPos()
+	 {
+		 return pos;
+	 }
+	 int getJumpCount()
+	 {
+		 return jumpCount;
+	 }
+
+
+	 void setId(short m_id)
 	 {
 		 id = m_id;
 	 }
-	 void setState(int m_state)
+	 int get_max_create_map()
 	 {
-		 state = m_state;
+		 return max_create_map;
 	 }
 
-	 void setAnim(int m_anim)
+	 void set_max_create_map_plus()
 	 {
-		 anim = m_anim;
+		 max_create_map++;
 	 }
-	 void setImageCount(int m_ic)
-	 {
-		 imageCount = m_ic;
-	 }
-	 void setisRanding(bool r)
-	 {
-		 isRanding = r;
-	 }
-	 void setPos(float m_x, float m_y)
-	 {
-		 pos.x = m_x;
-		 pos.y = m_y;
-	 }
-	 void setJumpCount(int jc)
-	 {
-		 jumpCount = jc;
-	 }
-
-
-
 
 	 void setCollisonHelperY(int y)
 	 {
@@ -357,20 +336,21 @@ public:
 	 }
 
 
+
 	 void UpdateGravity()
 	 {
 		 velY += accY;
 		 pos.y += (velY + accY) * 0.03f;
 	 }
 
-	 void setDir(int m_dir)
+	 void SwitchState(int m_state)
 	 {
-		 dir = m_dir;
+		 state = m_state;
 	 }
 
 	 void setPlayerRanding(float pos_y)
 	 {
-		 setState(PLAYER::IDLE);
+		 SwitchState(PLAYER::IDLE);
 		 accY = 0;
 		 velY = 0;
 		 pos.y = pos_y;
@@ -378,23 +358,7 @@ public:
 		 jumpCount = 0;
 	 }
 
-	 void Move()
-	 {
-		 if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-		 {
-			 if(velY == 0) 
-				 state = PLAYER::MOVE;
-			 dir = P_DIR_LEFT;
-			 pos.x -= (speed * 0.016f);
-		 }
-		 if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-		 {
-			 if (velY == 0)
-				state = PLAYER::MOVE;
-			 dir = P_DIR_RIGHT;
-			 pos.x += (speed * 0.016f);
-		 }
-	 }
+	
 
 	 void Jump()
 	 {
@@ -403,37 +367,14 @@ public:
 		 isRanding = false;
 		 velY = -400.5f;
 		 jumpCount++;
-		 setState(PLAYER::JUMP);
-	 }
-
-	 int getJumpCount()
-	 {
-		 return jumpCount;
+		 SwitchState(PLAYER::JUMP);
 	 }
 
 
-	 void draw(HDC hdc)
-	 {
-		 switch (state)
-		 {
-		 case PLAYER::IDLE:
-			 imageCount = 11;
-			 player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
-			 break;
-
-		 case PLAYER::MOVE:
-			 imageCount = 12;
-			 player_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
-			 break;
-
-		 case PLAYER::JUMP:
-			 player_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
-			 break;
-
-		 case PLAYER::FALL:
-			 player_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
-		 }
-	 }
+	void move(float m_x)
+	{
+		pos.x += m_x;
+	}
 
 	 bool FallingCollsionOtherObject(Objects obj) {
 		 if (pos.y + imageSizeY / 2 >= obj.y - obj.collsionHelper[0] &&
@@ -462,17 +403,19 @@ public:
 			 anim = 0;
 	 }
 
-	 Player(float m_x, float m_y , short m_id)
+	 Player(float m_x, float m_y, short m_id)
 	 {
 		 pos.setPos(m_x, m_y);
-		 id = m_id;
+
 		 state = PLAYER::IDLE;
 		 imageCount = 11;
-
+		 id = m_id;
 	 }
 
 	 Player();
-
+	 short getId() {
+		 return id;
+	 }
 	 //bool ()
  };
 
@@ -501,26 +444,6 @@ public:
 			 imageSizeY = 42;
 			 imageCount = 12;
 		 }
-	 }
-
-	 void draw(HDC hdc) {
-		 
-		 if (type == MONSTER::PIG) {
-			 if (attack)
-				 img_Bomb_Monster_Attack.Draw(hdc, x - 16, y - 16, 32, 32, anim, 0, 32, 32);
-			 else {
-				 img_Bomb_Monster_Idle.Draw(hdc, x - 16, y - 16, 32, 32, anim, 0, 32, 32);
-			 }
-		 }
-		 if (type == MONSTER::PLANT) {
-			 if (attack)
-				 img_Plant_Monster_Attack.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 0, imageSizeX, 42);
-			 else {
-				 img_Plant_Monster_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 0, imageSizeX, 42);
-			 }
-		 }
-		 
-
 	 }
 
 	 void animation()

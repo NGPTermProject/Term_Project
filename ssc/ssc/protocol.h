@@ -1,6 +1,6 @@
 #pragma once
 
-const short SERVER_PORT = 4000;
+const short SERVER_PORT = 9000;
 
 const int  MAX_NAME_SIZE = 20;
 const int  MAX_USER = 10;
@@ -35,18 +35,6 @@ struct sc_login_ok {
 };
 
 
-//cs
-struct cs_move {
-	unsigned char size;
-	char packet_type;
-	int type; //왼,오 점프 
-};
-
-struct cs_mouse_input{
-	unsigned char size;
-	char packet_type;
-	float x,y;
-};
 
 struct cs_close_animation{		//애니메이션 동작이 끝났음을 알림. 
 	unsigned char size;
@@ -70,12 +58,6 @@ struct sc_move {
 };
 
 
-struct sc_put_object {
-	unsigned char size;
-	char packet_type;
-	float x,y;
-	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
-};
 
 
 struct sc_remove_object {
@@ -108,7 +90,50 @@ struct sc_player_collision{	//몬스터에 의한 충돌
 	
 };
 
+struct sc_send_player_id {
+	short id;
+};
 
+struct sc_send_player {
+	short id;
+	int state;
+	
+	
+	float x;
+	float y;
+	
+	int jumpCount;
+	int dir;
+
+};
+struct sc_recv_keyinfo {
+	short id;
+	bool left = false;
+	bool right = false;
+	bool jump = false;
+	bool isClick = false;
+	float x;
+	float y;
+};
+
+struct sc_obstacle {
+	float x;
+	float y;
+};
+
+struct sc_button {
+	bool isPush[2];
+};
+
+struct sc_put_object {
+	unsigned char size;
+	char packet_type;
+	float x, y;
+	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
+	bool isClick;
+	bool isPush[2];
+
+};
 
 
 #pragma pack(pop)
