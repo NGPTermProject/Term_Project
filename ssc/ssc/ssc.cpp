@@ -46,11 +46,13 @@ int main()
 	//server.InitServer();
 	player.push_back(Player(200, 600, 0));
 	player.push_back(Player(400, 600, 1));
-	m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
-	m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
-	m_static_map.push_back(Map(MAP::PLAT, 200, 150));
-	m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
-	m_static_map.push_back(Map(MAP::PLAT, 500, 150));
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
+	m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 566));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
+	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
 
 
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
@@ -61,8 +63,10 @@ int main()
 	sc_obs[1].y = 500;
 
 
-	m_monster.push_back(Monster(MONSTER::PLANT, 200, 100));
-	m_monster.push_back(Monster(MONSTER::PIG, 500, 100));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
+	m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
+	m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
+	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
 
 
 

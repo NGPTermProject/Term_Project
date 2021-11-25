@@ -50,5 +50,4 @@ C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\m
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(181,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(181,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(180,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
-  LINK : C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\x64\Debug\clientProject.exe을(를) 찾을 수 없거나 마지막 증분 링크에 의해 빌드되지 않았습니다. 전체 링크를 수행하고 있습니다.
   clientProject.vcxproj -> C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\x64\Debug\clientProject.exe

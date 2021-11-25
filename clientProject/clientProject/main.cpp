@@ -151,20 +151,20 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 		}
 
 		recvn(sock, (char*)&put, sizeof(put), 0);
-		if (put.isClick){
+		if (put.isClick) {
 			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
 		}
 		for (int i = 0; i < 2; ++i)
 			m_static_map[i].setState(put.isPush[i]);
-	
+
 		/*	sc_button bt;
 		recvn(sock, (char*)&bt, sizeof(bt), 0);
 		for (int i = 0; i < 2; ++i)
 			m_static_map[i].setState(bt.isPush[i]);*/
 
 
-	//	recvn(sock, (char*)&hero, sizeof(hero), 0);
-	//	recvn(sock, (char*)&boss, sizeof(boss), 0);
+			//	recvn(sock, (char*)&hero, sizeof(hero), 0);
+			//	recvn(sock, (char*)&boss, sizeof(boss), 0);
 
 	}
 	closesocket(sock);
@@ -181,7 +181,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBRUSH hBrush, oldBrush;
 
 
-	
+
 	// 충돌 박스 
 
 	static vector<Monster> m_monster;
@@ -192,54 +192,54 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static LARGE_INTEGER tTime;
 	static int block_count;
 
-	
+
 	RECT rect = { 675, 450, 825, 465 }; // 글을 쓸 공간 지정
 	static int map_current_count = 0;
 	static int map_max_count = 5;
 
-	static bool isJumping = false ;
+	static bool isJumping = false;
 
 	// 지역변수는 메시지가 발생할 때마다 초기화되므로 값을 계속 유지하기 위해서 static 사용
 	static TCHAR str[512];
 
 	switch (uMsg) {
-//		if (stage == 0) {
-//	case WM_CHAR:  // 키보드 입력
-//		int                str_len;
-//		str_len = lstrlen(str);
-//
-//		if ((TCHAR)wParam == '\b') // 백 스페이스일 경우
-//			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
-//		else if ((TCHAR)wParam == VK_RETURN) {
-//			if (str_len != 0) {
-//#ifdef NETWORK
-//				//id 서버로 보내고 로비로
-//				memcpy(buf, str, str_len);
-//				retval = send(sock, buf, strlen(buf), 0);
-//				if (retval == SOCKET_ERROR) {
-//					err_display("send()");
-//					break;
-//				}
-//				//데이터 받기
-//				retval = recvn(sock, buf, retval, 0);
-//				if (retval == SOCKET_ERROR) {
-//					err_display("recv()");
-//					break;
-//				}
-//				else if (retval == 0)
-//					break;
-//#endif
-//				stage = 1;
-//			}
-//		}
-//		else
-//		{
-//			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
-//			str[str_len] = (TCHAR)wParam;
-//			str[str_len + 1] = 0;
-//		}
-//		break;
-//		}
+		//		if (stage == 0) {
+		//	case WM_CHAR:  // 키보드 입력
+		//		int                str_len;
+		//		str_len = lstrlen(str);
+		//
+		//		if ((TCHAR)wParam == '\b') // 백 스페이스일 경우
+		//			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
+		//		else if ((TCHAR)wParam == VK_RETURN) {
+		//			if (str_len != 0) {
+		//#ifdef NETWORK
+		//				//id 서버로 보내고 로비로
+		//				memcpy(buf, str, str_len);
+		//				retval = send(sock, buf, strlen(buf), 0);
+		//				if (retval == SOCKET_ERROR) {
+		//					err_display("send()");
+		//					break;
+		//				}
+		//				//데이터 받기
+		//				retval = recvn(sock, buf, retval, 0);
+		//				if (retval == SOCKET_ERROR) {
+		//					err_display("recv()");
+		//					break;
+		//				}
+		//				else if (retval == 0)
+		//					break;
+		//#endif
+		//				stage = 1;
+		//			}
+		//		}
+		//		else
+		//		{
+		//			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
+		//			str[str_len] = (TCHAR)wParam;
+		//			str[str_len + 1] = 0;
+		//		}
+		//		break;
+		//		}
 	case WM_CREATE:
 
 		// QueryPerformanceCounter(&tTime);
@@ -253,25 +253,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		LoadImage();
 
-		p.push_back(Player(200 , 600, 0));
-		p.push_back(Player(400 , 600, 1));
+		p.push_back(Player(200, 600, 0));
+		p.push_back(Player(400, 600, 1));
 
 
 
 		// 여기 부분에 추가.
 
 
-		m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
-		m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
-		m_static_map.push_back(Map(MAP::PLAT, 200, 150));
-		m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
-		m_static_map.push_back(Map(MAP::PLAT, 500, 150));
-	
+		m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
+		m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
+		m_static_map.push_back(Map(MAP::PLAT, 48, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 48, 566));
+		m_static_map.push_back(Map(MAP::PLAT, 432, 214));
+		m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
+
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
 
-		m_monster.push_back(Monster(MONSTER::PLANT, 200, 100));
-		m_monster.push_back(Monster(MONSTER::PIG, 500, 100));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
+		m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
+		m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
+		m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
 
 
 		//Timer::Reset();
@@ -284,12 +288,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 
 		case 1:
-		
+
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
 			keyinfo.jump = false;
 
-			for(int i =0 ; i< 2 ; ++i )
+			for (int i = 0; i < 2; ++i)
 				p[i].animation();
 
 
@@ -346,11 +350,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		}
 		if (wParam == VK_SPACE) {
-			isJumping  = false;
+			isJumping = false;
 		}
 		keyinfo.jump = false;
 		break;
-	
+
 	case WM_LBUTTONDOWN:
 		if (map_current_count != map_max_count) {
 			if (CheckCollision(LOWORD(lParam), HIWORD(lParam))) {
