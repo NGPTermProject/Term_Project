@@ -46,6 +46,7 @@ short MyId;
 vector<Player> p;
 
 bool InitClient();
+bool CheckCollision(float x, float y);	//같은 위치에 블록 생성 안되게
 cs_send_player_id id;
 cs_send_player p_info[2];
 cs_send_keyinfo keyinfo;
@@ -61,10 +62,6 @@ cs_obstacle cs_obs[2];
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
-#ifdef NETWORK
-	if (!InitClient())
-		return 1;
-#endif
 	HWND hWnd;
 	MSG Message;
 	WNDCLASSEX WndClass;
@@ -356,12 +353,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 	case WM_LBUTTONDOWN:
 		if (map_current_count != map_max_count) {
-			keyinfo.isClick = true;
-			keyinfo.x = LOWORD(lParam);
-			keyinfo.y = HIWORD(lParam);
-			map_current_count++;
-			//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
-			//InvalidateRect(hWnd, NULL, false);
+			if (CheckCollision(LOWORD(lParam), HIWORD(lParam))) {
+				keyinfo.isClick = true;
+				keyinfo.x = LOWORD(lParam);
+				keyinfo.y = HIWORD(lParam);
+				map_current_count++;
+				//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
+				//InvalidateRect(hWnd, NULL, false);
+			}
 		}
 		break;
 
@@ -450,3 +449,18 @@ bool InitClient() {
 }
 
 
+bool CheckCollision(float x, float y) {
+	for (int i = 0; i < m_map.size(); ++i) {
+		if (m_map[i].x - 48 <= x && x <= m_map[i].x + 48 &&
+			m_map[i].y - 16 <= y && y <= m_map[i].y + 16) {
+			return false;
+		}
+	}
+	for (int i = 0; i < m_static_map.size(); ++i) {
+		if (m_static_map[i].x - 48 <= x && x <= m_static_map[i].x + 48 &&
+			m_static_map[i].y - 16 <= y && y <= m_static_map[i].y + 16) {
+			return false;
+		}
+	}
+	return true;
+}
