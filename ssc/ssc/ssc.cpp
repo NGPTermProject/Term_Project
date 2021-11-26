@@ -24,6 +24,7 @@ Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
 vector<Bullet> vec_bullet;
+
 vector<Obstacle> m_obstacle;
 
 HANDLE hThread;
@@ -32,7 +33,8 @@ int Client_Count = -1;
 sc_send_player_id p_id;
 sc_send_player sc_p[2];
 sc_obstacle sc_obs[2];
-
+//vector<sc_obstacle> bullet;
+sc_bullet bullet[50];
 sc_recv_keyinfo keyinfo;
 CRITICAL_SECTION cs;
 short client_id;
@@ -40,12 +42,13 @@ bool c_left[2];
 bool c_right[2];
 sc_put_object put[2];
 sc_button sc_b;
+
 int main()
 {
 
 	//server.InitServer();
 	player.push_back(Player(200, 600, 0));
-	player.push_back(Player(400, 600, 1));
+	player.push_back(Player(400 , 600, 1));
 	m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
 	m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
 	m_static_map.push_back(Map(MAP::PLAT, 200, 150));
@@ -61,8 +64,8 @@ int main()
 	sc_obs[1].y = 500;
 
 
-	m_monster.push_back(Monster(MONSTER::PLANT, 200, 100));
-	m_monster.push_back(Monster(MONSTER::PIG, 500, 100));
+	m_monster.push_back(Monster(MONSTER::PLANT, 200, 100 ,100));
+	m_monster.push_back(Monster(MONSTER::PIG, 500, 100 , 350));
 
 
 
@@ -96,9 +99,9 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-
+	
 	bool flag = TRUE;
-
+	
 	while (1)
 	{
 		//accept()
@@ -112,18 +115,18 @@ int main()
 		}
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
 
-
+	
 		Client_Count++;
 
 		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
 
 	}
 	DeleteCriticalSection(&cs);
-
+	
 	closesocket(server_socket);
-
+	
 	WSACleanup();
-
+	
 	return 0;
 }
 
@@ -141,16 +144,18 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 
 
-	int StartTime = GetTickCount64();
-	int deltaTime;
-
-	//timeGetTime();
+	
 	while (1) {
-		int NowTime = GetTickCount64();
-
-		deltaTime = NowTime - StartTime;
-
-		if (deltaTime >= 10) {
+		//StartTime = GetTickCount64();
+	    int StartTime = (int)GetTickCount64();
+		while ((GetTickCount64() - StartTime) <= 10)
+		{
+			//cout << (int)GetTickCount64() << endl;
+			//cout << StartTime << endl;
+			//cout << "??????" << endl;
+			//cout << "체크" << endl;
+		}
+		{
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			if (keyinfo.isClick) {
 				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
@@ -171,24 +176,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 			player[client_id].UpdateGravity();
 
-			//EnterCriticalSection(&cs);
-			//cout << "?" << endl;
-
-			//for(int i = 0; i < m_obstacle.size(); ++i)
-			//	m_obstacle[i].Move();
-
-			//if (keyinfo.jump) {
-			//	for (int i = 0; i < 2; ++i)
-			//		m_monster[i].Attack();
-			//}
-
-			//for (int i = 0; i < vec_bullet.size(); ++i) {
-			//	vec_bullet[i].Update();
-			//	if (player[Client_Count].CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
-			//		vec_bullet[i].setisColl(true);
-			//		m_map.clear();
-			//	}
-			//}
 			//플레이어 점프 상태에서 충돌 처리 부분
 			if (player[client_id].getVely() > 0 || player[client_id].getisRanding()) {
 				if (player[client_id].getVely() > 0) player[client_id].SwitchState(PLAYER::FALL);
@@ -240,10 +227,12 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				}
 				else check = 0;
 			}
+
 			// 땅 착지     
 			if (player[client_id].getPos().y > 780) {
 				player[client_id].setPlayerRanding(780);
 			}
+
 
 			// --키입력------------------------------------------///
 			if (keyinfo.jump == true) {
@@ -263,6 +252,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].move((300 * 0.016f));
 			}
 			///-------------------------------------------------///
+
 			for (int i = 0; i < m_obstacle.size(); ++i) {
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
@@ -272,7 +262,68 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					sc_obs[i].y = m_obstacle[i].getPosY();
 				}
 			}
+			for (int i = 0; i < m_monster.size(); ++i) {
+				EnterCriticalSection(&cs);
+				m_monster[i].Update();
+				LeaveCriticalSection(&cs);
 
+				if (m_monster[i].getisAttack()) {
+					put[0].AttackMonsterId = i;
+					put[1].AttackMonsterId = i;
+					vec_bullet.push_back(m_monster[i].Attack());
+					//sc_obstacle s;
+					//bullet.push_back(s);
+					m_monster[i].setisAttack(false);
+				}
+			}
+
+
+			//for (int i = 0; i < vec_bullet.size(); ++i) {
+			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
+			//		EnterCriticalSection(&cs);
+			//		vec_bullet.erase(vec_bullet.begin() + i);
+			//		LeaveCriticalSection(&cs);
+
+			//	}
+			//}
+			//EnterCriticalSection(&cs);
+			//put[0].bulletsize = vec_bullet.size();
+			//put[1].bulletsize = vec_bullet.size();
+			//LeaveCriticalSection(&cs);
+			//for (int i = 0; i < vec_bullet.size(); ++i) {			
+
+			//	//if (player[Client_Count].CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
+			//	if (vec_bullet[i].getisColl()) {
+			//		EnterCriticalSection(&cs);
+			//		
+			//		bullet[i].isColl = true;
+			//		//vec_bullet.erase(vec_bullet.begin() + i);
+			//		
+			//		LeaveCriticalSection(&cs);				
+			//	}
+
+			//	EnterCriticalSection(&cs);
+
+			//	vec_bullet[i].animation();
+			//	vec_bullet[i].Update();
+
+			//	bullet[i].x = vec_bullet[i].x;
+			//	bullet[i].y = vec_bullet[i].y;
+			//	bullet[i].type = vec_bullet[i].type;
+			//	bullet[i].imageCount = vec_bullet[i].imageCount;
+			//	bullet[i].imageSizeX = vec_bullet[i].imageSizeX;
+			//	bullet[i].imageSizeY = vec_bullet[i].imageSizeY;
+			//	bullet[i].anim = vec_bullet[i].anim;
+
+			//	LeaveCriticalSection(&cs);
+			//	//	vec_bullet[i].setisColl(true);
+			//	//	m_map.clear();
+			//	//}
+
+			//}
+
+			//if (vec_bullet[i].isColl && vec_bullet[i].anim == 0)
+			//	vec_bullet.erase(vec_bullet.begin() + i);
 
 
 			sc_p[client_id].id = client_id;
@@ -300,15 +351,17 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
+			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
 
 			for (int i = 0; i < 2; ++i) {
 				put[client_id].isPush[i] = false;
 
 			}
 			put[client_id].isClick = false;
+			put[client_id].AttackMonsterId = -1;
 
 		}
-		StartTime = NowTime;
+		
 	}
 	return 0;
 }
@@ -339,7 +392,7 @@ void err_quit(const char* msg)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpmsgbuf, 0, NULL
 	);
-	MessageBox(NULL, (LPCTSTR)lpmsgbuf, (LPCWSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpmsgbuf,(LPCWSTR)msg, MB_ICONERROR);
 	LocalFree(lpmsgbuf);
 	exit(-1);
 }

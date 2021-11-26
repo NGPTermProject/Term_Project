@@ -125,17 +125,31 @@ struct cs_send_keyinfo {
 	bool isClick = false;
 	float x = 0;
 	float y = 0;
+
+	//bool isColl = false;
+	//int collId = -1;
 };
 
 struct cs_obstacle {
 	float x;
 	float y; 
+	bool isColl;
 };
 
 struct sc_button {
 	bool isPush[2];
 };
 
+struct cs_bullet {
+	float x;
+	float y;
+	bool isColl = false;
+	int type = 0;
+	int imageCount;
+	int	imageSizeX;
+	int	imageSizeY;
+	int anim;
+};
 struct sc_put_object {
 	unsigned char size;
 	char packet_type;
@@ -143,6 +157,10 @@ struct sc_put_object {
 	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
 	bool isClick;
 	bool isPush[2];
+	int AttackMonsterId;
+	int bulletsize = 0;
+
+
 };
 
 
