@@ -131,6 +131,8 @@ struct sc_bullet {
 	int	imageSizeX;
 	int	imageSizeY;
 	int anim;
+	bool isStart = false;
+
 };
 
 struct sc_button {
@@ -145,7 +147,7 @@ struct sc_put_object {
 	bool isClick;
 	bool isPush[2];
 	int AttackMonsterId = -1;
-	int bulletsize = 0;
+	bool clear = false ;
 };
 
 

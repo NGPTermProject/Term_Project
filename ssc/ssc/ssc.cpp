@@ -23,7 +23,7 @@ vector<Map> m_static_map;
 Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
-vector<Bullet> vec_bullet;
+Bullet m_bullet[20];
 
 vector<Obstacle> m_obstacle;
 
@@ -33,8 +33,7 @@ int Client_Count = -1;
 sc_send_player_id p_id;
 sc_send_player sc_p[2];
 sc_obstacle sc_obs[2];
-//vector<sc_obstacle> bullet;
-sc_bullet bullet[50];
+sc_bullet bullet[20];
 sc_recv_keyinfo keyinfo;
 CRITICAL_SECTION cs;
 short client_id;
@@ -146,15 +145,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 	
 	while (1) {
-		//StartTime = GetTickCount64();
 	    int StartTime = (int)GetTickCount64();
-		while ((GetTickCount64() - StartTime) <= 10)
-		{
-			//cout << (int)GetTickCount64() << endl;
-			//cout << StartTime << endl;
-			//cout << "??????" << endl;
-			//cout << "체크" << endl;
-		}
+		while ((GetTickCount64() - StartTime) <= 10){ }
 		{
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			if (keyinfo.isClick) {
@@ -180,6 +172,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			if (player[client_id].getVely() > 0 || player[client_id].getisRanding()) {
 				if (player[client_id].getVely() > 0) player[client_id].SwitchState(PLAYER::FALL);
 				int check = 0;
+
 				for (int i = 0; i < m_map.size(); ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
@@ -257,9 +250,18 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();
-					LeaveCriticalSection(&cs);
 					sc_obs[i].x = m_obstacle[i].getPosX();
 					sc_obs[i].y = m_obstacle[i].getPosY();
+					LeaveCriticalSection(&cs);
+				}
+				if (player[client_id].CollsionByObstacle(m_obstacle[i])) {
+					EnterCriticalSection(&cs);
+					put[client_id].clear = true;
+					put[(client_id + 1) % 2].clear = true;
+					m_map.clear();
+					player[0].setStartLine(200, 600);
+					player[1].setStartLine(400, 600);
+					LeaveCriticalSection(&cs);
 				}
 			}
 			for (int i = 0; i < m_monster.size(); ++i) {
@@ -268,97 +270,64 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				LeaveCriticalSection(&cs);
 
 				if (m_monster[i].getisAttack()) {
+					EnterCriticalSection(&cs);
 					put[0].AttackMonsterId = i;
 					put[1].AttackMonsterId = i;
-					vec_bullet.push_back(m_monster[i].Attack());
-					//sc_obstacle s;
-					//bullet.push_back(s);
+					m_bullet[i].InitBullet(m_monster[i]);
 					m_monster[i].setisAttack(false);
+					LeaveCriticalSection(&cs);
+
 				}
 			}
 
+			for (int i = 0; i < 15; ++i) {
+				//충돌 후 터지는 애니메이션 재생
+				if (m_bullet[i].isColl && m_bullet[i].anim >= m_bullet[i].anim_max) {
+					EnterCriticalSection(&cs);
+					m_bullet[i].DeadAnimation(m_monster[i]);
+					LeaveCriticalSection(&cs);
 
-			//for (int i = 0; i < vec_bullet.size(); ++i) {
-			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
-			//		EnterCriticalSection(&cs);
-			//		vec_bullet.erase(vec_bullet.begin() + i);
-			//		LeaveCriticalSection(&cs);
+				}
+				//플레이어와 충돌
+				if (player[client_id].CollsionByObstacle(m_bullet[i])&&m_bullet[i].isColl == false) {
+					EnterCriticalSection(&cs);
+					put[client_id].clear = true;
+					put[(client_id + 1) % 2].clear = true;
+					m_map.clear();
+					m_bullet[i].setisColl(true);
+					player[0].setStartLine(200, 600);
+					player[1].setStartLine(400, 600);
+					LeaveCriticalSection(&cs);
+				}
+				//총알 생성 후 이동 & 애니메이션
+				if (m_bullet[i].isStart) {
+					EnterCriticalSection(&cs);
+					m_bullet[i].animation();
+					m_bullet[i].Update();
+					LeaveCriticalSection(&cs);
+				}
+				// 클라이언트에 전달하기 위한 패킷에 총알 정보 전달.
+				EnterCriticalSection(&cs);
+				m_bullet[i].SetBulletInfo(bullet[i]);
+				LeaveCriticalSection(&cs);
+			}
 
-			//	}
-			//}
-			//EnterCriticalSection(&cs);
-			//put[0].bulletsize = vec_bullet.size();
-			//put[1].bulletsize = vec_bullet.size();
-			//LeaveCriticalSection(&cs);
-			//for (int i = 0; i < vec_bullet.size(); ++i) {			
-
-			//	//if (player[Client_Count].CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
-			//	if (vec_bullet[i].getisColl()) {
-			//		EnterCriticalSection(&cs);
-			//		
-			//		bullet[i].isColl = true;
-			//		//vec_bullet.erase(vec_bullet.begin() + i);
-			//		
-			//		LeaveCriticalSection(&cs);				
-			//	}
-
-			//	EnterCriticalSection(&cs);
-
-			//	vec_bullet[i].animation();
-			//	vec_bullet[i].Update();
-
-			//	bullet[i].x = vec_bullet[i].x;
-			//	bullet[i].y = vec_bullet[i].y;
-			//	bullet[i].type = vec_bullet[i].type;
-			//	bullet[i].imageCount = vec_bullet[i].imageCount;
-			//	bullet[i].imageSizeX = vec_bullet[i].imageSizeX;
-			//	bullet[i].imageSizeY = vec_bullet[i].imageSizeY;
-			//	bullet[i].anim = vec_bullet[i].anim;
-
-			//	LeaveCriticalSection(&cs);
-			//	//	vec_bullet[i].setisColl(true);
-			//	//	m_map.clear();
-			//	//}
-
-			//}
-
-			//if (vec_bullet[i].isColl && vec_bullet[i].anim == 0)
-			//	vec_bullet.erase(vec_bullet.begin() + i);
-
-
-			sc_p[client_id].id = client_id;
-			sc_p[client_id].state = player[client_id].getState();
-			sc_p[client_id].x = player[client_id].getPos().x;
-			sc_p[client_id].y = player[client_id].getPos().y;
-			sc_p[client_id].dir = player[client_id].getDir();
-			sc_p[client_id].jumpCount = player[client_id].getJumpCount();
-
-
-			//int b_check = 0;
-			//for (int i = 0; i < 2; ++i) {
-			//	if (put[client_id].isPush[i]) b_check++;
-			//	if (put[(client_id + 1) % 2].isPush[i]) b_check++;
-
-			//}
-			//if (b_check == 4) {
-			//	cout << "Next Stage" << endl;
-			//}
-			//else {
-			//	b_check = 0;
-			//	cout << b_check << endl;
-			//}
+			//클라이언트에 전달하기 위한 패킷에 플레이어 정보 전달.
+			player[client_id].setPlayerInfo(sc_p[client_id]);
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
 			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
 
+			//초기화
 			for (int i = 0; i < 2; ++i) {
 				put[client_id].isPush[i] = false;
 
 			}
 			put[client_id].isClick = false;
 			put[client_id].AttackMonsterId = -1;
+			put[client_id].clear = false;
 
 		}
 		

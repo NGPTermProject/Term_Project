@@ -1,3 +1,5 @@
+#include "protocol.h"
+
 class Objects
 {
 public:
@@ -194,6 +196,7 @@ public:
 
 	 int type = 0;
 	 bool isColl = false;
+	 bool isStart = false;
 
 	 Bullet(int m_type, int m_x, int m_y)
 	 {
@@ -213,6 +216,10 @@ public:
 		 }
 
 	 }
+	 Bullet()
+	 {
+
+	 };
 
 	 void setisColl(bool b)
 	 {
@@ -274,6 +281,17 @@ public:
 	 }
 
 	
+	 void getBulletInfo(cs_bullet bullet) {
+		 x = bullet.x;
+		 y = bullet.y;
+		 type = bullet.type;
+		 imageCount = bullet.imageCount;
+		 imageSizeX = bullet.imageSizeX;
+		 imageSizeY = bullet.imageSizeY;
+		 anim = bullet.anim;
+		 isStart = bullet.isStart;
+		 isColl = bullet.isColl;
+	 }
 
 	 ~Bullet() {
 	 };
@@ -420,20 +438,36 @@ public:
 		 {
 		 case PLAYER::IDLE:
 			 imageCount = 11;
-			 player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 if(id == 0)
+				player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 else 
+				player2_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::MOVE:
 			 imageCount = 12;
-			 player_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 if (id == 0)
+				player_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::JUMP:
-			 player_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 if (id == 0)	
+				player_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::FALL:
-			 player_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 if (id == 0)
+				 player_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+
 		 }
 	 }
 
@@ -473,6 +507,16 @@ public:
 
 	 }
 
+	 void getPlayerInfo(cs_send_player player)
+	 {
+		 id = player.id;
+		 state = player.state;
+		 pos.x =player.x;
+		 pos.y =player.y;
+		 dir = player.dir;
+		 jumpCount = player.jumpCount;
+	 }
+
 	 Player();
 
 	 //bool ()
@@ -484,7 +528,7 @@ public:
 
 	 int type = 0;
 	 bool attack = false;
-
+	 int dir = 0;
 	 Monster(int m_type, float m_x, float m_y)
 	 {
 		 x = m_x;
@@ -506,19 +550,20 @@ public:
 	 }
 
 	 void draw(HDC hdc) {
-		 
+		 //player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 		 if (type == MONSTER::PIG) {
 			 if (attack)
-				 img_Bomb_Monster_Attack.Draw(hdc, x - 16, y - 16, 32, 32, anim, 0, 32, 32);
+				 img_Bomb_Monster_Attack.Draw(hdc, x - 16, y - 16, 32, 32, anim, dir, 32, 32);
 			 else {
-				 img_Bomb_Monster_Idle.Draw(hdc, x - 16, y - 16, 32, 32, anim, 0, 32, 32);
+				 img_Bomb_Monster_Idle.Draw(hdc, x - 16, y - 16, 32, 32, anim, dir, 32, 32);
 			 }
 		 }
 		 if (type == MONSTER::PLANT) {
 			 if (attack)
-				 img_Plant_Monster_Attack.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 0, imageSizeX, 42);
+				 img_Plant_Monster_Attack.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, dir, imageSizeX, 42);
 			 else {
-				 img_Plant_Monster_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 0, imageSizeX, 42);
+				 img_Plant_Monster_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, dir, imageSizeX, 42);
 			 }
 		 }
 		 
@@ -537,11 +582,10 @@ public:
 		 }
 	 }
 
-	 Bullet Attack() {
+	 void Attack() {
 		 anim = 0;
 		 imageCount = 7;
 		 attack = true;
-		 return Bullet(type, x, y);
 	 }
 
  };

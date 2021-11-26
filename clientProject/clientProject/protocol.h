@@ -149,6 +149,7 @@ struct cs_bullet {
 	int	imageSizeX;
 	int	imageSizeY;
 	int anim;
+	bool isStart = false;
 };
 struct sc_put_object {
 	unsigned char size;
@@ -158,8 +159,8 @@ struct sc_put_object {
 	bool isClick;
 	bool isPush[2];
 	int AttackMonsterId;
-	int bulletsize = 0;
-
+	//int bulletsize = 0;
+	bool clear = false;
 
 };
 
