@@ -57,6 +57,12 @@ vector<Map> m_static_map;
 cs_obstacle cs_obs[2];
 
 
+bool click;
+bool jump;
+bool Left;
+bool Right;
+float mouse_x, mouse_y;
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -100,6 +106,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return Message.wParam;
 }
 
+void send_move(cs_send_keyinfo keyinfo)
+{
+	cs_move packet;
+	packet.id = keyinfo.id;
+	packet.packet_type = CS_PACKET_MOVE;
+	packet.size = sizeof(packet);
+	packet.jump = keyinfo.jump;
+	packet.left = keyinfo.left;
+	packet.right = keyinfo.right;
+
+	send(sock, reinterpret_cast<char*>(&packet), packet.size, 0);
+
+}
+void send_put_object(cs_send_keyinfo keyinfo)
+{
+
+	cs_mouse_input packet;
+	packet.id = keyinfo.id;
+	packet.packet_type = CS_MOUSE_INPUT;
+	packet.size = sizeof(packet);
+	packet.isClick = keyinfo.isClick;
+	packet.x = keyinfo.x;
+	packet.y = keyinfo.y;
+	cout << "클라이언트 id " << packet.id << "send!" << endl;
+	send(sock, reinterpret_cast<char*>(&packet), packet.size, 0);
+
+}
+
 
 DWORD WINAPI Recv_Thread(LPVOID arg)
 {
@@ -124,16 +158,50 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
+	cout << "연결 성공!" << endl;
 
 
 	//PlayerID 전달.
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
-	MyId = id.id;
 	keyinfo.id = id.id;
+<<<<<<< Updated upstream
 	cout << MyId << endl;
+=======
+	cout << keyinfo.id << endl;
+	int StartTime;
+>>>>>>> Stashed changes
 	while (1) {
 
+<<<<<<< Updated upstream
 		recvn(sock, (char*)&p_info, sizeof(p_info), 0);
+=======
+		while (GetTickCount64() - StartTime <= 10) { }
+		{
+			//send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			//keyinfo.isClick = false;
+			//keyinfo.jump = false;
+
+			for (int i = 0; i < 2; ++i)
+				p[i].animation();
+
+
+			for (int i = 0; i < m_monster.size(); ++i) {
+				m_monster[i].animation();
+			}
+			//Bullet 애니메이션
+			//for (int i = 0; i < vec_bullet.size(); ++i) {
+
+			//	//vec_bullet[i].animation();
+			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
+			//		vec_bullet.erase(vec_bullet.begin() + i);
+			//	}
+			//	
+			//}
+			for (int i = 0; i < m_obstacle.size(); ++i) {
+				m_obstacle[i].animation();
+			}
+			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
+>>>>>>> Stashed changes
 
 		for (int i = 0; i < 2; ++i) {
 			p[p_info[i].id].setState(p_info[i].state);
@@ -239,7 +307,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //		}
 //		break;
 //		}
-	case WM_CREATE:
+	case WM_CREATE: {
 
 		// QueryPerformanceCounter(&tTime);
 
@@ -252,8 +320,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		LoadImage();
 
-		p.push_back(Player(200 , 600, 0));
-		p.push_back(Player(400 , 600, 1));
+		p.push_back(Player(200, 600, 0));
+		p.push_back(Player(400, 600, 1));
 
 
 
@@ -265,7 +333,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_static_map.push_back(Map(MAP::PLAT, 200, 150));
 		m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
 		m_static_map.push_back(Map(MAP::PLAT, 500, 150));
-	
+
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
 
@@ -279,20 +347,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SetTimer(hWnd, 1, 1, NULL);
 		//
 		//InitClient();
+	}
 		break;
 
 	case WM_TIMER:
 		switch (wParam) {
 
 		case 1:
+<<<<<<< Updated upstream
 
 		
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
+=======
+		/*int StartTime;
+			
+			StartTime = GetTickCount64();
+>>>>>>> Stashed changes
 
-			for(int i =0 ; i< 2 ; ++i )
-				p[i].animation();
 
+<<<<<<< Updated upstream
 
 			for (int i = 0; i < m_monster.size(); ++i) {
 				m_monster[i].animation();
@@ -306,6 +380,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			for (int i = 0; i < m_obstacle.size(); ++i) {
 				m_obstacle[i].animation();
 			}
+=======
+			while (GetTickCount64() - StartTime <= 10){}*/
+			//keyinfo.packet_type = SC_RECV_KEYINFO;
+			
+>>>>>>> Stashed changes
 
 
 			break;
@@ -334,6 +413,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				keyinfo.right = true;
 				break;
 			}
+			send_move(keyinfo);
 			break;
 		}
 		break;
@@ -347,6 +427,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		}
 		keyinfo.jump = false;
+
+		send_move(keyinfo);
 		break;
 	
 	case WM_LBUTTONDOWN:
@@ -354,6 +436,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			keyinfo.isClick = true;
 			keyinfo.x = LOWORD(lParam);
 			keyinfo.y = HIWORD(lParam);
+			send_put_object(keyinfo);
 			map_current_count++;
 			//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
 			//InvalidateRect(hWnd, NULL, false);

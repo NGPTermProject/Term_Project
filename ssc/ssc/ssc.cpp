@@ -147,6 +147,51 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 		deltaTime = NowTime - StartTime;
 		if (deltaTime >= 10) {
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
+
+			unsigned char packet_start = keyinfo.packet_type;
+
+			cout << packet_start << endl;
+			EnterCriticalSection(&cs);
+			client_id = keyinfo.id;
+			cout << "클라이언트 id : " << client_id << endl;
+			if (client_id == keyinfo.id) {
+				c_left[client_id] = keyinfo.left;
+				c_right[client_id] = keyinfo.right;
+			}
+			LeaveCriticalSection(&cs);
+			switch (packet_start) {
+			case CS_PACKET_MOVE : {
+				// --키입력------------------------------------------///
+				if (keyinfo.jump == true) {
+					player[client_id].Jump();
+				}
+				if (c_left[client_id] == true) {
+					if (player[client_id].getVely() == 0)
+						player[client_id].SwitchState(PLAYER::MOVE);
+					player[client_id].setDir(32);
+					player[client_id].move(-(300 * 0.016f));
+				}
+
+				if (c_right[client_id] == true) {
+					if (player[client_id].getVely() == 0)
+						player[client_id].SwitchState(PLAYER::MOVE);
+					player[client_id].setDir(0);
+					player[client_id].move((300 * 0.016f));
+				}
+				///-------------------------------------------------///
+
+			}
+			break;
+			case SC_PUT_BUTTON: {
+
+				
+
+
+
+			}
+			break;
+			}
+
 			if (keyinfo.isClick) {
 				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
 				for (int i = 0; i < 2; ++i) {
@@ -156,13 +201,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				}
 			}
 
-			EnterCriticalSection(&cs);
-			client_id = keyinfo.id;
-			if (client_id == keyinfo.id) {
-				c_left[client_id] = keyinfo.left;
-				c_right[client_id] = keyinfo.right;
-			}
-			LeaveCriticalSection(&cs);
+			
 
 
 
@@ -263,6 +302,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].setPlayerRanding(780);
 			}
 
+<<<<<<< Updated upstream
 			if (keyinfo.jump == true) {
 				player[client_id].Jump();
 			}
@@ -280,6 +320,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].setDir(0);
 				player[client_id].move((300 * 0.016f));
 			}
+=======
+
+			
+>>>>>>> Stashed changes
 
 			EnterCriticalSection(&cs);
 			for (int i = 0; i < m_obstacle.size(); ++i) {

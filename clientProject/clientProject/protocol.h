@@ -37,14 +37,20 @@ struct sc_login_ok {
 
 //cs
 struct cs_move {
+	short id;
 	unsigned char size;
 	char packet_type;
+	bool left;
+	bool jump;
+	bool right;
 	int type; //©ч,©ю а║га 
 };
 
 struct cs_mouse_input{
+	short id;
 	unsigned char size;
 	char packet_type;
+	bool isClick;
 	float x,y;
 };
 
@@ -119,6 +125,8 @@ struct cs_send_player {
 
 struct cs_send_keyinfo {
 	short id;
+	short size;
+	char packet_type;
 	bool left = false;
 	bool right = false;
 	bool jump = false;
