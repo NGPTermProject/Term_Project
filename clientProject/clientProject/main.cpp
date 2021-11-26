@@ -170,27 +170,17 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	//PlayerID РќДо.
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
 	keyinfo.id = id.id;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 	cout << MyId << endl;
-=======
-=======
->>>>>>> Stashed changes
 	cout << keyinfo.id << endl;
 	int StartTime;
->>>>>>> Stashed changes
 	while (1) {
 
-<<<<<<< Updated upstream
 		recvn(sock, (char*)&p_info, sizeof(p_info), 0);
-=======
 		while (GetTickCount64() - StartTime <= 10) { }
 		{
 			//send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			//keyinfo.isClick = false;
 			//keyinfo.jump = false;
-<<<<<<< Updated upstream
-=======
 
 			for (int i = 0; i < 2; ++i)
 				p[i].animation();
@@ -212,7 +202,6 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 				m_obstacle[i].animation();
 			}
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
->>>>>>> Stashed changes
 
 			for (int i = 0; i < 2; ++i)
 				p[i].animation();
@@ -234,7 +223,6 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 				m_obstacle[i].animation();
 			}
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
->>>>>>> Stashed changes
 
 		for (int i = 0; i < 2; ++i) {
 			p[p_info[i].id].setState(p_info[i].state);
