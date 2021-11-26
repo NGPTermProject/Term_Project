@@ -171,6 +171,9 @@ public:
 
 	 int type = 0;
 	 bool isColl = false;
+	 bool isStart = false;
+	 
+	 int anim_max = 0;
 
 	 Bullet(int m_type, int m_x, int m_y)
 	 {
@@ -190,6 +193,10 @@ public:
 		 }
 
 	 }
+	 Bullet()
+	 {
+
+	 };
 
 	 bool getisColl()
 	 {
@@ -222,6 +229,11 @@ public:
 			 Move();
 
 		 if (Coll() && isColl == false) {
+			 //setisColl(true);
+			 dy = 0;
+			 //dx = 0;
+			 //x = 0;
+			 //y = 0;
 			 isColl = true;
 			 anim = 0;
 			 imageCount = 6;

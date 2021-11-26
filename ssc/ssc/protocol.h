@@ -131,6 +131,8 @@ struct sc_bullet {
 	int	imageSizeX;
 	int	imageSizeY;
 	int anim;
+	bool isStart = false;
+
 };
 
 struct sc_button {

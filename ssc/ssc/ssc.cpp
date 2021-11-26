@@ -23,7 +23,8 @@ vector<Map> m_static_map;
 Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
-vector<Bullet> vec_bullet;
+//vector<Bullet> vec_bullet;
+Bullet m_bullet[20];
 
 vector<Obstacle> m_obstacle;
 
@@ -270,13 +271,84 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				if (m_monster[i].getisAttack()) {
 					put[0].AttackMonsterId = i;
 					put[1].AttackMonsterId = i;
-					vec_bullet.push_back(m_monster[i].Attack());
-					//sc_obstacle s;
-					//bullet.push_back(s);
+					m_bullet[i].type = m_monster[i].type;
+					m_bullet[i].x = m_monster[i].getPosX();
+					m_bullet[i].y = m_monster[i].getPosY();
+
+					if (m_bullet[i].type == MONSTER::PIG) {
+						m_bullet[i].imageCount = 2;
+						m_bullet[i].imageSizeX = 64;
+						m_bullet[i].imageSizeY = 64;
+						m_bullet[i].anim_max = 220;
+
+					}
+					else if (m_bullet[i].type == MONSTER::PLANT) {
+						m_bullet[i].imageCount = 3;
+						m_bullet[i].imageSizeX = 24;
+						m_bullet[i].imageSizeY = 24;
+						m_bullet[i].anim_max = 20;
+
+					}
+					EnterCriticalSection(&cs);
+
+					m_bullet[i].isStart = true;
 					m_monster[i].setisAttack(false);
+					LeaveCriticalSection(&cs);
+
 				}
 			}
 
+			for (int i = 0; i < 15; ++i) {
+				if (player[client_id].CollsionByObstacle(m_bullet[i])) {
+					cout << "씨발샊야" << endl;
+				}
+				if (m_bullet[i].isColl && m_bullet[i].anim >= m_bullet[i].anim_max) {
+					EnterCriticalSection(&cs);
+					m_bullet[i].x = m_monster[i].getPosX();
+					m_bullet[i].y = m_monster[i].getPosY();
+					LeaveCriticalSection(&cs);
+
+					if (m_bullet[i].type == MONSTER::PIG) {
+						EnterCriticalSection(&cs);
+						m_bullet[i].imageCount = 2;
+						LeaveCriticalSection(&cs);
+
+					}
+					else if (m_bullet[i].type == MONSTER::PLANT) {
+						EnterCriticalSection(&cs);
+
+						m_bullet[i].imageCount = 3;
+						LeaveCriticalSection(&cs);
+
+					}
+					EnterCriticalSection(&cs);
+					m_bullet[i].isStart = false;
+					m_bullet[i].isColl = false;
+					LeaveCriticalSection(&cs);
+
+				}
+			}
+			for (int i = 0; i < 15; ++i) {
+				if (m_bullet[i].isStart) {
+					EnterCriticalSection(&cs);
+					m_bullet[i].animation();
+					m_bullet[i].Update();
+					LeaveCriticalSection(&cs);
+				}
+				EnterCriticalSection(&cs);
+
+				bullet[i].x = m_bullet[i].x;
+				bullet[i].y = m_bullet[i].y;
+				bullet[i].type = m_bullet[i].type;
+				bullet[i].imageCount = m_bullet[i].imageCount;
+				bullet[i].imageSizeX = m_bullet[i].imageSizeX;
+				bullet[i].imageSizeY = m_bullet[i].imageSizeY;
+				bullet[i].anim = m_bullet[i].anim;
+				bullet[i].isStart = m_bullet[i].isStart;
+				bullet[i].isColl = m_bullet[i].isColl;
+				LeaveCriticalSection(&cs);
+
+			}
 
 			//for (int i = 0; i < vec_bullet.size(); ++i) {
 			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {

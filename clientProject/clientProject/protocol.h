@@ -149,6 +149,7 @@ struct cs_bullet {
 	int	imageSizeX;
 	int	imageSizeY;
 	int anim;
+	bool isStart = false;
 };
 struct sc_put_object {
 	unsigned char size;

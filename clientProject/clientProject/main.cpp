@@ -58,7 +58,8 @@ vector<Map> m_static_map;
 cs_obstacle cs_obs[2];
 
 vector<Monster> m_monster;
-vector<Bullet> vec_bullet;
+Bullet m_bullet[20];
+//vector<Bullet> vec_bullet;
 //vector<cs_obstacle> bullet;
 cs_bullet bullet[50];
 
@@ -139,11 +140,16 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 
 	int StartTime;
 	while (1) {
+	
 		StartTime = GetTickCount64();
 
 
-		while (GetTickCount64() - StartTime <= 10) { }
+		while (GetTickCount64() - StartTime <= 1) { }
 		{
+
+
+
+
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
 
 			for (int i = 0; i < 2; ++i) {
@@ -169,27 +175,30 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			for (int i = 0; i < 2; ++i)
 				m_static_map[i].setState(put.isPush[i]);
 			if (put.AttackMonsterId != -1) {
-				vec_bullet.push_back(m_monster[put.AttackMonsterId].Attack());
+				m_monster[put.AttackMonsterId].Attack();
+				//vec_bullet.push_back(m_monster[put.AttackMonsterId].Attack());
 				//cs_obstacle s;
 				//bullet.push_back(s);
 			}
-			if (put.bulletsize != vec_bullet.size()) {
+			/*if (put.bulletsize != vec_bullet.size()) {
 				vec_bullet.erase(vec_bullet.begin() + vec_bullet.size() - 1);
-			}
+			}*/
 
 			recvn(sock, (char*)&bullet, sizeof(bullet), 0);
-			for (int i = 0; i < vec_bullet.size(); ++i) {
+			for (int i = 0; i < 15; ++i) {
 				//if (bullet[i].isColl) vec_bullet[i].setisColl(true);
-				vec_bullet[i].x = bullet[i].x;
-				vec_bullet[i].y = bullet[i].y;
-				vec_bullet[i].type = bullet[i].type;
-				vec_bullet[i].imageCount = bullet[i].imageCount;
-				vec_bullet[i].imageSizeX = bullet[i].imageSizeX;
-				vec_bullet[i].imageSizeY = bullet[i].imageSizeY;
-				vec_bullet[i].anim = bullet[i].anim;
-				vec_bullet[i].isColl = bullet[i].isColl;
-			}
+				m_bullet[i].x = bullet[i].x;
+				m_bullet[i].y = bullet[i].y;
+				m_bullet[i].type = bullet[i].type;
+				m_bullet[i].imageCount = bullet[i].imageCount;
+				m_bullet[i].imageSizeX = bullet[i].imageSizeX;
+				m_bullet[i].imageSizeY = bullet[i].imageSizeY;
+				m_bullet[i].anim = bullet[i].anim;
+				m_bullet[i].isColl = bullet[i].isColl;
+				m_bullet[i].isStart= bullet[i].isStart;
 
+			}
+	
 
 		}
 		/*	sc_button bt;
@@ -317,17 +326,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 
 		case 1:
-		
+			//int StartTime;
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
+
+			//StartTime = GetTickCount64();
+			//while (GetTickCount64() - StartTime <= 10) {}
+			/*send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			keyinfo.isClick = false;*/
 			//keyinfo.jump = false;
 
-			for(int i =0 ; i< 2 ; ++i )
+			for (int i = 0; i < 2; ++i)
 				p[i].animation();
 
 
 			for (int i = 0; i < m_monster.size(); ++i) {
+
 				m_monster[i].animation();
+
 			}
 			//Bullet 애니메이션
 			//for (int i = 0; i < vec_bullet.size(); ++i) {
@@ -341,6 +357,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			for (int i = 0; i < m_obstacle.size(); ++i) {
 				m_obstacle[i].animation();
 			}
+
 
 
 			break;
@@ -432,8 +449,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 
-			for (int i = 0; i < vec_bullet.size(); ++i) {
-				vec_bullet[i].draw(memdc1);
+			for (int i = 0; i < 15; ++i) {
+				if(m_bullet[i].isStart)
+					m_bullet[i].draw(memdc1);
 			}
 
 			for (int i = 0; i < m_obstacle.size(); ++i) {

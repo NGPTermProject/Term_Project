@@ -194,6 +194,7 @@ public:
 
 	 int type = 0;
 	 bool isColl = false;
+	 bool isStart = false;
 
 	 Bullet(int m_type, int m_x, int m_y)
 	 {
@@ -213,6 +214,10 @@ public:
 		 }
 
 	 }
+	 Bullet()
+	 {
+
+	 };
 
 	 void setisColl(bool b)
 	 {
@@ -420,20 +425,36 @@ public:
 		 {
 		 case PLAYER::IDLE:
 			 imageCount = 11;
-			 player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 if(id == 0)
+				player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 else 
+				player2_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::MOVE:
 			 imageCount = 12;
-			 player_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 if (id == 0)
+				player_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::JUMP:
-			 player_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 if (id == 0)	
+				player_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::FALL:
-			 player_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 if (id == 0)
+				 player_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+
 		 }
 	 }
 
@@ -537,11 +558,10 @@ public:
 		 }
 	 }
 
-	 Bullet Attack() {
+	 void Attack() {
 		 anim = 0;
 		 imageCount = 7;
 		 attack = true;
-		 return Bullet(type, x, y);
 	 }
 
  };
