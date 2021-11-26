@@ -18,7 +18,6 @@
 #include "Object.h"
 #include "Network.h"
 #include "protocol.h"
-//#include "Timer.h"
 
 using namespace std;
 
@@ -57,10 +56,18 @@ vector<Map> m_static_map;
 
 cs_obstacle cs_obs[2];
 
-vector<Monster> m_monster;
-vector<Bullet> vec_bullet;
-//vector<cs_obstacle> bullet;
-cs_bullet bullet[50];
+
+bool click;
+bool jump;
+bool Left;
+bool Right;
+float mouse_x, mouse_y;
+
+bool click;
+bool jump;
+bool Left;
+bool Right;
+float mouse_x, mouse_y;
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
@@ -105,6 +112,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	return Message.wParam;
 }
 
+void send_move(cs_send_keyinfo keyinfo)
+{
+	cs_move packet;
+	packet.id = keyinfo.id;
+	packet.packet_type = CS_PACKET_MOVE;
+	packet.size = sizeof(packet);
+	packet.jump = keyinfo.jump;
+	packet.left = keyinfo.left;
+	packet.right = keyinfo.right;
+
+	send(sock, reinterpret_cast<char*>(&packet), packet.size, 0);
+
+}
+void send_put_object(cs_send_keyinfo keyinfo)
+{
+
+	cs_mouse_input packet;
+	packet.id = keyinfo.id;
+	packet.packet_type = CS_MOUSE_INPUT;
+	packet.size = sizeof(packet);
+	packet.isClick = keyinfo.isClick;
+	packet.x = keyinfo.x;
+	packet.y = keyinfo.y;
+	cout << "클라이언트 id " << packet.id << "send!" << endl;
+	send(sock, reinterpret_cast<char*>(&packet), packet.size, 0);
+
+}
+
 
 DWORD WINAPI Recv_Thread(LPVOID arg)
 {
@@ -129,70 +164,90 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
+	cout << "연결 성공!" << endl;
 
 
 	//PlayerID 전달.
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
-	MyId = id.id;
 	keyinfo.id = id.id;
 	cout << MyId << endl;
-
+	cout << keyinfo.id << endl;
 	int StartTime;
 	while (1) {
-		StartTime = GetTickCount64();
 
-
+		recvn(sock, (char*)&p_info, sizeof(p_info), 0);
 		while (GetTickCount64() - StartTime <= 10) { }
 		{
+			//send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			//keyinfo.isClick = false;
+			//keyinfo.jump = false;
+
+			for (int i = 0; i < 2; ++i)
+				p[i].animation();
+
+
+			for (int i = 0; i < m_monster.size(); ++i) {
+				m_monster[i].animation();
+			}
+			//Bullet 애니메이션
+			//for (int i = 0; i < vec_bullet.size(); ++i) {
+
+			//	//vec_bullet[i].animation();
+			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
+			//		vec_bullet.erase(vec_bullet.begin() + i);
+			//	}
+			//	
+			//}
+			for (int i = 0; i < m_obstacle.size(); ++i) {
+				m_obstacle[i].animation();
+			}
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
 
-			for (int i = 0; i < 2; ++i) {
-				p[p_info[i].id].setState(p_info[i].state);
-				p[p_info[i].id].setPos(p_info[i].x, p_info[i].y);
-				p[p_info[i].id].setJumpCount(p_info[i].jumpCount);
-				p[p_info[i].id].setDir(p_info[i].dir);
-
-			}
-
-			recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
-			{
-				for (int i = 0; i < 2; ++i) {
-					m_obstacle[i].x = cs_obs[i].x;
-					m_obstacle[i].y = cs_obs[i].y;
-				}
-			}
-
-			recvn(sock, (char*)&put, sizeof(put), 0);
-			if (put.isClick) {
-				m_map.push_back(Map(MAP::PLAT, put.x, put.y));
-			}
 			for (int i = 0; i < 2; ++i)
-				m_static_map[i].setState(put.isPush[i]);
-			if (put.AttackMonsterId != -1) {
-				vec_bullet.push_back(m_monster[put.AttackMonsterId].Attack());
-				//cs_obstacle s;
-				//bullet.push_back(s);
-			}
-			if (put.bulletsize != vec_bullet.size()) {
-				vec_bullet.erase(vec_bullet.begin() + vec_bullet.size() - 1);
-			}
+				p[i].animation();
 
-			recvn(sock, (char*)&bullet, sizeof(bullet), 0);
-			for (int i = 0; i < vec_bullet.size(); ++i) {
-				//if (bullet[i].isColl) vec_bullet[i].setisColl(true);
-				vec_bullet[i].x = bullet[i].x;
-				vec_bullet[i].y = bullet[i].y;
-				vec_bullet[i].type = bullet[i].type;
-				vec_bullet[i].imageCount = bullet[i].imageCount;
-				vec_bullet[i].imageSizeX = bullet[i].imageSizeX;
-				vec_bullet[i].imageSizeY = bullet[i].imageSizeY;
-				vec_bullet[i].anim = bullet[i].anim;
-				vec_bullet[i].isColl = bullet[i].isColl;
-			}
 
+			for (int i = 0; i < m_monster.size(); ++i) {
+				m_monster[i].animation();
+			}
+			//Bullet 애니메이션
+			//for (int i = 0; i < vec_bullet.size(); ++i) {
+
+			//	//vec_bullet[i].animation();
+			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
+			//		vec_bullet.erase(vec_bullet.begin() + i);
+			//	}
+			//	
+			//}
+			for (int i = 0; i < m_obstacle.size(); ++i) {
+				m_obstacle[i].animation();
+			}
+			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
+
+		for (int i = 0; i < 2; ++i) {
+			p[p_info[i].id].setState(p_info[i].state);
+			p[p_info[i].id].setPos(p_info[i].x, p_info[i].y);
+			p[p_info[i].id].setJumpCount(p_info[i].jumpCount);
+			p[p_info[i].id].setDir(p_info[i].dir);
 
 		}
-		/*	sc_button bt;
+
+		recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
+		{
+			for (int i = 0; i < 2; ++i) {
+				m_obstacle[i].x = cs_obs[i].x;
+				m_obstacle[i].y = cs_obs[i].y;
+
+			}
+		}
+
+		recvn(sock, (char*)&put, sizeof(put), 0);
+		if (put.isClick) {
+			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
+		}
+		for (int i = 0; i < 2; ++i)
+			m_static_map[i].setState(put.isPush[i]);
+	/*	sc_button bt;
 		recvn(sock, (char*)&bt, sizeof(bt), 0);
 		for (int i = 0; i < 2; ++i)
 			m_static_map[i].setState(bt.isPush[i]);*/
@@ -219,6 +274,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	
 	// 충돌 박스 
 
+	static vector<Monster> m_monster;
+	static vector<Bullet> vec_bullet;
 
 
 	// 물리
@@ -229,8 +286,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	RECT rect = { 675, 450, 825, 465 }; // 글을 쓸 공간 지정
 	static int map_current_count = 0;
 	static int map_max_count = 5;
-
-	static bool isJumping = false ;
 
 	// 지역변수는 메시지가 발생할 때마다 초기화되므로 값을 계속 유지하기 위해서 static 사용
 	static TCHAR str[512];
@@ -273,7 +328,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //		}
 //		break;
 //		}
-	case WM_CREATE:
+	case WM_CREATE: {
 
 		// QueryPerformanceCounter(&tTime);
 
@@ -286,8 +341,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		LoadImage();
 
-		p.push_back(Player(200 , 600, 0));
-		p.push_back(Player(400 , 600, 1));
+		p.push_back(Player(200, 600, 0));
+		p.push_back(Player(400, 600, 1));
 
 
 
@@ -299,48 +354,69 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_static_map.push_back(Map(MAP::PLAT, 200, 150));
 		m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
 		m_static_map.push_back(Map(MAP::PLAT, 500, 150));
-	
+
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
 
+//	static Obstacle obstacle(OBSTACLE::BLADE, 100, 500);
+//		static Obstacle obstacle_map(OBSTACLE::MIDDLE_UP, 100, 500);
+		//Monster
 		m_monster.push_back(Monster(MONSTER::PLANT, 200, 100));
 		m_monster.push_back(Monster(MONSTER::PIG, 500, 100));
 
 
-		//Timer::Reset();
-		SetTimer(hWnd, 1, 10, NULL);
+		SetTimer(hWnd, 1, 1, NULL);
 		//
 		//InitClient();
+	}
 		break;
 
 	case WM_TIMER:
 		switch (wParam) {
 
 		case 1:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+
 		
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
-			//keyinfo.jump = false;
+=======
+		/*int StartTime;
+			
+			StartTime = GetTickCount64();
+>>>>>>> Stashed changes
 
-			for(int i =0 ; i< 2 ; ++i )
-				p[i].animation();
 
+<<<<<<< Updated upstream
 
 			for (int i = 0; i < m_monster.size(); ++i) {
 				m_monster[i].animation();
 			}
 			//Bullet 애니메이션
-			//for (int i = 0; i < vec_bullet.size(); ++i) {
+			for (int i = 0; i < vec_bullet.size(); ++i) {
 
-			//	//vec_bullet[i].animation();
-			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
-			//		vec_bullet.erase(vec_bullet.begin() + i);
-			//	}
-			//	
-			//}
+				vec_bullet[i].animation();
+
+			}
 			for (int i = 0; i < m_obstacle.size(); ++i) {
 				m_obstacle[i].animation();
 			}
+=======
+			while (GetTickCount64() - StartTime <= 10){}*/
+			//keyinfo.packet_type = SC_RECV_KEYINFO;
+			
+>>>>>>> Stashed changes
+=======
+		/*int StartTime;
+			
+			StartTime = GetTickCount64();
+
+
+			while (GetTickCount64() - StartTime <= 10){}*/
+			//keyinfo.packet_type = SC_RECV_KEYINFO;
+			
+>>>>>>> Stashed changes
 
 
 			break;
@@ -369,6 +445,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				keyinfo.right = true;
 				break;
 			}
+			send_move(keyinfo);
 			break;
 		}
 		break;
@@ -381,10 +458,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			keyinfo.right = false;
 
 		}
-		if (wParam == VK_SPACE) {
-			isJumping  = false;
-		}
 		keyinfo.jump = false;
+
+		send_move(keyinfo);
 		break;
 	
 	case WM_LBUTTONDOWN:
@@ -392,6 +468,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			keyinfo.isClick = true;
 			keyinfo.x = LOWORD(lParam);
 			keyinfo.y = HIWORD(lParam);
+			send_put_object(keyinfo);
 			map_current_count++;
 			//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
 			//InvalidateRect(hWnd, NULL, false);

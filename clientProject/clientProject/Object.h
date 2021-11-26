@@ -273,8 +273,6 @@ public:
 			 return false;
 	 }
 
-	
-
 	 ~Bullet() {
 	 };
  };
