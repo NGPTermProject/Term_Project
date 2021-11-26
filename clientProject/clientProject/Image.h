@@ -23,6 +23,10 @@ static CImage img_wall;
 static int img_bg_width;
 static int img_bg_height;
 
+
+static int img_Loginbg_width;
+static int img_Loginbg_height;
+
 static CImage img_ButtonUp;
 static CImage img_ButtonDown;
 static CImage img_Bullet;
@@ -45,6 +49,7 @@ static CImage img_wall_Long;
 static CImage img_wall_Middle;
 
 static CImage img_Login;
+static CImage img_LoginBG;
 
 static CImage img_cutting_blade;
 
@@ -58,7 +63,11 @@ void LoadImage();
 void LoadImage()
 {
 	//id입력창
-	img_Login.Load(L"white.png");
+	img_LoginBG.Load(L"LoginBG.png");
+	img_Loginbg_width = img_LoginBG.GetWidth();
+	img_Loginbg_height = img_LoginBG.GetHeight();
+	img_Login.Load(L"Login.png");
+
 	//버튼
 	img_ButtonUp.Load(L"button_up.png");
 	img_ButtonDown.Load(L"button_down.png");

@@ -37,7 +37,7 @@ LARGE_INTEGER g_tSecond;
 LARGE_INTEGER g_tTime;
 float         g_fDeltaTime;
 
-int stage = 1;  //0이면 로그인 화면
+int stage = 0;  //0이면 로그인 화면
 short MyId;
 //////////////////////////
 // 로그인 화면에서 키보드 입력하면 id창에 입력
@@ -193,7 +193,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static int block_count;
 
 
-	RECT rect = { 675, 450, 825, 465 }; // 글을 쓸 공간 지정
 	static int map_current_count = 0;
 	static int map_max_count = 5;
 
@@ -203,43 +202,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static TCHAR str[512];
 
 	switch (uMsg) {
-		//		if (stage == 0) {
-		//	case WM_CHAR:  // 키보드 입력
-		//		int                str_len;
-		//		str_len = lstrlen(str);
-		//
-		//		if ((TCHAR)wParam == '\b') // 백 스페이스일 경우
-		//			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
-		//		else if ((TCHAR)wParam == VK_RETURN) {
-		//			if (str_len != 0) {
-		//#ifdef NETWORK
-		//				//id 서버로 보내고 로비로
-		//				memcpy(buf, str, str_len);
-		//				retval = send(sock, buf, strlen(buf), 0);
-		//				if (retval == SOCKET_ERROR) {
-		//					err_display("send()");
-		//					break;
-		//				}
-		//				//데이터 받기
-		//				retval = recvn(sock, buf, retval, 0);
-		//				if (retval == SOCKET_ERROR) {
-		//					err_display("recv()");
-		//					break;
-		//				}
-		//				else if (retval == 0)
-		//					break;
-		//#endif
-		//				stage = 1;
-		//			}
-		//		}
-		//		else
-		//		{
-		//			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
-		//			str[str_len] = (TCHAR)wParam;
-		//			str[str_len + 1] = 0;
-		//		}
-		//		break;
-		//		}
+		//	if (stage == 0) {
+	case WM_CHAR:  // 키보드 입력
+		int                str_len;
+		str_len = lstrlen(str);
+
+		if ((TCHAR)wParam == '\b') // 백 스페이스일 경우
+			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
+		else if ((TCHAR)wParam == VK_RETURN) {
+			if (str_len != 0) {
+#ifdef NETWORK
+				//id 서버로 보내고 로비로
+				memcpy(buf, str, str_len);
+				retval = send(sock, buf, strlen(buf), 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("send()");
+					break;
+				}
+				//데이터 받기
+				retval = recvn(sock, buf, retval, 0);
+				if (retval == SOCKET_ERROR) {
+					err_display("recv()");
+					break;
+				}
+				else if (retval == 0)
+					break;
+#endif
+				stage = 1;
+			}
+		}
+		else
+		{
+			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
+			str[str_len] = (TCHAR)wParam;
+			str[str_len + 1] = 0;
+		}
+		break;
+		//3	}
 	case WM_CREATE:
 
 		// QueryPerformanceCounter(&tTime);
@@ -369,7 +368,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_PAINT:
-
+	{
 		hdc = BeginPaint(hWnd, &ps);
 
 		memdc1 = CreateCompatibleDC(hdc);
@@ -381,7 +380,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		img_bg.Draw(memdc1, 0, 0, Window_Size_X, Window_Size_Y, 0, 0, img_bg_width, img_bg_height);
 
 		if (stage == 0) {
-			img_Login.Draw(memdc1, 675, 450, 150, 15);  //아이디 입력 창
+			img_LoginBG.Draw(memdc1, 0, 0, Window_Size_X, Window_Size_Y, 0, 0, img_Loginbg_width, img_Loginbg_height);
+			img_Login.Draw(memdc1, 675, 320, 150, 15);  //아이디 입력 창
+			RECT rect = { 685, 320, 835, 465 }; // 글을 쓸 공간 지정
+			DrawText(memdc1, str, -1, &rect, DT_VCENTER | DT_WORDBREAK);
+			RECT r = { 590, 320,740,465 };
+			DrawText(memdc1, L"ID: ", -1, &r, DT_CENTER | DT_VCENTER);
 		}
 		else {
 
@@ -412,16 +416,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		}
 
+
 		BitBlt(hdc, 0, 0, Window_Size_X, Window_Size_Y, memdc1, 0, 0, SRCCOPY);
-		if (stage == 0) //id입력
-			DrawText(hdc, str, -1, &rect, DT_CENTER | DT_VCENTER);
 
 		DeleteObject(SelectObject(memdc1, hBitmap1));
 		DeleteDC(memdc1);
 		EndPaint(hWnd, &ps);
 
 		break;
-
+	}
 	case WM_DESTROY:
 		KillTimer(hWnd, 1);
 		PostQuitMessage(0);
