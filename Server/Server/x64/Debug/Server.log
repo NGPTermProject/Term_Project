@@ -1,5 +1,0 @@
-﻿  Server.cpp
-C:\Users\pig75\OneDrive\Desktop\NGPTP\Server\Server\Server.cpp(156,6): warning C4101: 'ret' :참조되지 않은 지역 변수입니다.
-  main.cpp
-  코드를 생성하고 있습니다...
-  Server.vcxproj -> C:\Users\pig75\OneDrive\Desktop\NGPTP\Server\x64\Debug\Server.exe
