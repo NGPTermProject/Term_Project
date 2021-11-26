@@ -202,9 +202,12 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 
 			
+<<<<<<< Updated upstream
 
 
 
+=======
+>>>>>>> Stashed changes
 
 			player[client_id].UpdateGravity();
 			
@@ -303,6 +306,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 			if (keyinfo.jump == true) {
 				player[client_id].Jump();
 			}
@@ -320,6 +324,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].setDir(0);
 				player[client_id].move((300 * 0.016f));
 			}
+=======
+
+			
+>>>>>>> Stashed changes
 =======
 
 			

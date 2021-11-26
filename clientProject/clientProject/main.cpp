@@ -63,6 +63,12 @@ bool Left;
 bool Right;
 float mouse_x, mouse_y;
 
+bool click;
+bool jump;
+bool Left;
+bool Right;
+float mouse_x, mouse_y;
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -165,8 +171,11 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
 	keyinfo.id = id.id;
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	cout << MyId << endl;
 =======
+=======
+>>>>>>> Stashed changes
 	cout << keyinfo.id << endl;
 	int StartTime;
 >>>>>>> Stashed changes
@@ -180,6 +189,30 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			//send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			//keyinfo.isClick = false;
 			//keyinfo.jump = false;
+<<<<<<< Updated upstream
+=======
+
+			for (int i = 0; i < 2; ++i)
+				p[i].animation();
+
+
+			for (int i = 0; i < m_monster.size(); ++i) {
+				m_monster[i].animation();
+			}
+			//Bullet 애니메이션
+			//for (int i = 0; i < vec_bullet.size(); ++i) {
+
+			//	//vec_bullet[i].animation();
+			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
+			//		vec_bullet.erase(vec_bullet.begin() + i);
+			//	}
+			//	
+			//}
+			for (int i = 0; i < m_obstacle.size(); ++i) {
+				m_obstacle[i].animation();
+			}
+			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
+>>>>>>> Stashed changes
 
 			for (int i = 0; i < 2; ++i)
 				p[i].animation();
@@ -355,6 +388,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case 1:
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 		
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
@@ -381,6 +415,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				m_obstacle[i].animation();
 			}
 =======
+			while (GetTickCount64() - StartTime <= 10){}*/
+			//keyinfo.packet_type = SC_RECV_KEYINFO;
+			
+>>>>>>> Stashed changes
+=======
+		/*int StartTime;
+			
+			StartTime = GetTickCount64();
+
+
 			while (GetTickCount64() - StartTime <= 10){}*/
 			//keyinfo.packet_type = SC_RECV_KEYINFO;
 			
