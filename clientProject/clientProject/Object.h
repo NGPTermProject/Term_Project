@@ -102,8 +102,8 @@ public:
 			 x = m_x;
 			 y = m_y;
 			 type = m_type;
-			 imageSizeX = 320;
-			 imageSizeY = 96;
+			 imageSizeX = 96;
+			 imageSizeY = 320;
 		 }
 	 }
  };
@@ -141,6 +141,8 @@ public:
 		 }
 		 if (type == MAP::PLAT)
 			 img_wall.Draw(memdc1, x - 48, y - 16, 96, 32);
+		 if (type == MAP::LONG)
+			 img_longwall.Draw(memdc1, x - 432, y - 16, 864, 32);
 	 }
 	 Map()
 	 {
@@ -161,6 +163,13 @@ public:
 			 collsionHelper[3] = 48;
 		 }
 		 if (m_type == MAP::BUTTON)
+		 {
+			 collsionHelper[0] = 16;
+			 collsionHelper[1] = 10;
+			 collsionHelper[2] = 32;
+			 collsionHelper[3] = 32;
+		 }
+		 if (m_type == MAP::LONG)
 		 {
 			 collsionHelper[0] = 16;
 			 collsionHelper[1] = 10;

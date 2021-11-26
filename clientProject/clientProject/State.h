@@ -32,6 +32,7 @@ namespace MAP {
 	enum M_Map {
 		BUTTON,
 		PLAT,
+		LONG,
 	};
 }
 

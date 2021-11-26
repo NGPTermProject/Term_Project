@@ -17,6 +17,7 @@ static CImage monster_dead;
 
 // Wall
 static CImage img_wall;
+static CImage img_longwall;
 
 
 // Width and Height
@@ -86,6 +87,7 @@ void LoadImage()
 
 	//발판
 	img_wall.Load(L"block_grass.png");
+	img_longwall.Load(L"grass_ground.png");
 
 	//몬스터
 	img_Bomb_Monster_Attack.Load(L"monster_bomb1.png");

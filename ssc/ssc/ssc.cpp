@@ -20,6 +20,13 @@ int recvn(SOCKET s, char* buf, int len, int flags);
 DWORD WINAPI Client_Thread(LPVOID arg);
 vector<Map> m_map;
 vector<Map> m_static_map;
+int FirstMapSize = 7;
+int SecondMapSize = 5;
+int FirstMonsterSize = 4;
+int SecondMonsterSize = 5;
+int FirstObstacleSize = 2;
+int SecondObstacleSize = 2;
+
 Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
@@ -54,6 +61,12 @@ int main()
 	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
 	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
 
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
+	m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
+	m_static_map.push_back(Map(MAP::PLAT, 500, 550));
+	m_static_map.push_back(Map(MAP::PLAT, 288, 150));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 342));
+
 
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
@@ -62,11 +75,20 @@ int main()
 	sc_obs[1].x = 300;
 	sc_obs[1].y = 500;
 
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 912, 406));
+	m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 230));
+
 
 	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
 	m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
 	m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
 	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
+
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 480));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 580));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 680));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
+	m_monster.push_back(Monster(MONSTER::PIG, 500, 520));
 
 
 
@@ -229,7 +251,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				}
 
 
-				for (int i = 2; i < m_static_map.size(); ++i) {
+				for (int i = 2; i < 7; ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
 
@@ -267,7 +289,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].move((300 * 0.016f));
 			}
 			///-------------------------------------------------///
-			for (int i = 0; i < m_obstacle.size(); ++i) {
+			for (int i = 0; i < 2; ++i) {
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();

@@ -18,36 +18,38 @@ C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\O
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(140,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(143,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(143,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(200,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(201,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(234,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(234,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(236,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(236,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(241,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(241,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(243,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(243,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(421,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(421,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(426,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(426,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(145,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(145,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(209,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(210,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(243,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(243,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(245,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(245,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(250,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(250,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(252,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(252,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(430,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(430,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(434,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(434,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(510,50): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(510,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(512,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(512,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(517,51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(517,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(519,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(519,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(542,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(542,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(98,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(181,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(181,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(180,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(435,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(435,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(439,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(439,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(443,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(443,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(519,50): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(519,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(521,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(521,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(526,51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(526,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(528,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(528,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(551,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\Object.h(551,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(103,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(191,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(191,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\clientProject\main.cpp(190,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
   clientProject.vcxproj -> C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\x64\Debug\clientProject.exe

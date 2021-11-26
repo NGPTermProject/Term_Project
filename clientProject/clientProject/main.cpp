@@ -45,7 +45,6 @@ short MyId;
 //////////////////////////
 vector<Player> p;
 
-bool InitClient();
 bool CheckCollision(float x, float y);	//같은 위치에 블록 생성 안되게
 cs_send_player_id id;
 cs_send_player p_info[2];
@@ -54,8 +53,14 @@ sc_put_object put;
 vector<Map> m_map;
 vector<Obstacle> m_obstacle;
 Map m_button[2];
+vector<Monster> m_monster;
 vector<Map> m_static_map;
-
+int FirstMapSize = 7;
+int SecondMapSize = 15;	//FirstMapSize+8
+int FirstMonsterSize = 4;
+int SecondMonsterSize = 9;	//FirstMonsterSize+5
+int FirstObstacleSize = 2;
+int SecondObstacleSize = 5;	//FirstObstacleSize+3
 cs_obstacle cs_obs[2];
 
 
@@ -122,8 +127,6 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
-
-
 	//PlayerID 전달.
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
 	MyId = id.id;
@@ -138,24 +141,31 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			p[p_info[i].id].setPos(p_info[i].x, p_info[i].y);
 			p[p_info[i].id].setJumpCount(p_info[i].jumpCount);
 			p[p_info[i].id].setDir(p_info[i].dir);
-
 		}
 
 		recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
-		{
-			for (int i = 0; i < 2; ++i) {
-				m_obstacle[i].x = cs_obs[i].x;
-				m_obstacle[i].y = cs_obs[i].y;
 
-			}
+		for (int i = 0; i < 2; ++i) {
+			m_obstacle[i].x = cs_obs[i].x;
+			m_obstacle[i].y = cs_obs[i].y;
 		}
 
 		recvn(sock, (char*)&put, sizeof(put), 0);
 		if (put.isClick) {
 			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
 		}
-		for (int i = 0; i < 2; ++i)
-			m_static_map[i].setState(put.isPush[i]);
+		if (stage == 1) {
+			for (int i = 0; i < FirstMapSize; ++i)
+				m_static_map[i].setState(put.isPush[i]);
+		}
+		else if (stage == 2) {
+			for (int i = FirstMapSize; i < SecondMapSize; ++i)
+				m_static_map[i].setState(put.isPush[i]);
+		}
+		else if (stage == 3) {
+			for (int i = SecondMapSize; i < m_static_map.size(); ++i)
+				m_static_map[i].setState(put.isPush[0]);
+		}
 
 		/*	sc_button bt;
 		recvn(sock, (char*)&bt, sizeof(bt), 0);
@@ -184,8 +194,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	// 충돌 박스 
 
-	static vector<Monster> m_monster;
-	static vector<Bullet> vec_bullet;
+
+	vector<Bullet> vec_bullet;
 
 
 	// 물리
@@ -202,7 +212,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	static TCHAR str[512];
 
 	switch (uMsg) {
-		//	if (stage == 0) {
+		if (stage == 0) {
 	case WM_CHAR:  // 키보드 입력
 		int                str_len;
 		str_len = lstrlen(str);
@@ -211,23 +221,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
 		else if ((TCHAR)wParam == VK_RETURN) {
 			if (str_len != 0) {
-#ifdef NETWORK
-				//id 서버로 보내고 로비로
-				memcpy(buf, str, str_len);
-				retval = send(sock, buf, strlen(buf), 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				//데이터 받기
-				retval = recvn(sock, buf, retval, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("recv()");
-					break;
-				}
-				else if (retval == 0)
-					break;
-#endif
+
+				////id 서버로 보내고 로비로
+				//memcpy(buf, str, str_len);
+				//retval = send(sock, buf, strlen(buf), 0);
+				//if (retval == SOCKET_ERROR) {
+				//	err_display("send()");
+				//	break;
+				//}
+				////데이터 받기
+				//retval = recvn(sock, buf, retval, 0);
+				//if (retval == SOCKET_ERROR) {
+				//	err_display("recv()");
+				//	break;
+				//}
+				//else if (retval == 0)
+				//	break;
+
 				stage = 1;
 			}
 		}
@@ -238,7 +248,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			str[str_len + 1] = 0;
 		}
 		break;
-		//3	}
+		}
 	case WM_CREATE:
 
 		// QueryPerformanceCounter(&tTime);
@@ -256,7 +266,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		p.push_back(Player(400, 600, 1));
 
 
-
 		// 여기 부분에 추가.
 
 
@@ -267,14 +276,70 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_static_map.push_back(Map(MAP::PLAT, 48, 566));
 		m_static_map.push_back(Map(MAP::PLAT, 432, 214));
 		m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
+		//first
 
-		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
-		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
+		m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
+		m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
+		m_static_map.push_back(Map(MAP::PLAT, 500, 550));
+		m_static_map.push_back(Map(MAP::PLAT, 288, 150));
+		m_static_map.push_back(Map(MAP::PLAT, 432, 342));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 510));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 210));
+		m_static_map.push_back(Map(MAP::LONG, 432, 342));
+		//second
+
+		m_static_map.push_back(Map(MAP::BUTTON, 1392, 24));
+		m_static_map.push_back(Map(MAP::BUTTON, 1296, 664));
+		m_static_map.push_back(Map(MAP::PLAT, 480, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 576, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 384, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 48, 598));
+		m_static_map.push_back(Map(MAP::PLAT, 336, 502));
+		m_static_map.push_back(Map(MAP::PLAT, 624, 758));
+		m_static_map.push_back(Map(MAP::PLAT, 816, 310));
+		m_static_map.push_back(Map(MAP::PLAT, 1080, 726));
+		m_static_map.push_back(Map(MAP::PLAT, 1200, 726));
+		m_static_map.push_back(Map(MAP::PLAT, 1296, 694));
+		m_static_map.push_back(Map(MAP::PLAT, 1104, 54));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 54));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 434));
+
 
 		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
 		m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
 		m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
 		m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
+		//first
+
+		m_monster.push_back(Monster(MONSTER::PLANT, 822, 307));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 175));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 475));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775));
+		m_monster.push_back(Monster(MONSTER::PIG, 500, 520));
+		//second
+
+		m_monster.push_back(Monster(MONSTER::PLANT, 48, 563));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 399));
+		m_monster.push_back(Monster(MONSTER::PIG, 336, 472));
+		m_monster.push_back(Monster(MONSTER::PIG, 624, 728));
+		m_monster.push_back(Monster(MONSTER::PIG, 816, 280));
+		m_monster.push_back(Monster(MONSTER::PIG, 1080, 696));
+		m_monster.push_back(Monster(MONSTER::PIG, 1200, 696));
+
+
+
+		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
+		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
+		//first
+
+		m_obstacle.push_back(Obstacle(OBSTACLE::MIDDLE_UP, 912, 406));
+		m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 280));
+		m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 432, 402));
+		//second
+
+		m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 300, 800));
+		m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));
+		m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 576, 324));
 
 
 		//Timer::Reset();
@@ -292,21 +357,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			keyinfo.isClick = false;
 			keyinfo.jump = false;
 
-			for (int i = 0; i < 2; ++i)
+			for (int i = 0; i < p.size(); ++i)
 				p[i].animation();
 
 
-			for (int i = 0; i < m_monster.size(); ++i) {
-				m_monster[i].animation();
+
+			if (stage == 1) {
+				for (int i = 0; i < FirstMonsterSize; ++i) {
+					m_monster[i].animation();
+				}
+				for (int i = 0; i < FirstObstacleSize; ++i) {
+					m_obstacle[i].animation();
+				}
+			}
+			else if (stage == 2) {
+				for (int i = FirstMonsterSize; i < SecondMonsterSize; ++i) {
+					m_monster[i].animation();
+				}
+				for (int i = FirstObstacleSize; i < SecondObstacleSize; ++i) {
+					m_obstacle[i].animation();
+				}
+			}
+			else if (stage == 3) {
+				for (int i = SecondMonsterSize; i < m_monster.size(); ++i) {
+					m_monster[i].animation();
+				}
+				for (int i = SecondObstacleSize; i < m_obstacle.size(); ++i) {
+					m_obstacle[i].animation();
+				}
 			}
 			//Bullet 애니메이션
 			for (int i = 0; i < vec_bullet.size(); ++i) {
-
 				vec_bullet[i].animation();
-
-			}
-			for (int i = 0; i < m_obstacle.size(); ++i) {
-				m_obstacle[i].animation();
 			}
 
 
@@ -318,10 +400,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_KEYDOWN:
-		if (stage == 0) {
-
-		}
-		else {
+		if (stage != 0) {
 			switch (wParam)
 			{
 			case VK_SPACE:
@@ -335,34 +414,55 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case VK_RIGHT:
 				keyinfo.right = true;
 				break;
+			case 49:
+				cout << "stage 1" << endl;
+				stage = 1;
+				p[0].setPos(200, 600);
+				p[1].setPos(400, 600);
+				break;
+			case 50:
+				cout << "stage 2" << endl;
+				stage = 2;
+				p[0].setPos(200, 600);
+				p[1].setPos(400, 600);
+				break;
+			case 51:
+				cout << "stage 3" << endl;
+				stage = 3;
+				p[0].setPos(384, 320);
+				p[1].setPos(480, 320);
+				break;
 			}
-			break;
 		}
 		break;
 	case WM_KEYUP:
-		if (wParam == VK_LEFT) {
-			keyinfo.left = false;
+		if (stage != 0) {
+			if (wParam == VK_LEFT) {
+				keyinfo.left = false;
 
-		}
-		if (wParam == VK_RIGHT) {
-			keyinfo.right = false;
+			}
+			if (wParam == VK_RIGHT) {
+				keyinfo.right = false;
 
+			}
+			if (wParam == VK_SPACE) {
+				isJumping = false;
+			}
+			keyinfo.jump = false;
 		}
-		if (wParam == VK_SPACE) {
-			isJumping = false;
-		}
-		keyinfo.jump = false;
 		break;
 
 	case WM_LBUTTONDOWN:
-		if (map_current_count != map_max_count) {
-			if (CheckCollision(LOWORD(lParam), HIWORD(lParam))) {
-				keyinfo.isClick = true;
-				keyinfo.x = LOWORD(lParam);
-				keyinfo.y = HIWORD(lParam);
-				map_current_count++;
-				//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
-				//InvalidateRect(hWnd, NULL, false);
+		if (stage != 0) {
+			if (map_current_count != map_max_count) {
+				if (CheckCollision(LOWORD(lParam), HIWORD(lParam))) {
+					keyinfo.isClick = true;
+					keyinfo.x = LOWORD(lParam);
+					keyinfo.y = HIWORD(lParam);
+					map_current_count++;
+					//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
+					//InvalidateRect(hWnd, NULL, false);
+				}
 			}
 		}
 		break;
@@ -393,11 +493,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			for (int i = 0; i < m_map.size(); ++i)
 				m_map[i].draw(memdc1);
 
-			for (int i = 0; i < m_static_map.size(); ++i)
-				m_static_map[i].draw(memdc1);
-
-			for (int i = 0; i < m_monster.size(); ++i) {
-				m_monster[i].draw(memdc1);
+			if (stage == 1) {
+				for (int i = 0; i < FirstMapSize; ++i)
+					m_static_map[i].draw(memdc1);
+				for (int i = 0; i < FirstMonsterSize; ++i) {
+					m_monster[i].draw(memdc1);
+				}
+				for (int i = 0; i < FirstObstacleSize; ++i) {
+					m_obstacle[i].draw(memdc1);
+				}
+			}
+			else if (stage == 2) {
+				for (int i = FirstMapSize; i < SecondMapSize; ++i)
+					m_static_map[i].draw(memdc1);
+				for (int i = FirstMonsterSize; i < SecondMonsterSize; ++i) {
+					m_monster[i].draw(memdc1);
+				}
+				for (int i = FirstObstacleSize; i < SecondObstacleSize; ++i) {
+					m_obstacle[i].draw(memdc1);
+				}
+			}
+			else if (stage == 3) {
+				for (int i = SecondMapSize; i < m_static_map.size(); ++i)
+					m_static_map[i].draw(memdc1);
+				for (int i = SecondMonsterSize; i < m_monster.size(); ++i) {
+					m_monster[i].draw(memdc1);
+				}
+				for (int i = SecondObstacleSize; i < m_obstacle.size(); ++i) {
+					m_obstacle[i].draw(memdc1);
+				}
 			}
 
 			//플레이어 그리기
@@ -410,9 +534,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				vec_bullet[i].draw(memdc1);
 			}
 
-			for (int i = 0; i < m_obstacle.size(); ++i) {
-				m_obstacle[i].draw(memdc1);
-			}
 
 		}
 
@@ -432,29 +553,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
-
-
-
-bool InitClient() {
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return false;
-
-	//socket()
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == INVALID_SOCKET)  err_quit("socket()");
-
-	//connect()
-	ZeroMemory(&serveraddr, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
-	serveraddr.sin_port = htons(SERVERPORT);
-	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) {
-		err_quit("connet()");
-	}
-	return true;
-}
-
 
 bool CheckCollision(float x, float y) {
 	for (int i = 0; i < m_map.size(); ++i) {
