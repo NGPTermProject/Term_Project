@@ -59,7 +59,16 @@ vector<Map> m_static_map;
 cs_obstacle cs_obs[2];
 
 
+void send_login()
+{
+	cs_packet_login packet;
+	packet.size = sizeof(packet);
+	packet.packet_type = CS_PACKET_LOGIN;
 
+	send(sock, reinterpret_cast<char*>(&packet), packet.size, 0);
+
+
+}
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
@@ -122,13 +131,27 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
-
+	send_login();
 
 	//PlayerID РќДо.
+<<<<<<< Updated upstream
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
 	MyId = id.id;
 	keyinfo.id = id.id;
 	cout << MyId << endl;
+=======
+	sc_login_ok packet;
+	recvn(sock, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+	cout << static_cast<int>(packet.packet_type) << endl;
+	if (packet.packet_type == SC_PACKET_LOGIN_OK) {
+		cout << "login succsess" << endl;
+		MyId = packet.id;
+		keyinfo.id = packet.id;
+		cout << MyId << endl;
+	}
+	
+	int StartTime;
+>>>>>>> Stashed changes
 	while (1) {
 
 		recvn(sock, (char*)&p_info, sizeof(p_info), 0);

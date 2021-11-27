@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< Updated upstream
       <FullPath>C:\Users\오성훈\Desktop\git\GitHub\Term_Project\clientProject\x64\Debug\clientProject.exe</FullPath>
+=======
+      <FullPath>C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\x64\Debug\clientProject.exe</FullPath>
+>>>>>>> Stashed changes
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />
