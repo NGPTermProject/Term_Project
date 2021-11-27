@@ -24,14 +24,12 @@ const char SC_PLAYER_COLLISION = 7;
 struct cs_packet_login {
 	unsigned char size;
 	char	packet_type;
-	char	name[MAX_NAME_SIZE];
 };
 
 struct sc_login_ok {
 	unsigned char size;
 	char	packet_type;
 	int		id;
-	short	x, y;
 };
 
 

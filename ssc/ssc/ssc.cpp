@@ -36,6 +36,9 @@ sc_send_player sc_p[2];
 sc_obstacle sc_obs[2];
 //vector<sc_obstacle> bullet;
 sc_bullet bullet[50];
+
+vector<SOCKET> matching_queue;
+
 sc_recv_keyinfo keyinfo;
 CRITICAL_SECTION cs;
 short client_id;
@@ -44,6 +47,16 @@ bool c_right[2];
 sc_put_object put[2];
 sc_button sc_b;
 
+void send_login_ok(SOCKET s, short id)
+{
+	sc_login_ok packet;
+	packet.size = sizeof(packet);
+	packet.packet_type = SC_PACKET_LOGIN_OK;
+	packet.id = id;
+
+	send(s, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+
+}
 int main()
 {
 
@@ -117,10 +130,30 @@ int main()
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
 
 	
-		Client_Count++;
+		matching_queue.push_back(client_sock);
 
-		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
+		cs_packet_login packet;
+		recvn(client_sock, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+		cout << "클라이언트에서 보낸 패킷 : " << static_cast<int>(packet.packet_type) << endl;
+	
 
+			if (packet.packet_type == CS_PACKET_LOGIN) {
+				Client_Count++;
+				if (matching_queue.size() == 2) {
+					for (int i = 0; i < 2; ++i) {
+						send_login_ok(matching_queue[i], Client_Count);
+
+						cout << "recvn login packet" << endl;
+
+						hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
+						if (hThread == NULL) { closesocket(client_sock); }
+					}
+				}
+				else {
+					for (int i = 0; i < matching_queue.size(); ++i)
+						send_login_ok(matching_queue[i], Client_Count);
+				}
+			}
 	}
 	DeleteCriticalSection(&cs);
 	
