@@ -390,3 +390,16 @@ MigrationBackup/
 .ionide/
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,c++
+*.ilk
+*.ilk
+*.log
+*.tlog
+*.idb
+*.idb
+*.pdb
+*.tlog
+*.log
+*.ilk
+*.pdb
+*.tlog
+clientProject/clientProject/x64/Debug/clientProject.ilk
