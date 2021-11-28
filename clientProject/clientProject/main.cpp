@@ -141,14 +141,17 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	send_login();
 
 	sc_login_ok packet;
-	recvn(sock, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
-	cout << static_cast<int>(packet.packet_type) << endl;
-	if (packet.packet_type == SC_PACKET_LOGIN_OK) {
-		cout << "login succsess" << endl;
-		MyId = packet.id;
-		keyinfo.id = packet.id;
-		cout <<"플레이어 : " << MyId << endl;
-	}
+		recvn(sock, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+		cout << static_cast<int>(packet.packet_type) << endl;
+		if (packet.packet_type == SC_PACKET_LOGIN_OK) {
+			cout << "login succsess" << endl;
+			MyId = packet.id;
+			keyinfo.id = packet.id;
+			cout << "플레이어 : " << MyId << endl;
+			//break;
+		}
+	
+
 
 	int StartTime;
 	while (1) {

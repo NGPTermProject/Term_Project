@@ -128,7 +128,7 @@ int main()
 			std::cout << "!!!" << std::endl;
 		}
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
-
+		
 	
 		matching_queue.push_back(client_sock);
 
@@ -138,20 +138,15 @@ int main()
 	
 
 			if (packet.packet_type == CS_PACKET_LOGIN) {
-				Client_Count++;
 				if (matching_queue.size() == 2) {
 					for (int i = 0; i < 2; ++i) {
-						send_login_ok(matching_queue[i], Client_Count);
+						send_login_ok(matching_queue[i], i);
 
 						cout << "recvn login packet" << endl;
-
-						hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
-						if (hThread == NULL) { closesocket(client_sock); }
+						Client_Count++;
+						hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)matching_queue[i], 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
+						if (hThread == NULL) { closesocket(matching_queue[i]); }
 					}
-				}
-				else {
-					for (int i = 0; i < matching_queue.size(); ++i)
-						send_login_ok(matching_queue[i], Client_Count);
 				}
 			}
 	}
@@ -171,11 +166,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 	int retval;
 
-	// hero.id 송신
-	//p_id.id = 
-	p_id.id = Client_Count;
-	cout << Client_Count << endl;
-	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 
 
 	

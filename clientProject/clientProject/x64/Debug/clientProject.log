@@ -53,8 +53,8 @@ C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProjec
 C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(542,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(542,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(114,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(156,29): warning C4244: '=': 'ULONGLONG'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(237,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(237,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(236,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(159,29): warning C4244: '=': 'ULONGLONG'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(240,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(240,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(239,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
   clientProject.vcxproj -> C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\x64\Debug\clientProject.exe
