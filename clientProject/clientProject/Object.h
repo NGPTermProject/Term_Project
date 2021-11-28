@@ -528,10 +528,15 @@ public:
 			 imageSizeY = 32;
 			 imageCount = 10;
 		 }
-		 if (m_type == MONSTER::PLANT) {
+		 if (m_type == MONSTER::PLANT || m_type == MONSTER::RPLANT) {
 			 imageSizeX = 44;
 			 imageSizeY = 42;
 			 imageCount = 12;
+		 }
+		 if (m_type == MONSTER::TREE) {
+			 imageSizeX = 64;
+			 imageSizeY = 32;
+			 imageCount = 18;
 		 }
 	 }
 
@@ -551,8 +556,16 @@ public:
 				 img_Plant_Monster_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 0, imageSizeX, 42);
 			 }
 		 }
-		 
-
+		 if (type == MONSTER::RPLANT) {
+			 if (attack)
+				 img_Plant_Monster_Reverse_Attack.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 42, imageSizeX, 42);
+			 else {
+				 img_Plant_Monster_Reverse_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 42, imageSizeX, 42);
+			 }
+		 }
+		 if (type == MONSTER::TREE) {
+			 img_Tree_Monster_Idle.Draw(hdc, x - 32, y - 16, imageSizeX, 32, anim, 0, imageSizeX, 32);
+		 }
 	 }
 
 	 void animation()

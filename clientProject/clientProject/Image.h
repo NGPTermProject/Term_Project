@@ -47,6 +47,11 @@ static CImage img_Bomb_Monster_Idle;
 static CImage img_Plant_Monster_Idle;
 static CImage img_Plant_Monster_Attack;
 
+static CImage img_Plant_Monster_Reverse_Idle;
+static CImage img_Plant_Monster_Reverse_Attack;
+
+static CImage img_Tree_Monster_Idle;
+
 
 static CImage img_Bullet_Monster_Attack;
 static CImage img_Bullet_Monster_Idle;
@@ -101,7 +106,9 @@ void LoadImage()
 	img_Plant_Monster_Attack.Load(L"plant_attack.png");
 	img_Plant_Monster_Idle.Load(L"plant_idle.png");
 
-
+	img_Plant_Monster_Reverse_Idle.Load(L"plant__reverse_idle.png");
+	img_Plant_Monster_Reverse_Attack.Load(L"plant__reverse_attack");
+	img_Tree_Monster_Idle.Load(L"tree_idle.png");
 
 	//플레이어
 	player_idle.Load(L"frog_idle.png");

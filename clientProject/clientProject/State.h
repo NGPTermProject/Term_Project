@@ -14,7 +14,9 @@ namespace MONSTER
 {
 	enum M_State {
 		PIG,
-		PLANT
+		PLANT,
+		RPLANT,
+		TREE
 	};
 }
 

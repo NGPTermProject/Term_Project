@@ -358,22 +358,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_static_map.push_back(Map(MAP::PLAT, 1392, 434));
 
 
-		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
-		m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775));
+		m_monster.push_back(Monster(MONSTER::RPLANT, 48, 531));
 		m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
 		m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
 		//first
 
-		m_monster.push_back(Monster(MONSTER::PLANT, 822, 307));
-		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 175));
-		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 475));
-		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775));
+		m_monster.push_back(Monster(MONSTER::RPLANT, 250, 307));
+		m_monster.push_back(Monster(MONSTER::TREE, 1392, 180));
+		m_monster.push_back(Monster(MONSTER::TREE, 1392, 480));
+		m_monster.push_back(Monster(MONSTER::TREE, 1392, 780));
 		m_monster.push_back(Monster(MONSTER::PIG, 500, 520));
 		//second
 
-		m_monster.push_back(Monster(MONSTER::PLANT, 48, 563));
-		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 399));
-		m_monster.push_back(Monster(MONSTER::PIG, 336, 472));
+		m_monster.push_back(Monster(MONSTER::RPLANT, 48, 563));
+		m_monster.push_back(Monster(MONSTER::TREE, 1392, 404));
+		m_monster.push_back(Monster(MONSTER::RPLANT, 336, 467));
 		m_monster.push_back(Monster(MONSTER::PIG, 624, 728));
 		m_monster.push_back(Monster(MONSTER::PIG, 816, 280));
 		m_monster.push_back(Monster(MONSTER::PIG, 1080, 696));
