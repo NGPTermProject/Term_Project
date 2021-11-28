@@ -24,6 +24,10 @@ Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
 vector<Bullet> vec_bullet;
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of c122221 (push_bullet)
 vector<Obstacle> m_obstacle;
 vector<SOCKET> matching_queue;
 
@@ -319,7 +323,72 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					sc_obs[i].y = m_obstacle[i].getPosY();
 				}
 			}
+<<<<<<< HEAD
 
+=======
+			for (int i = 0; i < m_monster.size(); ++i) {
+				EnterCriticalSection(&cs);
+				m_monster[i].Update();
+				LeaveCriticalSection(&cs);
+
+				if (m_monster[i].getisAttack()) {
+					put[0].AttackMonsterId = i;
+					put[1].AttackMonsterId = i;
+					vec_bullet.push_back(m_monster[i].Attack());
+					//sc_obstacle s;
+					//bullet.push_back(s);
+					m_monster[i].setisAttack(false);
+				}
+			}
+
+
+			//for (int i = 0; i < vec_bullet.size(); ++i) {
+			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
+			//		EnterCriticalSection(&cs);
+			//		vec_bullet.erase(vec_bullet.begin() + i);
+			//		LeaveCriticalSection(&cs);
+
+			//	}
+			//}
+			//EnterCriticalSection(&cs);
+			//put[0].bulletsize = vec_bullet.size();
+			//put[1].bulletsize = vec_bullet.size();
+			//LeaveCriticalSection(&cs);
+			//for (int i = 0; i < vec_bullet.size(); ++i) {			
+
+			//	//if (player[Client_Count].CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
+			//	if (vec_bullet[i].getisColl()) {
+			//		EnterCriticalSection(&cs);
+			//		
+			//		bullet[i].isColl = true;
+			//		//vec_bullet.erase(vec_bullet.begin() + i);
+			//		
+			//		LeaveCriticalSection(&cs);				
+			//	}
+
+			//	EnterCriticalSection(&cs);
+
+			//	vec_bullet[i].animation();
+			//	vec_bullet[i].Update();
+
+			//	bullet[i].x = vec_bullet[i].x;
+			//	bullet[i].y = vec_bullet[i].y;
+			//	bullet[i].type = vec_bullet[i].type;
+			//	bullet[i].imageCount = vec_bullet[i].imageCount;
+			//	bullet[i].imageSizeX = vec_bullet[i].imageSizeX;
+			//	bullet[i].imageSizeY = vec_bullet[i].imageSizeY;
+			//	bullet[i].anim = vec_bullet[i].anim;
+
+			//	LeaveCriticalSection(&cs);
+			//	//	vec_bullet[i].setisColl(true);
+			//	//	m_map.clear();
+			//	//}
+
+			//}
+
+			//if (vec_bullet[i].isColl && vec_bullet[i].anim == 0)
+			//	vec_bullet.erase(vec_bullet.begin() + i);
+>>>>>>> parent of c122221 (push_bullet)
 
 
 			sc_p[client_id].id = client_id;

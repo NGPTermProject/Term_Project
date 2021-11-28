@@ -134,6 +134,19 @@ struct sc_button {
 	bool isPush[2];
 };
 
+<<<<<<< HEAD
+=======
+struct cs_bullet {
+	float x;
+	float y;
+	bool isColl = false;
+	int type = 0;
+	int imageCount;
+	int	imageSizeX;
+	int	imageSizeY;
+	int anim;
+};
+>>>>>>> parent of c122221 (push_bullet)
 struct sc_put_object {
 	unsigned char size;
 	char packet_type;

@@ -2,6 +2,7 @@
 #pragma comment(lib, "ws2_32")
 //#include <winsock2.h>
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 //#define SERVERIP "192.168.143.240"
@@ -10,6 +11,8 @@
 //#define SERVERIP "192.168.35.128"
 
 >>>>>>> Stashed changes
+=======
+>>>>>>> parent of c122221 (push_bullet)
 #define SERVERIP "127.0.0.1"
 #define SERVERPORT 9000
 #define BUFSIZE 512

@@ -58,6 +58,7 @@ vector<Map> m_static_map;
 
 cs_obstacle cs_obs[2];
 
+<<<<<<< HEAD
 
 void send_login()
 {
@@ -66,6 +67,12 @@ void send_login()
 	packet.packet_type = CS_PACKET_LOGIN;
 
 	send(sock, reinterpret_cast<char*>(&packet), packet.size, 0);
+=======
+vector<Monster> m_monster;
+vector<Bullet> vec_bullet;
+//vector<cs_obstacle> bullet;
+cs_bullet bullet[50];
+>>>>>>> parent of c122221 (push_bullet)
 
 
 }
@@ -153,6 +160,7 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	int StartTime;
 >>>>>>> Stashed changes
 	while (1) {
+<<<<<<< HEAD
 
 		recvn(sock, (char*)&p_info, sizeof(p_info), 0);
 
@@ -166,12 +174,60 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 
 		recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
 		{
+=======
+		StartTime = GetTickCount64();
+
+
+		while (GetTickCount64() - StartTime <= 10) { }
+		{
+			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
+
+>>>>>>> parent of c122221 (push_bullet)
 			for (int i = 0; i < 2; ++i) {
 				m_obstacle[i].x = cs_obs[i].x;
 				m_obstacle[i].y = cs_obs[i].y;
 
+<<<<<<< HEAD
 			}
 		}
+=======
+			recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
+			{
+				for (int i = 0; i < 2; ++i) {
+					m_obstacle[i].x = cs_obs[i].x;
+					m_obstacle[i].y = cs_obs[i].y;
+				}
+			}
+
+			recvn(sock, (char*)&put, sizeof(put), 0);
+			if (put.isClick) {
+				m_map.push_back(Map(MAP::PLAT, put.x, put.y));
+			}
+			for (int i = 0; i < 2; ++i)
+				m_static_map[i].setState(put.isPush[i]);
+			if (put.AttackMonsterId != -1) {
+				vec_bullet.push_back(m_monster[put.AttackMonsterId].Attack());
+				//cs_obstacle s;
+				//bullet.push_back(s);
+			}
+			if (put.bulletsize != vec_bullet.size()) {
+				vec_bullet.erase(vec_bullet.begin() + vec_bullet.size() - 1);
+			}
+
+			recvn(sock, (char*)&bullet, sizeof(bullet), 0);
+			for (int i = 0; i < vec_bullet.size(); ++i) {
+				//if (bullet[i].isColl) vec_bullet[i].setisColl(true);
+				vec_bullet[i].x = bullet[i].x;
+				vec_bullet[i].y = bullet[i].y;
+				vec_bullet[i].type = bullet[i].type;
+				vec_bullet[i].imageCount = bullet[i].imageCount;
+				vec_bullet[i].imageSizeX = bullet[i].imageSizeX;
+				vec_bullet[i].imageSizeY = bullet[i].imageSizeY;
+				vec_bullet[i].anim = bullet[i].anim;
+				vec_bullet[i].isColl = bullet[i].isColl;
+			}
+
+>>>>>>> parent of c122221 (push_bullet)
 
 		recvn(sock, (char*)&put, sizeof(put), 0);
 		if (put.isClick) {
@@ -310,12 +366,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch (wParam) {
 
 		case 1:
+<<<<<<< HEAD
 
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
 			keyinfo.jump = false;
+=======
+		
+			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			keyinfo.isClick = false;
+			//keyinfo.jump = false;
+>>>>>>> parent of c122221 (push_bullet)
 
-			for (int i = 0; i < 2; ++i)
+			for(int i =0 ; i< 2 ; ++i )
 				p[i].animation();
 
 
