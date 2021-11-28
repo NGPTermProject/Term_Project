@@ -1,7 +1,1 @@
-﻿  ssc.cpp
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\ssc\ssc\Object.h(180,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\ssc\ssc\Object.h(181,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\ssc\ssc\Object.h(479,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\ssc\ssc\Object.h(479,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\ssc\ssc\ssc.cpp(169,6): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
-  ssc.vcxproj -> C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\ssc\x64\Debug\ssc.exe
+﻿  ssc.vcxproj -> C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\x64\Debug\ssc.exe
