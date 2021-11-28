@@ -20,17 +20,12 @@ int recvn(SOCKET s, char* buf, int len, int flags);
 DWORD WINAPI Client_Thread(LPVOID arg);
 vector<Map> m_map;
 vector<Map> m_static_map;
-int FirstMapSize = 7;
-int SecondMapSize = 5;
-int FirstMonsterSize = 4;
-int SecondMonsterSize = 5;
-int FirstObstacleSize = 2;
-int SecondObstacleSize = 2;
-
 Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
-vector<Bullet> vec_bullet;
+//vector<Bullet> vec_bullet;
+Bullet m_bullet[20];
+
 vector<Obstacle> m_obstacle;
 
 HANDLE hThread;
@@ -39,6 +34,10 @@ int Client_Count = -1;
 sc_send_player_id p_id;
 sc_send_player sc_p[2];
 sc_obstacle sc_obs[2];
+//vector<sc_obstacle> bullet;
+sc_bullet bullet[50];
+
+vector<SOCKET> matching_queue;
 
 sc_recv_keyinfo keyinfo;
 CRITICAL_SECTION cs;
@@ -47,25 +46,28 @@ bool c_left[2];
 bool c_right[2];
 sc_put_object put[2];
 sc_button sc_b;
+
+void send_login_ok(SOCKET s, short id)
+{
+	sc_login_ok packet;
+	packet.size = sizeof(packet);
+	packet.packet_type = SC_PACKET_LOGIN_OK;
+	packet.id = id;
+
+	send(s, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+
+}
 int main()
 {
 
 	//server.InitServer();
 	player.push_back(Player(200, 600, 0));
-	player.push_back(Player(400, 600, 1));
-	m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
-	m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
-	m_static_map.push_back(Map(MAP::PLAT, 48, 374));
-	m_static_map.push_back(Map(MAP::PLAT, 1392, 374));
-	m_static_map.push_back(Map(MAP::PLAT, 48, 566));
-	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
-	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
-
-	m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
-	m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
-	m_static_map.push_back(Map(MAP::PLAT, 500, 550));
-	m_static_map.push_back(Map(MAP::PLAT, 288, 150));
-	m_static_map.push_back(Map(MAP::PLAT, 432, 342));
+	player.push_back(Player(400 , 600, 1));
+	m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
+	m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
+	m_static_map.push_back(Map(MAP::PLAT, 200, 150));
+	m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
+	m_static_map.push_back(Map(MAP::PLAT, 500, 150));
 
 
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
@@ -75,20 +77,9 @@ int main()
 	sc_obs[1].x = 300;
 	sc_obs[1].y = 500;
 
-	m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 912, 406));
-	m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 230));
 
-
-	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
-	m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
-	m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
-	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
-
-	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 480));
-	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 580));
-	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 680));
-	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
-	m_monster.push_back(Monster(MONSTER::PIG, 500, 520));
+	m_monster.push_back(Monster(MONSTER::PLANT, 200, 100 ,100));
+	m_monster.push_back(Monster(MONSTER::PIG, 500, 100 , 350));
 
 
 
@@ -122,9 +113,9 @@ int main()
 	SOCKET client_sock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-
+	
 	bool flag = TRUE;
-
+	
 	while (1)
 	{
 		//accept()
@@ -137,19 +128,34 @@ int main()
 			std::cout << "!!!" << std::endl;
 		}
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
+		
+	
+		matching_queue.push_back(client_sock);
 
+		cs_packet_login packet;
+		recvn(client_sock, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
+		cout << "클라이언트에서 보낸 패킷 : " << static_cast<int>(packet.packet_type) << endl;
+	
 
-		Client_Count++;
+			if (packet.packet_type == CS_PACKET_LOGIN) {
+				if (matching_queue.size() == 2) {
+					for (int i = 0; i < 2; ++i) {
+						send_login_ok(matching_queue[i], i);
 
-		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
-
+						cout << "recvn login packet" << endl;
+						Client_Count++;
+						hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)matching_queue[i], 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
+						if (hThread == NULL) { closesocket(matching_queue[i]); }
+					}
+				}
+			}
 	}
 	DeleteCriticalSection(&cs);
-
+	
 	closesocket(server_socket);
-
+	
 	WSACleanup();
-
+	
 	return 0;
 }
 
@@ -160,23 +166,20 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 	int retval;
 
-	// hero.id 송신
-	//p_id.id = 
-	p_id.id = Client_Count;
-	cout << Client_Count << endl;
-	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 
 
-	int StartTime = GetTickCount64();
-	int deltaTime;
-
-	//timeGetTime();
+	
 	while (1) {
-		int NowTime = GetTickCount64();
-
-		deltaTime = NowTime - StartTime;
-
-		if (deltaTime >= 10) {
+		//StartTime = GetTickCount64();
+	    int StartTime = (int)GetTickCount64();
+		while ((GetTickCount64() - StartTime) <= 10)
+		{
+			//cout << (int)GetTickCount64() << endl;
+			//cout << StartTime << endl;
+			//cout << "??????" << endl;
+			//cout << "체크" << endl;
+		}
+		{
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			if (keyinfo.isClick) {
 				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
@@ -197,24 +200,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 			player[client_id].UpdateGravity();
 
-			//EnterCriticalSection(&cs);
-			//cout << "?" << endl;
-
-			//for(int i = 0; i < m_obstacle.size(); ++i)
-			//	m_obstacle[i].Move();
-
-			//if (keyinfo.jump) {
-			//	for (int i = 0; i < 2; ++i)
-			//		m_monster[i].Attack();
-			//}
-
-			//for (int i = 0; i < vec_bullet.size(); ++i) {
-			//	vec_bullet[i].Update();
-			//	if (player[Client_Count].CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
-			//		vec_bullet[i].setisColl(true);
-			//		m_map.clear();
-			//	}
-			//}
 			//플레이어 점프 상태에서 충돌 처리 부분
 			if (player[client_id].getVely() > 0 || player[client_id].getisRanding()) {
 				if (player[client_id].getVely() > 0) player[client_id].SwitchState(PLAYER::FALL);
@@ -251,7 +236,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				}
 
 
-				for (int i = 2; i < 7; ++i) {
+				for (int i = 2; i < m_static_map.size(); ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
 
@@ -266,10 +251,12 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				}
 				else check = 0;
 			}
+
 			// 땅 착지     
 			if (player[client_id].getPos().y > 780) {
 				player[client_id].setPlayerRanding(780);
 			}
+
 
 			// --키입력------------------------------------------///
 			if (keyinfo.jump == true) {
@@ -289,7 +276,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].move((300 * 0.016f));
 			}
 			///-------------------------------------------------///
-			for (int i = 0; i < 2; ++i) {
+
+			for (int i = 0; i < m_obstacle.size(); ++i) {
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();
@@ -298,7 +286,139 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					sc_obs[i].y = m_obstacle[i].getPosY();
 				}
 			}
+			for (int i = 0; i < m_monster.size(); ++i) {
+				EnterCriticalSection(&cs);
+				m_monster[i].Update();
+				LeaveCriticalSection(&cs);
 
+				if (m_monster[i].getisAttack()) {
+					put[0].AttackMonsterId = i;
+					put[1].AttackMonsterId = i;
+					m_bullet[i].type = m_monster[i].type;
+					m_bullet[i].x = m_monster[i].getPosX();
+					m_bullet[i].y = m_monster[i].getPosY();
+
+					if (m_bullet[i].type == MONSTER::PIG) {
+						m_bullet[i].imageCount = 2;
+						m_bullet[i].imageSizeX = 64;
+						m_bullet[i].imageSizeY = 64;
+						m_bullet[i].anim_max = 220;
+
+					}
+					else if (m_bullet[i].type == MONSTER::PLANT) {
+						m_bullet[i].imageCount = 3;
+						m_bullet[i].imageSizeX = 24;
+						m_bullet[i].imageSizeY = 24;
+						m_bullet[i].anim_max = 20;
+
+					}
+					EnterCriticalSection(&cs);
+
+					m_bullet[i].isStart = true;
+					m_monster[i].setisAttack(false);
+					LeaveCriticalSection(&cs);
+
+				}
+			}
+
+			for (int i = 0; i < 15; ++i) {
+				if (player[client_id].CollsionByObstacle(m_bullet[i])) {
+					cout << "씨발샊야" << endl;
+				}
+				if (m_bullet[i].isColl && m_bullet[i].anim >= m_bullet[i].anim_max) {
+					EnterCriticalSection(&cs);
+					m_bullet[i].x = m_monster[i].getPosX();
+					m_bullet[i].y = m_monster[i].getPosY();
+					LeaveCriticalSection(&cs);
+
+					if (m_bullet[i].type == MONSTER::PIG) {
+						EnterCriticalSection(&cs);
+						m_bullet[i].imageCount = 2;
+						LeaveCriticalSection(&cs);
+
+					}
+					else if (m_bullet[i].type == MONSTER::PLANT) {
+						EnterCriticalSection(&cs);
+
+						m_bullet[i].imageCount = 3;
+						LeaveCriticalSection(&cs);
+
+					}
+					EnterCriticalSection(&cs);
+					m_bullet[i].isStart = false;
+					m_bullet[i].isColl = false;
+					LeaveCriticalSection(&cs);
+
+				}
+			}
+			for (int i = 0; i < 15; ++i) {
+				if (m_bullet[i].isStart) {
+					EnterCriticalSection(&cs);
+					m_bullet[i].animation();
+					m_bullet[i].Update();
+					LeaveCriticalSection(&cs);
+				}
+				EnterCriticalSection(&cs);
+
+				bullet[i].x = m_bullet[i].x;
+				bullet[i].y = m_bullet[i].y;
+				bullet[i].type = m_bullet[i].type;
+				bullet[i].imageCount = m_bullet[i].imageCount;
+				bullet[i].imageSizeX = m_bullet[i].imageSizeX;
+				bullet[i].imageSizeY = m_bullet[i].imageSizeY;
+				bullet[i].anim = m_bullet[i].anim;
+				bullet[i].isStart = m_bullet[i].isStart;
+				bullet[i].isColl = m_bullet[i].isColl;
+				LeaveCriticalSection(&cs);
+
+			}
+
+			//for (int i = 0; i < vec_bullet.size(); ++i) {
+			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
+			//		EnterCriticalSection(&cs);
+			//		vec_bullet.erase(vec_bullet.begin() + i);
+			//		LeaveCriticalSection(&cs);
+
+			//	}
+			//}
+			//EnterCriticalSection(&cs);
+			//put[0].bulletsize = vec_bullet.size();
+			//put[1].bulletsize = vec_bullet.size();
+			//LeaveCriticalSection(&cs);
+			//for (int i = 0; i < vec_bullet.size(); ++i) {			
+
+			//	//if (player[Client_Count].CollsionByObstacle(vec_bullet[i]) && vec_bullet[i].getisColl() != true) {
+			//	if (vec_bullet[i].getisColl()) {
+			//		EnterCriticalSection(&cs);
+			//		
+			//		bullet[i].isColl = true;
+			//		//vec_bullet.erase(vec_bullet.begin() + i);
+			//		
+			//		LeaveCriticalSection(&cs);				
+			//	}
+
+			//	EnterCriticalSection(&cs);
+
+			//	vec_bullet[i].animation();
+			//	vec_bullet[i].Update();
+
+			//	bullet[i].x = vec_bullet[i].x;
+			//	bullet[i].y = vec_bullet[i].y;
+			//	bullet[i].type = vec_bullet[i].type;
+			//	bullet[i].imageCount = vec_bullet[i].imageCount;
+			//	bullet[i].imageSizeX = vec_bullet[i].imageSizeX;
+			//	bullet[i].imageSizeY = vec_bullet[i].imageSizeY;
+			//	bullet[i].anim = vec_bullet[i].anim;
+
+			//	LeaveCriticalSection(&cs);
+			//	//	vec_bullet[i].setisColl(true);
+			//	//	m_map.clear();
+			//	//}
+
+			//}
+
+			//if (vec_bullet[i].isColl && vec_bullet[i].anim == 0)
+			//	vec_bullet.erase(vec_bullet.begin() + i);
 
 
 			sc_p[client_id].id = client_id;
@@ -326,15 +446,17 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
+			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
 
 			for (int i = 0; i < 2; ++i) {
 				put[client_id].isPush[i] = false;
 
 			}
 			put[client_id].isClick = false;
+			put[client_id].AttackMonsterId = -1;
 
 		}
-		StartTime = NowTime;
+		
 	}
 	return 0;
 }
@@ -365,7 +487,7 @@ void err_quit(const char* msg)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpmsgbuf, 0, NULL
 	);
-	MessageBox(NULL, (LPCTSTR)lpmsgbuf, (LPCWSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpmsgbuf,(LPCWSTR)msg, MB_ICONERROR);
 	LocalFree(lpmsgbuf);
 	exit(-1);
 }

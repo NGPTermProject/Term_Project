@@ -171,6 +171,9 @@ public:
 
 	 int type = 0;
 	 bool isColl = false;
+	 bool isStart = false;
+	 
+	 int anim_max = 0;
 
 	 Bullet(int m_type, int m_x, int m_y)
 	 {
@@ -190,6 +193,15 @@ public:
 		 }
 
 	 }
+	 Bullet()
+	 {
+
+	 };
+
+	 bool getisColl()
+	 {
+		 return isColl;
+	 }
 
 	 void setisColl(bool b)
 	 {
@@ -199,10 +211,6 @@ public:
 			imageCount = 6;
 	 }
 
-	 bool getisColl()
-	 {
-		 return isColl;
-	 }
 
 
 
@@ -221,6 +229,11 @@ public:
 			 Move();
 
 		 if (Coll() && isColl == false) {
+			 //setisColl(true);
+			 dy = 0;
+			 //dx = 0;
+			 //x = 0;
+			 //y = 0;
 			 isColl = true;
 			 anim = 0;
 			 imageCount = 6;
@@ -425,13 +438,14 @@ public:
 
 	 int type = 0;
 	 bool attack = false;
-
-	 Monster(int m_type, float m_x, float m_y)
+	 int AttackDelay = 0;
+	 int AttackCount = 0;
+	 Monster(int m_type, float m_x, float m_y, int m_ad)
 	 {
 		 x = m_x;
 		 y = m_y;
 		 type = m_type;
-
+		 AttackDelay = m_ad;
 		 anim = 0;
 
 		 if (m_type == MONSTER::PIG) {
@@ -464,6 +478,33 @@ public:
 		 attack = true;
 		 return Bullet(type, x, y);
 	 }
+
+	 void Update() {
+
+		 AttackCount++;
+		 if (AttackDelay < AttackCount) {
+			 AttackCount = 0;
+			 attack = true;
+		 }
+	 }
+	 bool getisAttack() {
+		 return attack;
+	 }
+	 
+	 void setisAttack(bool b)
+	 {
+		 attack = b;
+	 }
+
+	 float getPosX()
+	 {
+		 return x;
+	 }
+	 float getPosY()
+	 {
+		 return y;
+	 }
+	 
 
  };
 

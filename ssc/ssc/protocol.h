@@ -24,14 +24,12 @@ const char SC_PLAYER_COLLISION = 7;
 struct cs_packet_login {
 	unsigned char size;
 	char	packet_type;
-	char	name[MAX_NAME_SIZE];
 };
 
 struct sc_login_ok {
 	unsigned char size;
 	char	packet_type;
 	int		id;
-	short	x, y;
 };
 
 
@@ -119,6 +117,20 @@ struct sc_recv_keyinfo {
 struct sc_obstacle {
 	float x;
 	float y;
+	bool isColl = false;
+};
+
+struct sc_bullet {
+	float x;
+	float y;
+	bool isColl = false;
+	int type = 0;
+	int imageCount;
+	int	imageSizeX;
+	int	imageSizeY;
+	int anim;
+	bool isStart = false;
+
 };
 
 struct sc_button {
@@ -132,8 +144,10 @@ struct sc_put_object {
 	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
 	bool isClick;
 	bool isPush[2];
-
+	int AttackMonsterId = -1;
+	int bulletsize = 0;
 };
+
 
 
 #pragma pack(pop)

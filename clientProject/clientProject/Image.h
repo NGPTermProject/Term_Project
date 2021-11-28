@@ -7,6 +7,12 @@ static CImage player_jump;
 static CImage player_fall;
 static CImage player_dead;
 
+static CImage player2_idle;
+static CImage player2_move;
+static CImage player2_jump;
+static CImage player2_fall;
+static CImage player2_dead;
+
 // BackGround
 static CImage img_bg;
 
@@ -102,6 +108,11 @@ void LoadImage()
 	player_move.Load(L"frog_move.png");
 	player_jump.Load(L"frog_jump.png");
 	player_fall.Load(L"frog_fall.png");
+
+	player2_idle.Load(L"frog_idle2.png");
+	player2_move.Load(L"frog_move2.png");
+	player2_jump.Load(L"frog_jump2.png");
+	player2_fall.Load(L"frog_fall2.png");
 
 
 	//Àå¾Ö¹°
