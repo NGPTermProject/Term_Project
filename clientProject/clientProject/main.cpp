@@ -277,7 +277,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		_tfreopen(_T("CONERR$"), _T("w"), stderr);
 		//
 
-		LoadImage();
+		//LoadImage();
 
 		p.push_back(Player(200 , 600, 0));
 		p.push_back(Player(400 , 600, 1));
