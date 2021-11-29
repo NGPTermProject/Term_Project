@@ -97,8 +97,8 @@ public:
 			 x = m_x;
 			 y = m_y;
 			 type = m_type;
-			 imageSizeX = 320;
-			 imageSizeY = 96;
+			 imageSizeX = 96;
+			 imageSizeY = 320;
 		 }
 	 }
  };
@@ -152,6 +152,8 @@ public:
 			 collsionHelper[2] = 32;
 			 collsionHelper[3] = 32;
 		 }
+
+		 
 	 }
 	 ~Map() {};
  };
@@ -193,6 +195,16 @@ public:
 		 if (m_type == MONSTER::PLANT) {
 			 imageSizeX = 44;
 			 imageSizeY = 42;
+			 imageCount = 12;
+		 }
+		 if (m_type == MONSTER::RPLANT) {
+			 imageSizeX = 44;
+			 imageSizeY = 42;
+			 imageCount = 12;
+		 }
+		 if (m_type == MONSTER::TREE) {
+			 imageSizeX = 64;
+			 imageSizeY = 32;
 			 imageCount = 12;
 		 }
 	 }

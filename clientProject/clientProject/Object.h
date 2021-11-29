@@ -104,8 +104,8 @@ public:
 			 x = m_x;
 			 y = m_y;
 			 type = m_type;
-			 imageSizeX = 320;
-			 imageSizeY = 96;
+			 imageSizeX = 96;
+			 imageSizeY = 320;
 		 }
 	 }
  };
@@ -169,6 +169,13 @@ public:
 			 collsionHelper[2] = 32;
 			 collsionHelper[3] = 32;
 		 }
+		 if (m_type == MAP::LONG)
+		 {
+			 collsionHelper[0] = 16;
+			 collsionHelper[1] = 10;
+			 collsionHelper[2] = 32;
+			 collsionHelper[3] = 32;
+		 }
 	 }
 	 ~Map() {};
  };
@@ -209,7 +216,7 @@ public:
 			 imageSizeX = 64;
 			 imageSizeY = 64;
 		 }
-		 else if (type == MONSTER::PLANT) {
+		 else if (type == MONSTER::PLANT || type==MONSTER::RPLANT) {
 			 imageCount = 3;
 			 imageSizeX = 24;
 			 imageSizeY = 24;
@@ -546,6 +553,19 @@ public:
 			 imageSizeX = 44;
 			 imageSizeY = 42;
 			 imageCount = 12;
+			 dir = 0;
+		 }
+		 if (m_type == MONSTER::RPLANT) {
+			 imageSizeX = 44;
+			 imageSizeY = 42;
+			 imageCount = 12;
+			 dir = 42;
+		 }
+		 if (m_type == MONSTER::TREE) {
+			 imageSizeX = 64;
+			 imageSizeY = 32;
+			 imageCount = 18;
+
 		 }
 	 }
 
@@ -559,13 +579,18 @@ public:
 				 img_Bomb_Monster_Idle.Draw(hdc, x - 16, y - 16, 32, 32, anim, dir, 32, 32);
 			 }
 		 }
-		 if (type == MONSTER::PLANT) {
+		 if (type == MONSTER::PLANT || type == MONSTER::RPLANT) {
 			 if (attack)
 				 img_Plant_Monster_Attack.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, dir, imageSizeX, 42);
 			 else {
 				 img_Plant_Monster_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, dir, imageSizeX, 42);
 			 }
 		 }
+		 if (type == MONSTER::TREE) {
+				img_Bomb_Monster_Attack.Draw(hdc, x - 32, y - 16, 64, 32, anim, dir, 64, 32);
+	
+		 }
+
 		 
 
 	 }

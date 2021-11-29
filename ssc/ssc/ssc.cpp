@@ -42,29 +42,116 @@ bool c_right[2];
 sc_put_object put[2];
 sc_button sc_b;
 
+int FirstMapSize = 7;
+int SecondMapSize = 15;
+int FirstMonsterSize = 4;
+int SecondMonsterSize = 9;
+int FirstObstacleSize = 2;
+int SecondObstacleSize = 5;
+
+int MapStartSize = 0;
+int MapEndSize = FirstMapSize;
+
+int MonsterStartSize = 0;
+int MonsterEndSize = FirstMonsterSize;
+
+int ObstacleStartSzie = 0;
+int ObstacleEndSize = FirstObstacleSize;
+
 int main()
 {
 
 	//server.InitServer();
 	player.push_back(Player(200, 600, 0));
 	player.push_back(Player(400 , 600, 1));
-	m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
-	m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
-	m_static_map.push_back(Map(MAP::PLAT, 200, 150));
-	m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
-	m_static_map.push_back(Map(MAP::PLAT, 500, 150));
+	//m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
+	//m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
+	//m_static_map.push_back(Map(MAP::PLAT, 200, 150));
+	//m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
+	//m_static_map.push_back(Map(MAP::PLAT, 500, 150));
+
+
+	//m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
+	//m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
+	//sc_obs[0].x = 100;
+	//sc_obs[0].y = 500;
+	//sc_obs[1].x = 300;
+	//sc_obs[1].y = 500;
+
+
+	//m_monster.push_back(Monster(MONSTER::PLANT, 200, 100 ,100));
+	//m_monster.push_back(Monster(MONSTER::PIG, 500, 100 , 350));
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
+	m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 566));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
+	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
+	//first
+
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
+	m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
+	m_static_map.push_back(Map(MAP::PLAT, 500, 550));
+	m_static_map.push_back(Map(MAP::PLAT, 288, 150));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 342));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 510));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 210));
+	m_static_map.push_back(Map(MAP::LONG, 432, 342));
+	//second
+
+	m_static_map.push_back(Map(MAP::BUTTON, 1392, 24));
+	m_static_map.push_back(Map(MAP::BUTTON, 1296, 664));
+	m_static_map.push_back(Map(MAP::PLAT, 480, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 576, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 384, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 598));
+	m_static_map.push_back(Map(MAP::PLAT, 336, 502));
+	m_static_map.push_back(Map(MAP::PLAT, 624, 758));
+	m_static_map.push_back(Map(MAP::PLAT, 816, 310));
+	m_static_map.push_back(Map(MAP::PLAT, 1080, 726));
+	m_static_map.push_back(Map(MAP::PLAT, 1200, 726));
+	m_static_map.push_back(Map(MAP::PLAT, 1296, 694));
+	m_static_map.push_back(Map(MAP::PLAT, 1104, 54));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 54));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 434));
+
+
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775,5000));
+	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 531, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 432, 184, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184, 5000));
+	//first
+
+	m_monster.push_back(Monster(MONSTER::RPLANT, 250, 307, 5000));
+	m_monster.push_back(Monster(MONSTER::TREE, 1392, 180, 5000));
+	m_monster.push_back(Monster(MONSTER::TREE, 1392, 480, 5000));
+	m_monster.push_back(Monster(MONSTER::TREE, 1392, 780, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 500, 520, 5000));
+	//second
+
+	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 563, 5000));
+	m_monster.push_back(Monster(MONSTER::TREE, 1392, 404, 5000));
+	m_monster.push_back(Monster(MONSTER::RPLANT, 336, 467, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 624, 728, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 816, 280, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1080, 696, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1200, 696, 5000));
+
 
 
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
-	sc_obs[0].x = 100;
-	sc_obs[0].y = 500;
-	sc_obs[1].x = 300;
-	sc_obs[1].y = 500;
+	//first
 
+	m_obstacle.push_back(Obstacle(OBSTACLE::MIDDLE_UP, 912, 406));
+	m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 280));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 432, 402));
+	//second
 
-	m_monster.push_back(Monster(MONSTER::PLANT, 200, 100 ,100));
-	m_monster.push_back(Monster(MONSTER::PIG, 500, 100 , 350));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 300, 800));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 576, -100));
 
 
 
@@ -205,7 +292,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				}
 
 
-				for (int i = 2; i < m_static_map.size(); ++i) {
+				for (int i = MapStartSize+ 2; i < MapEndSize; ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
 
@@ -246,7 +333,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 			///-------------------------------------------------///
 
-			for (int i = 0; i < m_obstacle.size(); ++i) {
+			for (int i = ObstacleStartSzie; i < ObstacleEndSize; ++i) {
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();
@@ -264,7 +351,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					LeaveCriticalSection(&cs);
 				}
 			}
-			for (int i = 0; i < m_monster.size(); ++i) {
+			for (int i = MonsterStartSize; i < MonsterEndSize; ++i) {
 				EnterCriticalSection(&cs);
 				m_monster[i].Update();
 				LeaveCriticalSection(&cs);

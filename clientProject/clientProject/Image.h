@@ -28,6 +28,8 @@ static CImage img_wall;
 // Width and Height
 static int img_bg_width;
 static int img_bg_height;
+static int img_Loginbg_width;
+static int img_Loginbg_height;
 
 static CImage img_ButtonUp;
 static CImage img_ButtonDown;
@@ -45,12 +47,14 @@ static CImage img_Plant_Monster_Attack;
 
 static CImage img_Bullet_Monster_Attack;
 static CImage img_Bullet_Monster_Idle;
+static CImage img_Tree_Monster;
 
 
 static CImage img_wall_Long;
 static CImage img_wall_Middle;
 
 static CImage img_Login;
+static CImage img_LoginBG;
 
 static CImage img_cutting_blade;
 
@@ -64,7 +68,10 @@ void LoadImage();
 void LoadImage()
 {
 	//id입력창
-	img_Login.Load(L"res/white.png");
+	img_LoginBG.Load(L"res/LoginBG.png");
+	img_Loginbg_width = img_LoginBG.GetWidth();
+	img_Loginbg_height = img_LoginBG.GetHeight();
+	img_Login.Load(L"res/Login.png");
 	//버튼
 	img_ButtonUp.Load(L"res/button_up.png");
 	img_ButtonDown.Load(L"res/button_down.png");
@@ -89,7 +96,7 @@ void LoadImage()
 	img_Bomb_Monster_Idle.Load(L"res/monster_bomb_idle.png");
 	img_Plant_Monster_Attack.Load(L"res/plant_attack.png");
 	img_Plant_Monster_Idle.Load(L"res/plant_idle.png");
-
+	img_Tree_Monster.Load(L"res/tree_idle.png");
 
 
 	//플레이어
