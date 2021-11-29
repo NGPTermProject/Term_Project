@@ -119,6 +119,20 @@ struct sc_recv_keyinfo {
 struct sc_obstacle {
 	float x;
 	float y;
+	bool isColl = false;
+};
+
+struct sc_bullet {
+	float x;
+	float y;
+	bool isColl = false;
+	int type = 0;
+	int imageCount;
+	int	imageSizeX;
+	int	imageSizeY;
+	int anim;
+	bool isStart = false;
+
 };
 
 struct sc_button {
@@ -132,8 +146,10 @@ struct sc_put_object {
 	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
 	bool isClick;
 	bool isPush[2];
-
+	int AttackMonsterId = -1;
+	bool clear = false ;
 };
+
 
 
 #pragma pack(pop)

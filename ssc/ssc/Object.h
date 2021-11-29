@@ -1,6 +1,6 @@
 #pragma once
 #include "State.h"
-
+#include "protocol.h"
 class Objects
 {
 public:
@@ -34,9 +34,17 @@ public:
  class Obstacle : public Objects {
  public:
 	 int type;
-
+	 int dir  = 1;
 	 void Move() {
-		 x += 1;
+		 x += 5 * dir;
+		 if (x > 1450) {
+			 x = 1450;
+			 dir *= -1;
+		 }
+		 if (x < 50) {
+			 x = 50;
+			 dir *= -1;
+		 }
 	 }
 	 float getPosX()
 	 {
@@ -89,8 +97,8 @@ public:
 			 x = m_x;
 			 y = m_y;
 			 type = m_type;
-			 imageSizeX = 320;
-			 imageSizeY = 96;
+			 imageSizeX = 96;
+			 imageSizeY = 320;
 		 }
 	 }
  };
@@ -144,6 +152,8 @@ public:
 			 collsionHelper[2] = 32;
 			 collsionHelper[3] = 32;
 		 }
+
+		 
 	 }
 	 ~Map() {};
  };
@@ -161,6 +171,95 @@ public:
 
  };
 
+ class Monster : public Objects {
+ public:
+
+
+	 int type = 0;
+	 bool attack = false;
+	 int AttackDelay = 0;
+	 int AttackCount = 0;
+	 Monster(int m_type, float m_x, float m_y, int m_ad)
+	 {
+		 x = m_x;
+		 y = m_y;
+		 type = m_type;
+		 AttackDelay = m_ad;
+		 anim = 0;
+
+		 if (m_type == MONSTER::PIG) {
+			 imageSizeX = 32;
+			 imageSizeY = 32;
+			 imageCount = 10;
+		 }
+		 if (m_type == MONSTER::PLANT) {
+			 imageSizeX = 44;
+			 imageSizeY = 42;
+			 imageCount = 12;
+		 }
+		 if (m_type == MONSTER::RPLANT) {
+			 imageSizeX = 44;
+			 imageSizeY = 42;
+			 imageCount = 12;
+		 }
+		 if (m_type == MONSTER::TREE) {
+			 imageSizeX = 64;
+			 imageSizeY = 32;
+			 imageCount = 12;
+		 }
+	 }
+
+	 void animation()
+	 {
+		 anim += imageSizeX;
+		 if (anim >= imageSizeX * (imageCount - 1)) {
+			 anim = 0;
+			 if (attack) {
+				 imageCount = 10;
+				 attack = false;
+			 }
+		 }
+	 }
+
+	 //Bullet Attack() {
+		// anim = 0;
+		// imageCount = 7;
+		// attack = true;
+		// return Bullet(type, x, y);
+	 //}
+
+	 void Update() {
+
+		 AttackCount++;
+		 if (AttackDelay < AttackCount) {
+			 AttackCount = 0;
+			 attack = true;
+		 }
+	 }
+	 bool getisAttack() {
+		 return attack;
+	 }
+
+	 void setisAttack(bool b)
+	 {
+		 attack = b;
+	 }
+
+	 float getPosX()
+	 {
+		 return x;
+	 }
+	 float getPosY()
+	 {
+		 return y;
+	 }
+
+
+ };
+
+
+
+
  class Bullet : public Objects {
  public:
 
@@ -171,6 +270,9 @@ public:
 
 	 int type = 0;
 	 bool isColl = false;
+	 bool isStart = false;
+	 
+	 int anim_max = 0;
 
 	 Bullet(int m_type, int m_x, int m_y)
 	 {
@@ -190,40 +292,49 @@ public:
 		 }
 
 	 }
-
-	 void setisColl(bool b)
+	 Bullet()
 	 {
-		 isColl = b;
-		 anim = 0;
-		 if(type == MONSTER::PIG)
-			imageCount = 6;
-	 }
+
+	 };
 
 	 bool getisColl()
 	 {
 		 return isColl;
 	 }
 
+	 void setisColl(bool b)
+	 {
+		 dy = 0;
+		 isColl = b;
+		 anim = 0;
+		 if(type == MONSTER::PIG)
+			imageCount = 6;
+	 }
+
+
 
 
 	 void Move()
 	 {
-
-		float gravity = 0.3f;
-		dy += gravity;
-		x += dx;
-		y += dy;
+		 if (type == MONSTER::PIG) {
+			 float gravity = 0.3f;
+			 dy += gravity;
+			 x += dx;
+			 y += dy;
+		 }
+		 if (type == MONSTER::PLANT) {
+			 x += dx* 5.f;
+		 }
 		 
 	 }
 	 void Update()
 	 {
+
 		 if (Coll() == false)
 			 Move();
 
 		 if (Coll() && isColl == false) {
-			 isColl = true;
-			 anim = 0;
-			 imageCount = 6;
+			 setisColl(true);
 		 }
 	 }
 	 bool Coll()
@@ -234,8 +345,61 @@ public:
 			 return false;
 	 }
 
+
+	 void SetBulletInfo(sc_bullet &bullet) {
+		 bullet.x =x;
+		 bullet.y =y;
+		 bullet.type = type;
+		 bullet.imageCount = imageCount;
+		 bullet.imageSizeX = imageSizeX;
+		 bullet.imageSizeY = imageSizeY;
+		 bullet.anim = anim;
+		 bullet.isStart = isStart;
+		 bullet.isColl = isColl;
+	 }
+
+	 void InitBullet(Monster m_monster) {
+		 type = m_monster.type;
+		 x = m_monster.getPosX();
+		 y = m_monster.getPosY();
+
+		 if (type == MONSTER::PIG) {
+			 imageCount = 2;
+			 imageSizeX = 64;
+			 imageSizeY = 64;
+			 anim_max = 220;
+
+		 }
+		 else if (type == MONSTER::PLANT) {
+			imageCount = 3;
+			imageSizeX = 24;
+			imageSizeY = 24;
+			anim_max = 20;
+
+		 }
+		 isStart = true;
+	 }
+		
+	 void DeadAnimation(Monster m_monster){
+		 x = m_monster.getPosX();
+		 y = m_monster.getPosY();
+
+		 if (type == MONSTER::PIG) {
+			 imageCount = 2;
+
+		 }
+		 else if (type == MONSTER::PLANT) {
+			 imageCount = 3;
+
+		 }
+		  isStart = false;
+		  isColl = false;
+	 }
+
+
 	 ~Bullet() {
 	 };
+
  };
 
  class Player {
@@ -299,10 +463,15 @@ public:
 	 {
 		 return pos;
 	 }
+	 void setStartLine(int x, int y) {
+		 pos.setPos(x, y);
+		 velY = 0;
+	 }
 	 int getJumpCount()
 	 {
 		 return jumpCount;
 	 }
+	 
 
 
 	 void setId(short m_id)
@@ -417,55 +586,15 @@ public:
 		 return id;
 	 }
 	 //bool ()
- };
-
- class Monster : public Objects {
- public:
 
 
-	 int type = 0;
-	 bool attack = false;
-
-	 Monster(int m_type, float m_x, float m_y)
+	 void setPlayerInfo(sc_send_player &player)
 	 {
-		 x = m_x;
-		 y = m_y;
-		 type = m_type;
-
-		 anim = 0;
-
-		 if (m_type == MONSTER::PIG) {
-			 imageSizeX = 32;
-			 imageSizeY = 32;
-			 imageCount = 10;
-		 }
-		 if (m_type == MONSTER::PLANT) {
-			 imageSizeX = 44;
-			 imageSizeY = 42;
-			 imageCount = 12;
-		 }
+		player.id = id;
+		player.state =getState();
+		player.x = getPos().x;
+		player.y = getPos().y;
+		player.dir = getDir();
+		player.jumpCount = getJumpCount();
 	 }
-
-	 void animation()
-	 {
-		 anim += imageSizeX;
-		 if (anim >= imageSizeX * (imageCount - 1)) {
-			 anim = 0;
-			 if (attack) {
-				 imageCount = 10;
-				 attack = false;
-			 }
-		 }
-	 }
-
-	 Bullet Attack() {
-		 anim = 0;
-		 imageCount = 7;
-		 attack = true;
-		 return Bullet(type, x, y);
-	 }
-
  };
-
-
-

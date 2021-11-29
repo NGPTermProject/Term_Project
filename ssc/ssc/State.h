@@ -15,7 +15,9 @@ namespace MONSTER
 {
 	enum M_State {
 		PIG,
-		PLANT
+		PLANT,
+		RPLANT,
+		TREE
 	};
 }
 
@@ -33,6 +35,7 @@ namespace MAP {
 	enum M_Map {
 		BUTTON,
 		PLAT,
+		LONG
 	};
 }
 

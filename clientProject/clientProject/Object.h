@@ -1,3 +1,5 @@
+#include "protocol.h"
+
 class Objects
 {
 public:
@@ -102,8 +104,8 @@ public:
 			 x = m_x;
 			 y = m_y;
 			 type = m_type;
-			 imageSizeX = 320;
-			 imageSizeY = 96;
+			 imageSizeX = 96;
+			 imageSizeY = 320;
 		 }
 	 }
  };
@@ -167,6 +169,13 @@ public:
 			 collsionHelper[2] = 32;
 			 collsionHelper[3] = 32;
 		 }
+		 if (m_type == MAP::LONG)
+		 {
+			 collsionHelper[0] = 16;
+			 collsionHelper[1] = 10;
+			 collsionHelper[2] = 32;
+			 collsionHelper[3] = 32;
+		 }
 	 }
 	 ~Map() {};
  };
@@ -194,6 +203,7 @@ public:
 
 	 int type = 0;
 	 bool isColl = false;
+	 bool isStart = false;
 
 	 Bullet(int m_type, int m_x, int m_y)
 	 {
@@ -206,13 +216,17 @@ public:
 			 imageSizeX = 64;
 			 imageSizeY = 64;
 		 }
-		 else if (type == MONSTER::PLANT) {
+		 else if (type == MONSTER::PLANT || type==MONSTER::RPLANT) {
 			 imageCount = 3;
 			 imageSizeX = 24;
 			 imageSizeY = 24;
 		 }
 
 	 }
+	 Bullet()
+	 {
+
+	 };
 
 	 void setisColl(bool b)
 	 {
@@ -271,6 +285,19 @@ public:
 			 return true;
 		 else
 			 return false;
+	 }
+
+	
+	 void getBulletInfo(cs_bullet bullet) {
+		 x = bullet.x;
+		 y = bullet.y;
+		 type = bullet.type;
+		 imageCount = bullet.imageCount;
+		 imageSizeX = bullet.imageSizeX;
+		 imageSizeY = bullet.imageSizeY;
+		 anim = bullet.anim;
+		 isStart = bullet.isStart;
+		 isColl = bullet.isColl;
 	 }
 
 	 ~Bullet() {
@@ -418,20 +445,36 @@ public:
 		 {
 		 case PLAYER::IDLE:
 			 imageCount = 11;
-			 player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 if(id == 0)
+				player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 else 
+				player2_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::MOVE:
 			 imageCount = 12;
-			 player_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 if (id == 0)
+				player_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_move.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::JUMP:
-			 player_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 if (id == 0)	
+				player_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_jump.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+
 			 break;
 
 		 case PLAYER::FALL:
-			 player_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 if (id == 0)
+				 player_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+			 else
+				 player2_fall.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, 0, dir, imageSizeX, imageSizeY);
+
 		 }
 	 }
 
@@ -471,6 +514,16 @@ public:
 
 	 }
 
+	 void getPlayerInfo(cs_send_player player)
+	 {
+		 id = player.id;
+		 state = player.state;
+		 pos.x =player.x;
+		 pos.y =player.y;
+		 dir = player.dir;
+		 jumpCount = player.jumpCount;
+	 }
+
 	 Player();
 
 	 //bool ()
@@ -482,7 +535,7 @@ public:
 
 	 int type = 0;
 	 bool attack = false;
-
+	 int dir = 0;
 	 Monster(int m_type, float m_x, float m_y)
 	 {
 		 x = m_x;
@@ -500,25 +553,44 @@ public:
 			 imageSizeX = 44;
 			 imageSizeY = 42;
 			 imageCount = 12;
+			 dir = 0;
+		 }
+		 if (m_type == MONSTER::RPLANT) {
+			 imageSizeX = 44;
+			 imageSizeY = 42;
+			 imageCount = 12;
+			 dir = 42;
+		 }
+		 if (m_type == MONSTER::TREE) {
+			 imageSizeX = 64;
+			 imageSizeY = 32;
+			 imageCount = 18;
+
 		 }
 	 }
 
 	 void draw(HDC hdc) {
-		 
+		 //player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+
 		 if (type == MONSTER::PIG) {
 			 if (attack)
-				 img_Bomb_Monster_Attack.Draw(hdc, x - 16, y - 16, 32, 32, anim, 0, 32, 32);
+				 img_Bomb_Monster_Attack.Draw(hdc, x - 16, y - 16, 32, 32, anim, dir, 32, 32);
 			 else {
-				 img_Bomb_Monster_Idle.Draw(hdc, x - 16, y - 16, 32, 32, anim, 0, 32, 32);
+				 img_Bomb_Monster_Idle.Draw(hdc, x - 16, y - 16, 32, 32, anim, dir, 32, 32);
 			 }
 		 }
-		 if (type == MONSTER::PLANT) {
+		 if (type == MONSTER::PLANT || type == MONSTER::RPLANT) {
 			 if (attack)
-				 img_Plant_Monster_Attack.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 0, imageSizeX, 42);
+				 img_Plant_Monster_Attack.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, dir, imageSizeX, 42);
 			 else {
-				 img_Plant_Monster_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, 0, imageSizeX, 42);
+				 img_Plant_Monster_Idle.Draw(hdc, x - 22, y - 21, imageSizeX, 42, anim, dir, imageSizeX, 42);
 			 }
 		 }
+		 if (type == MONSTER::TREE) {
+				img_Bomb_Monster_Attack.Draw(hdc, x - 32, y - 16, 64, 32, anim, dir, 64, 32);
+	
+		 }
+
 		 
 
 	 }
@@ -535,11 +607,10 @@ public:
 		 }
 	 }
 
-	 Bullet Attack() {
+	 void Attack() {
 		 anim = 0;
 		 imageCount = 7;
 		 attack = true;
-		 return Bullet(type, x, y);
 	 }
 
  };
