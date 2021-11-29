@@ -25,6 +25,7 @@ struct cs_packet_login {
 	unsigned char size;
 	char	packet_type;
 	char	name[MAX_NAME_SIZE];
+	int		id;
 };
 
 struct sc_login_ok {
@@ -164,7 +165,16 @@ struct sc_put_object {
 
 };
 
+struct cs_login_button {
+	bool buttonCheck[2];
+	int buttonid;
+	int id;
+};
 
+struct cs_login_info {
+	int buttonid;
+	int id;
+};
 
 #pragma pack(pop)
 

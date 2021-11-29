@@ -64,8 +64,16 @@ static CImage img_Obs_544_96_Up;
 static CImage img_Obs_544_96;
 static CImage img_Obs_320_96;
 
-void LoadImage();
-void LoadImage()
+static CImage img_Select_T;
+//static CImage img_Select_F;
+
+static CImage img_LodingFrogRed;
+static CImage img_LodingFrogBlue;
+
+
+
+void M_LoadImage();
+void M_LoadImage()
 {
 	//id¿‘∑¬√¢
 	img_LoginBG.Load(L"res/LoginBG.png");
@@ -118,4 +126,9 @@ void LoadImage()
 	img_Obs_544_96_Up.Load(L"res/Obs544x96_Up.png");
 	img_Obs_544_96.Load(L"res/Obs544x96.png");
 	img_Obs_320_96.Load(L"res/Obs544x96_Up.png");
+
+	img_Select_T.Load(L"res/Select_T.png");
+
+	img_LodingFrogRed.Load(L"res/Loding_RedMove.png");
+	img_LodingFrogBlue.Load(L"res/Loding_BlueMove.png");
 }

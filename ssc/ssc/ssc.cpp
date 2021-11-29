@@ -58,6 +58,15 @@ int MonsterEndSize = FirstMonsterSize;
 int ObstacleStartSzie = 0;
 int ObstacleEndSize = FirstObstacleSize;
 
+bool LoginCheck[2];
+
+
+bool buttonCheck[2];
+int buttonid;
+
+sc_login_button login_button[2];
+sc_login_info login_info;
+cs_packet_login login;
 int main()
 {
 
@@ -223,15 +232,59 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 	int retval;
 
+	int loginClient = 0;
 	// hero.id 송신
 	//p_id.id = 
 	p_id.id = Client_Count;
 	cout << Client_Count << endl;
-	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 
+	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);	
 
+	//while (1) {
+	//	//cout << " 받을 준비~" << endl;
+	//	recvn(clientSock, (char*)&login_info, sizeof(login_info), 0);
+	//	
+	//	login_button[login_info.id].buttonCheck[login_info.buttonid] = true;
+	//	login_button[(login_info.id +1) %2].buttonCheck[login_info.buttonid] = true;
+
+	//	send(clientSock,(char*)buttonCheck, sizeof(buttonCheck), 0);
+	//	if(buttonid != -1)buttonCheck[buttonid] = true;
+
+	//	//send(clientSock, (char*)&buttonid, sizeof(buttonid), 0);
+
+	//	
+	////	cout << "send" << endl;
+	//	
+	//	/*int check = 0;
+	//	for (int i = 0; i < 2; ++i) {
+	//		if (buttonCheck[i]) check++;
+	//	}
+	//	if (check == 2) {
+
+	//		break;
+	//	}
+	//	else check = 0;*/
+	//	
+	//}
+	cout << "준비완료" << endl;
+	recvn(clientSock, (char*)&login, sizeof(login), 0);
+	LoginCheck[login.id] = true;
+	
+	//로그인 두개다 들어왔을때까지 기달.
+	while (1) {
+		int check = 0;
+		for (int i = 0; i < 2; ++i) {
+			if (LoginCheck[i]) check++;
+		}
+		if (check == 2) {
+			
+			break;
+		}
+		else check = 0;
+	}
 	
 	while (1) {
+
 	    int StartTime = (int)GetTickCount64();
 		while ((GetTickCount64() - StartTime) <= 10){ }
 		{

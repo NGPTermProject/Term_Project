@@ -38,7 +38,8 @@ LARGE_INTEGER g_tTime;
 float         g_fDeltaTime;
 
 int stage = 0;  //0이면 로그인 화면
-short MyId;
+int MyId;
+int hostId;
 //////////////////////////
 // 로그인 화면에서 키보드 입력하면 id창에 입력
 // id창에 글자가 있을때 엔터 누르면(서버에 송신) 게임 시작
@@ -71,7 +72,17 @@ int SecondMonsterSize = 9;
 int FirstObstacleSize = 2;
 int SecondObstacleSize = 5;
 
+bool isConnect = false;
 
+int RedAnim = 0;
+int BlueAnim = 0;
+
+int button = -1;
+bool buttonCheck[2];
+bool isClick;
+cs_packet_login login;
+cs_login_button login_button;
+cs_login_info login_info;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 #ifdef NETWORK
@@ -142,13 +153,19 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 
 	//PlayerID 전달.
 	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
-	MyId = id.id;
+	hostId = id.id;
 	keyinfo.id = id.id;
-	cout << MyId << endl;
+	login_button.id = hostId;
+	if (hostId == 0) {
+		cout << "호스트입니당" << endl;
+	}
+	cout << hostId << endl;
+
+
 
 	int StartTime;
 	while (1) {
-	
+		cout << "come" << endl;
 		StartTime = GetTickCount64();
 
 
@@ -218,8 +235,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	// 물리
 	static LARGE_INTEGER tTime;
 	static int block_count;
-
 	
+	static HBITMAP buttonBitmap;
+	static HWND Button1;
+	static HWND Button2;
 	RECT rect = { 675, 450, 825, 465 }; // 글을 쓸 공간 지정
 
 
@@ -254,8 +273,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 				else if (retval == 0)
 					break;
+				cout << "?" << endl;
+
 #endif
-				stage = 1;
+				//stage = 1;
+				//send()
+				WideCharToMultiByte(CP_ACP, 0, str, str_len, login.name, 256, NULL, NULL);
+				login.id = MyId;
+				//send(sock, (char*)&login, sizeof(login), 0);
+				//recvn()
 			}
 		}
 		else
@@ -263,6 +289,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
 			str[str_len] = (TCHAR)wParam;
 			str[str_len + 1] = 0;
+			InvalidateRect(hWnd, NULL, false);
+
 		}
 		break;
 		}
@@ -277,7 +305,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		_tfreopen(_T("CONERR$"), _T("w"), stderr);
 		//
 
-		LoadImage();
+		M_LoadImage();
+
+		buttonBitmap = (HBITMAP)LoadImage(NULL, TEXT("res/frogButtontest.bmp"), IMAGE_BITMAP,
+			0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE);
+		Button1 = CreateWindow(L"button", L"PressToPlay",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_BITMAP,
+			385, 350, 200, 43, hWnd, (HMENU)1, g_hInst, NULL);
+		SendMessage(Button1, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)buttonBitmap);
+		Button2 = CreateWindow(L"button", L"PressToPlay",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_BITMAP,
+			885, 350, 200, 43, hWnd, (HMENU)2, g_hInst, NULL);
+		SendMessage(Button2, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)buttonBitmap);
+
 
 		p.push_back(Player(200 , 600, 0));
 		p.push_back(Player(400 , 600, 1));
@@ -372,10 +412,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));
 		m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 576, -100));
 
-		//Timer::Reset();
+
 		SetTimer(hWnd, 1, 10, NULL);
+
+		//Timer::Reset();
+		//SetTimer(hWnd, 1, 10, NULL);
 		//
 		//InitClient();
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case 1:
+			login_button.buttonid = 0;
+			//send(sock, (char*)&button, sizeof(button), 0);
+			//recvn(sock, (char*)&buttonCheck, sizeof(buttonCheck), 0);
+			//if (!buttonCheck[button]) {
+			//	MyId = 0;
+			//	cout << "성공" << endl;
+			//}
+			//else
+			//	cout << "이미 먹혓어요 ㅠ" << endl;
+
+			break;
+
+
+		case 2:
+			login_button.buttonid = 1;
+			//send(sock, (char*)&button, sizeof(button), 0);
+			//recvn(sock, (char*)&buttonCheck, sizeof(buttonCheck), 0);
+			//if (!buttonCheck[button]) {
+			//	MyId = 1;
+			//	cout << "성공" << endl;
+			//}
+			//else
+			//	cout << "이미 먹혓어요 ㅠ" << endl;
+
+			break;
+		}
 		break;
 
 	case WM_TIMER:
@@ -383,10 +457,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case 1:
 			//int StartTime;
-
-			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
-			keyinfo.isClick = false;
-
+			
+			if (isConnect) {
+				send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+				keyinfo.isClick = false;
+			}
 			//StartTime = GetTickCount64();
 			//while (GetTickCount64() - StartTime <= 10) {}
 			/*send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
@@ -395,6 +470,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			for (int i = 0; i < 2; ++i)
 				p[i].animation();
+
+			if (stage == 0) {
+				RedAnim += 64;
+				if (RedAnim >= 768)
+					RedAnim = 0;
+				BlueAnim += 64;
+				if (BlueAnim >= 768)
+					BlueAnim = 0;
+			}
 
 			if (stage == 1) {
 				for (int i = 0; i < FirstMonsterSize; ++i) {
@@ -502,11 +586,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		if (stage == 0) {
 			img_LoginBG.Draw(memdc1, 0, 0, Window_Size_X, Window_Size_Y, 0, 0, img_Loginbg_width, img_Loginbg_height);
-			img_Login.Draw(memdc1, 675, 320, 150, 15);  //아이디 입력 창
-			RECT rect = { 685, 320, 835, 465 }; // 글을 쓸 공간 지정
-			DrawText(memdc1, str, -1, &rect, DT_VCENTER | DT_WORDBREAK);
-			RECT r = { 590, 320,740,465 };
-			DrawText(memdc1, L"ID: ", -1, &r, DT_CENTER | DT_VCENTER);
+			//img_Login.Draw(memdc1, 675, 320, 150, 15);  //아이디 입력 창
+			img_Select_T.Draw(memdc1, 400, 480, 200, 37);
+			img_Select_T.Draw(memdc1, 900, 480, 200, 37);
+
+			//RECT rect = { 685, 320, 835, 465 }; // 글을 쓸 공간 지정
+			//DrawText(memdc1, str, -1, &rect, DT_VCENTER | DT_WORDBREAK);
+			//RECT r = { 590, 320,740,465 };
+			//DrawText(memdc1, L"ID: ", -1, &r, DT_CENTER | DT_VCENTER);
+			//player_idle.Draw(hdc, pos.x - imageSizeX / 2, pos.y - imageSizeY / 2, imageSizeX, imageSizeY, anim, dir, imageSizeX, imageSizeY);
+			img_LodingFrogRed.Draw(memdc1, 460, 570, 64, 64, RedAnim, 0, 64, 64);
+			img_LodingFrogBlue.Draw(memdc1, 960, 565, 64, 64, BlueAnim, 64, 64, 64);
+
 		}
 		else {
 
