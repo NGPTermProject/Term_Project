@@ -159,10 +159,11 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 		StartTime = GetTickCount64();
 
 
-		while (GetTickCount64() - StartTime <= 1) { }
+		while (GetTickCount64() - StartTime <= 10) { }
 		{
 
-
+			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			keyinfo.isClick = false;
 
 
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
@@ -342,8 +343,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case 1:
 			//int StartTime;
-			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
-			keyinfo.isClick = false;
+
 
 			//StartTime = GetTickCount64();
 			//while (GetTickCount64() - StartTime <= 10) {}
