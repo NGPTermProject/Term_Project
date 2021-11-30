@@ -176,6 +176,13 @@ struct cs_login_info {
 	int id;
 };
 
+
+struct cs_start_game {
+	bool gamestart;
+	int stage;
+};
+
+
 #pragma pack(pop)
 
 

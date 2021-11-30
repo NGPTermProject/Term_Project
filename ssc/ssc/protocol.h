@@ -157,9 +157,9 @@ struct sc_login_button {
 	int id;
 };
 
-struct sc_login_info {
-	int buttonid;
-	int id;
+struct sc_start_game {
+	bool gamestart;
+	int stage;
 };
 
 

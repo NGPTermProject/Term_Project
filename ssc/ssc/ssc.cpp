@@ -65,8 +65,10 @@ bool buttonCheck[2];
 int buttonid;
 
 sc_login_button login_button[2];
-sc_login_info login_info;
+sc_start_game stage_game_info;
 cs_packet_login login;
+
+bool GameStart;
 int main()
 {
 
@@ -191,7 +193,7 @@ int main()
 
 	InitializeCriticalSection(&cs);
 
-	SOCKET client_sock;
+	SOCKET clientSock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 	
@@ -201,10 +203,10 @@ int main()
 	{
 		//accept()
 		addrlen = sizeof(clientaddr);
-		client_sock = accept(server_socket, (SOCKADDR*)&clientaddr, &addrlen);
-		setsockopt(client_sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
+		clientSock = accept(server_socket, (SOCKADDR*)&clientaddr, &addrlen);
+		setsockopt(clientSock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
 
-		if (client_sock == INVALID_SOCKET) {
+		if (clientSock == INVALID_SOCKET) {
 			//err_display("accept()");
 			std::cout << "!!!" << std::endl;
 		}
@@ -213,12 +215,12 @@ int main()
 	
 		Client_Count++;
 
-		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)client_sock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
+		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)clientSock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
 
 	}
 	DeleteCriticalSection(&cs);
-	
 	closesocket(server_socket);
+	
 	
 	WSACleanup();
 	
@@ -235,10 +237,48 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 	int loginClient = 0;
 	// hero.id 송신
 	//p_id.id = 
+	loginClient = Client_Count;
 	p_id.id = Client_Count;
-	cout << Client_Count << endl;
 
-	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);	
+	while (1) {
+		cout << Client_Count << endl;
+		if (Client_Count == 1) {
+			if (p_id.id == 0) {
+				p_id.id = 1;
+				send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+				break;
+			}
+			else {
+				send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+				break;
+			}
+		}
+		else
+			send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+
+	}
+
+	
+	//호스트인경우
+	if (loginClient == 0) {
+		recvn(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+		if (p_id.id == 3) {
+			stage_game_info.gamestart= true;
+			stage_game_info.stage = 1;
+			cout << "TRUE" << endl;
+		}
+	}
+	//시작 대기
+	while (1) {
+		if (stage_game_info.gamestart) {
+			cout << loginClient << "클라이언트 시작!" << endl;
+			break;
+		}
+	}
+
+	send(clientSock, (char*)&stage_game_info, sizeof(sc_start_game), 0);
+	
+	//recvn(clientSock, (char*)&);
 
 	//while (1) {
 	//	//cout << " 받을 준비~" << endl;
@@ -266,22 +306,24 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 	//	else check = 0;*/
 	//	
 	//}
-	cout << "준비완료" << endl;
-	recvn(clientSock, (char*)&login, sizeof(login), 0);
-	LoginCheck[login.id] = true;
-	
-	//로그인 두개다 들어왔을때까지 기달.
-	while (1) {
-		int check = 0;
-		for (int i = 0; i < 2; ++i) {
-			if (LoginCheck[i]) check++;
-		}
-		if (check == 2) {
-			
-			break;
-		}
-		else check = 0;
-	}
+
+
+	//cout << "준비완료" << endl;
+	//recvn(clientSock, (char*)&login, sizeof(login), 0);
+	//LoginCheck[login.id] = true;
+	//cout << "Check" << endl;
+	////로그인 두개다 들어왔을때까지 기달.
+	//while (1) {
+	//	int check = 0;
+	//	for (int i = 0; i < 2; ++i) {
+	//		if (LoginCheck[i]) check++;
+	//	}
+	//	if (check == 2) {
+	//		
+	//		break;
+	//	}
+	//	else check = 0;
+	//}
 	
 	while (1) {
 
@@ -457,7 +499,11 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
+
+
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
+			
+			
 			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
 
 			//초기화

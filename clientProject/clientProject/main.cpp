@@ -83,6 +83,10 @@ bool isClick;
 cs_packet_login login;
 cs_login_button login_button;
 cs_login_info login_info;
+cs_start_game start_game_info;
+bool EnterOtherPlayer;
+
+bool GameStart;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 #ifdef NETWORK
@@ -114,9 +118,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		NULL, (HMENU)NULL,
 		hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
+	CreateThread(NULL, 0, Recv_Thread, NULL, 0, NULL);
 	UpdateWindow(hWnd);
 
-	CreateThread(NULL, 0, Recv_Thread, NULL, 0, NULL);
 
 	while (GetMessage(&Message, 0, 0, 0)) {
 		TranslateMessage(&Message);
@@ -149,26 +153,53 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
+	hostId = -1;
+
+	while (1) {
+		//PlayerID 전달.
+		recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
+		if (id.id == 1) {
+			EnterOtherPlayer = true;
+			break;
+		}
+		cout << id.id << endl;
+		hostId = id.id;
+		keyinfo.id = id.id;
+		login_button.id = hostId;
+	}
 
 
-	//PlayerID 전달.
-	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
-	hostId = id.id;
-	keyinfo.id = id.id;
-	login_button.id = hostId;
 	if (hostId == 0) {
 		cout << "호스트입니당" << endl;
+
+	}
+	if (hostId == -1) {
+		cout << "팀원입니당" << endl;
+		hostId = 1;
+		keyinfo.id = 1;
+		login_button.id = 1;
 	}
 	cout << hostId << endl;
+	
+	cout << "리시브 받기전" << endl;
+	recvn(sock, (char*)&start_game_info, sizeof(cs_start_game), 0);
+	cout << "게임시작" << endl;
+	if (start_game_info.gamestart) {
+		cout << "게임시작" << endl;
+		stage = start_game_info.stage;
+		isConnect = true;
+	}
+	else {
+		cout << "오류 오류 큰일 큰일" << endl;
+	}
 
+	
+	//------------------------------//
 
 
 	int StartTime;
 	while (1) {
-		cout << "come" << endl;
 		StartTime = GetTickCount64();
-
-
 		while (GetTickCount64() - StartTime <= 1) { }
 		{	
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
@@ -202,13 +233,10 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 				}
 			}
 
-
 			recvn(sock, (char*)&bullet, sizeof(bullet), 0);
 			for (int i = 0; i < 15; ++i) {
 				m_bullet[i].getBulletInfo(bullet[i]);
 			}
-	
-
 		}
 
 
@@ -307,16 +335,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		M_LoadImage();
 
-		buttonBitmap = (HBITMAP)LoadImage(NULL, TEXT("res/frogButtontest.bmp"), IMAGE_BITMAP,
-			0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE);
-		Button1 = CreateWindow(L"button", L"PressToPlay",
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_BITMAP,
-			385, 350, 200, 43, hWnd, (HMENU)1, g_hInst, NULL);
-		SendMessage(Button1, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)buttonBitmap);
-		Button2 = CreateWindow(L"button", L"PressToPlay",
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_BITMAP,
-			885, 350, 200, 43, hWnd, (HMENU)2, g_hInst, NULL);
-		SendMessage(Button2, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)buttonBitmap);
+
+		//Button2 = CreateWindow(L"button", L"PressToPlay",
+		//	WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_BITMAP,
+		//	885, 350, 200, 43, hWnd, (HMENU)2, g_hInst, NULL);
+		//SendMessage(Button2, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)buttonBitmap);
 
 
 		p.push_back(Player(200 , 600, 0));
@@ -419,12 +442,25 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//SetTimer(hWnd, 1, 10, NULL);
 		//
 		//InitClient();
+
+
+			buttonBitmap = (HBITMAP)LoadImage(NULL, TEXT("res/frogButtonStrat.bmp"), IMAGE_BITMAP,
+				0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE);
+			Button1 = CreateWindow(L"button", L"PressToPlay",
+				WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_BITMAP,
+				620, 350, 200, 43, hWnd, (HMENU)1, g_hInst, NULL);
+			SendMessage(Button1, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)buttonBitmap);
+		
 		break;
 	case WM_COMMAND:
 		switch (LOWORD(wParam))
 		{
 		case 1:
-			login_button.buttonid = 0;
+			//recvn(sock, (char*)&p_info, sizeof(p_info), 0);
+			id.id = 3;
+			send(sock, (char*)&id, sizeof(cs_send_player_id), 0);
+			DestroyWindow(Button1);
+			//login_button.buttonid = 0;
 			//send(sock, (char*)&button, sizeof(button), 0);
 			//recvn(sock, (char*)&buttonCheck, sizeof(buttonCheck), 0);
 			//if (!buttonCheck[button]) {
@@ -438,7 +474,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 		case 2:
-			login_button.buttonid = 1;
+			//login_button.buttonid = 1;
 			//send(sock, (char*)&button, sizeof(button), 0);
 			//recvn(sock, (char*)&buttonCheck, sizeof(buttonCheck), 0);
 			//if (!buttonCheck[button]) {
@@ -457,7 +493,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case 1:
 			//int StartTime;
-			
+			if (hostId == 1) {
+				DestroyWindow(Button1);
+			}
 			if (isConnect) {
 				send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 				keyinfo.isClick = false;
@@ -475,9 +513,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				RedAnim += 64;
 				if (RedAnim >= 768)
 					RedAnim = 0;
-				BlueAnim += 64;
-				if (BlueAnim >= 768)
-					BlueAnim = 0;
+
+				if (EnterOtherPlayer) {
+					BlueAnim += 64;
+					if (BlueAnim >= 768)
+						BlueAnim = 0;
+				}
 			}
 
 			if (stage == 1) {
@@ -587,8 +628,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (stage == 0) {
 			img_LoginBG.Draw(memdc1, 0, 0, Window_Size_X, Window_Size_Y, 0, 0, img_Loginbg_width, img_Loginbg_height);
 			//img_Login.Draw(memdc1, 675, 320, 150, 15);  //아이디 입력 창
-			img_Select_T.Draw(memdc1, 400, 480, 200, 37);
-			img_Select_T.Draw(memdc1, 900, 480, 200, 37);
+		
 
 			//RECT rect = { 685, 320, 835, 465 }; // 글을 쓸 공간 지정
 			//DrawText(memdc1, str, -1, &rect, DT_VCENTER | DT_WORDBREAK);
