@@ -220,8 +220,20 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			if (put.isClick) {
 				m_map.push_back(Map(MAP::PLAT, put.x, put.y));
 			}
-			for (int i = 0; i < 2; ++i)
-				m_static_map[i].setState(put.isPush[i]);
+
+			if (stage == 1) {
+				for (int i = 0; i < 2; ++i)
+					m_static_map[i].setState(put.isPush[i]);
+			}
+			if (stage == 2) {
+				for (int i = FirstMapSize; i < FirstMapSize+2; ++i)
+					m_static_map[i].setState(put.isPush[i%2]);
+			}
+			if (stage == 2) {
+				for (int i = SecondMapSize; i < SecondMapSize+2; ++i)
+					m_static_map[i].setState(put.isPush[i%2]);
+			}
+			
 			if (put.AttackMonsterId != -1) {
 				m_monster[put.AttackMonsterId].Attack();
 
@@ -237,6 +249,8 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			for (int i = 0; i < 15; ++i) {
 				m_bullet[i].getBulletInfo(bullet[i]);
 			}
+
+			recvn(sock, (char*)&stage, sizeof(stage),0);
 		}
 
 
@@ -406,9 +420,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//first
 
 		m_monster.push_back(Monster(MONSTER::RPLANT, 250, 307));
-		m_monster.push_back(Monster(MONSTER::TREE, 1392, 180));
-		m_monster.push_back(Monster(MONSTER::TREE, 1392, 480));
-		m_monster.push_back(Monster(MONSTER::TREE, 1392, 780));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 180));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 480));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
 		m_monster.push_back(Monster(MONSTER::PIG, 500, 520));
 		//second
 
@@ -436,7 +450,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 576, -100));
 
 
-		SetTimer(hWnd, 1, 10, NULL);
+		SetTimer(hWnd, 1, 1, NULL);
 
 		//Timer::Reset();
 		//SetTimer(hWnd, 1, 10, NULL);
@@ -494,11 +508,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case 1:
 			//int StartTime;
 			if (hostId == 1) {
-				DestroyWindow(Button1);
+				if(Button1)DestroyWindow(Button1);
 			}
 			if (isConnect) {
 				send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 				keyinfo.isClick = false;
+				keyinfo.jump = false;
+
 			}
 			//StartTime = GetTickCount64();
 			//while (GetTickCount64() - StartTime <= 10) {}

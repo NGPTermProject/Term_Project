@@ -13,6 +13,7 @@ using namespace std;
 
 
 //Server server;
+void InitGameObject();
 
 void err_display(int err_num);
 void err_quit(const char* msg);
@@ -42,6 +43,10 @@ bool c_right[2];
 sc_put_object put[2];
 sc_button sc_b;
 
+int MapSize[3] = { 7,15,0 };
+int MonsterSize[3] = { 4,9,0 };
+int ObstacleSize[3] = { 2,5,0 };
+
 int FirstMapSize = 7;
 int SecondMapSize = 15;
 int FirstMonsterSize = 4;
@@ -67,104 +72,20 @@ int buttonid;
 sc_login_button login_button[2];
 sc_start_game stage_game_info;
 cs_packet_login login;
-
 bool GameStart;
+
+int Current_Stage = 1;
+int Next_Stage = 1;
+
+bool changestage[2]; 
+
 int main()
 {
 
-	//server.InitServer();
-	player.push_back(Player(200, 600, 0));
-	player.push_back(Player(400 , 600, 1));
-	//m_static_map.push_back(Map(MAP::BUTTON, 200, 120));
-	//m_static_map.push_back(Map(MAP::BUTTON, 1100, 120));
-	//m_static_map.push_back(Map(MAP::PLAT, 200, 150));
-	//m_static_map.push_back(Map(MAP::PLAT, 1100, 150));
-	//m_static_map.push_back(Map(MAP::PLAT, 500, 150));
-
-
-	//m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
-	//m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
-	//sc_obs[0].x = 100;
-	//sc_obs[0].y = 500;
-	//sc_obs[1].x = 300;
-	//sc_obs[1].y = 500;
-
-
-	//m_monster.push_back(Monster(MONSTER::PLANT, 200, 100 ,100));
-	//m_monster.push_back(Monster(MONSTER::PIG, 500, 100 , 350));
-	m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
-	m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
-	m_static_map.push_back(Map(MAP::PLAT, 48, 374));
-	m_static_map.push_back(Map(MAP::PLAT, 1392, 374));
-	m_static_map.push_back(Map(MAP::PLAT, 48, 566));
-	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
-	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
-	//first
-
-	m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
-	m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
-	m_static_map.push_back(Map(MAP::PLAT, 500, 550));
-	m_static_map.push_back(Map(MAP::PLAT, 288, 150));
-	m_static_map.push_back(Map(MAP::PLAT, 432, 342));
-	m_static_map.push_back(Map(MAP::PLAT, 1392, 510));
-	m_static_map.push_back(Map(MAP::PLAT, 1392, 210));
-	m_static_map.push_back(Map(MAP::LONG, 432, 342));
-	//second
-
-	m_static_map.push_back(Map(MAP::BUTTON, 1392, 24));
-	m_static_map.push_back(Map(MAP::BUTTON, 1296, 664));
-	m_static_map.push_back(Map(MAP::PLAT, 480, 374));
-	m_static_map.push_back(Map(MAP::PLAT, 576, 374));
-	m_static_map.push_back(Map(MAP::PLAT, 384, 374));
-	m_static_map.push_back(Map(MAP::PLAT, 48, 598));
-	m_static_map.push_back(Map(MAP::PLAT, 336, 502));
-	m_static_map.push_back(Map(MAP::PLAT, 624, 758));
-	m_static_map.push_back(Map(MAP::PLAT, 816, 310));
-	m_static_map.push_back(Map(MAP::PLAT, 1080, 726));
-	m_static_map.push_back(Map(MAP::PLAT, 1200, 726));
-	m_static_map.push_back(Map(MAP::PLAT, 1296, 694));
-	m_static_map.push_back(Map(MAP::PLAT, 1104, 54));
-	m_static_map.push_back(Map(MAP::PLAT, 1392, 54));
-	m_static_map.push_back(Map(MAP::PLAT, 1392, 434));
-
-
-	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775,5000));
-	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 531, 5000));
-	m_monster.push_back(Monster(MONSTER::PIG, 432, 184, 5000));
-	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184, 5000));
-	//first
-
-	m_monster.push_back(Monster(MONSTER::RPLANT, 250, 307, 5000));
-	m_monster.push_back(Monster(MONSTER::TREE, 1392, 180, 5000));
-	m_monster.push_back(Monster(MONSTER::TREE, 1392, 480, 5000));
-	m_monster.push_back(Monster(MONSTER::TREE, 1392, 780, 5000));
-	m_monster.push_back(Monster(MONSTER::PIG, 500, 520, 5000));
-	//second
-
-	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 563, 5000));
-	m_monster.push_back(Monster(MONSTER::TREE, 1392, 404, 5000));
-	m_monster.push_back(Monster(MONSTER::RPLANT, 336, 467, 5000));
-	m_monster.push_back(Monster(MONSTER::PIG, 624, 728, 5000));
-	m_monster.push_back(Monster(MONSTER::PIG, 816, 280, 5000));
-	m_monster.push_back(Monster(MONSTER::PIG, 1080, 696, 5000));
-	m_monster.push_back(Monster(MONSTER::PIG, 1200, 696, 5000));
-
-
-
-	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
-	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
-	//first
-
-	m_obstacle.push_back(Obstacle(OBSTACLE::MIDDLE_UP, 912, 406));
-	m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 280));
-	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 432, 402));
-	//second
-
-	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 300, 800));
-	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));
-	m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 576, -100));
-
-
+	InitGameObject();
+	MapSize[2] = m_static_map.size();
+	MonsterSize[2] = m_monster.size();
+	ObstacleSize[2] = m_obstacle.size();
 
 	WSADATA wsa;
 	SOCKADDR_IN sock_addr;
@@ -240,6 +161,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 	loginClient = Client_Count;
 	p_id.id = Client_Count;
 
+	int cool = 0;
+
 	while (1) {
 		cout << Client_Count << endl;
 		if (Client_Count == 1) {
@@ -278,58 +201,13 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 	send(clientSock, (char*)&stage_game_info, sizeof(sc_start_game), 0);
 	
-	//recvn(clientSock, (char*)&);
 
-	//while (1) {
-	//	//cout << " 받을 준비~" << endl;
-	//	recvn(clientSock, (char*)&login_info, sizeof(login_info), 0);
-	//	
-	//	login_button[login_info.id].buttonCheck[login_info.buttonid] = true;
-	//	login_button[(login_info.id +1) %2].buttonCheck[login_info.buttonid] = true;
-
-	//	send(clientSock,(char*)buttonCheck, sizeof(buttonCheck), 0);
-	//	if(buttonid != -1)buttonCheck[buttonid] = true;
-
-	//	//send(clientSock, (char*)&buttonid, sizeof(buttonid), 0);
-
-	//	
-	////	cout << "send" << endl;
-	//	
-	//	/*int check = 0;
-	//	for (int i = 0; i < 2; ++i) {
-	//		if (buttonCheck[i]) check++;
-	//	}
-	//	if (check == 2) {
-
-	//		break;
-	//	}
-	//	else check = 0;*/
-	//	
-	//}
-
-
-	//cout << "준비완료" << endl;
-	//recvn(clientSock, (char*)&login, sizeof(login), 0);
-	//LoginCheck[login.id] = true;
-	//cout << "Check" << endl;
-	////로그인 두개다 들어왔을때까지 기달.
-	//while (1) {
-	//	int check = 0;
-	//	for (int i = 0; i < 2; ++i) {
-	//		if (LoginCheck[i]) check++;
-	//	}
-	//	if (check == 2) {
-	//		
-	//		break;
-	//	}
-	//	else check = 0;
-	//}
-	
 	while (1) {
 
 	    int StartTime = (int)GetTickCount64();
 		while ((GetTickCount64() - StartTime) <= 10){ }
 		{
+			cool++;
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			if (keyinfo.isClick) {
 				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
@@ -366,21 +244,26 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					}
 				}
 
-				for (int i = 0; i < 2; ++i) {
+				for (int i = MapStartSize; i < MapStartSize + 2; ++i) {
 					// 플레이어 버른 누름
 					if (player[client_id].FallingCollsionOtherObject(m_static_map[i]))
 					{
 						player[client_id].setPlayerRanding(m_static_map[i].y - 16);
 						m_static_map[i].setState(true);
 
-						if (put[client_id].isPush[i] == put[(client_id + 1) % 2].isPush[i]) {
+						if (put[client_id].isPush[i % 2] == put[(client_id + 1) % 2].isPush[i % 2]) {
 							EnterCriticalSection(&cs);
-							put[client_id].isPush[i] = true;
-							put[(client_id + 1) % 2].isPush[i] = true;
+							put[client_id].isPush[i % 2] = true;
+							put[(client_id + 1) % 2].isPush[i % 2] = true;
 							LeaveCriticalSection(&cs);
 							//다음스테이지
-							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2])
-								cout << "NextStage" << endl;
+							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2]) {
+								if (Current_Stage == Next_Stage && m_map.size() != 0) {
+									Next_Stage++;
+									cool = 0;
+									cout << "Stage:" << Next_Stage << endl;
+								}
+							}
 						}
 						check++;
 					}
@@ -497,14 +380,33 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			//클라이언트에 전달하기 위한 패킷에 플레이어 정보 전달.
 			player[client_id].setPlayerInfo(sc_p[client_id]);
 
+
+
+			if (Current_Stage != Next_Stage) {
+				EnterCriticalSection(&cs);
+				Current_Stage++;
+				MapStartSize = MapSize[Current_Stage - 2];
+				MapEndSize = MapSize[Current_Stage - 1];
+
+				MonsterStartSize = MonsterSize[Current_Stage - 2];
+				MonsterEndSize = MonsterSize[Current_Stage - 1];
+
+				ObstacleStartSzie = ObstacleSize[Current_Stage - 2];
+				ObstacleEndSize = ObstacleSize[Current_Stage - 1];
+				m_map.clear();
+				for (int i = 0; i < 2; ++i) {
+					put[client_id].isPush[i] = false;
+					put[(client_id +1 )%2].isPush[i] = false;
+				}
+				LeaveCriticalSection(&cs);
+			}
+
+
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
-
-
-			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
-			
-			
+			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);			
 			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
+			send(clientSock, (char*)&Current_Stage, sizeof(Current_Stage), 0);
 
 			//초기화
 			for (int i = 0; i < 2; ++i) {
@@ -571,5 +473,86 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 	}
 
 	return (len - left);
+
+}
+
+
+void InitGameObject()
+{
+	//server.InitServer();
+	player.push_back(Player(200, 600, 0));
+	player.push_back(Player(400, 600, 1));
+
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
+	m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 566));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
+	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
+	//first
+
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
+	m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
+	m_static_map.push_back(Map(MAP::PLAT, 500, 550));
+	m_static_map.push_back(Map(MAP::PLAT, 288, 150));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 342));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 510));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 210));
+	m_static_map.push_back(Map(MAP::LONG, 432, 342));
+	//second
+
+	m_static_map.push_back(Map(MAP::BUTTON, 1392, 24));
+	m_static_map.push_back(Map(MAP::BUTTON, 1296, 664));
+	m_static_map.push_back(Map(MAP::PLAT, 480, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 576, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 384, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 598));
+	m_static_map.push_back(Map(MAP::PLAT, 336, 502));
+	m_static_map.push_back(Map(MAP::PLAT, 624, 758));
+	m_static_map.push_back(Map(MAP::PLAT, 816, 310));
+	m_static_map.push_back(Map(MAP::PLAT, 1080, 726));
+	m_static_map.push_back(Map(MAP::PLAT, 1200, 726));
+	m_static_map.push_back(Map(MAP::PLAT, 1296, 694));
+	m_static_map.push_back(Map(MAP::PLAT, 1104, 54));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 54));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 434));
+
+
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775, 500));
+	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 531, 500));
+	m_monster.push_back(Monster(MONSTER::PIG, 432, 184, 3000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184, 3000));
+	//first
+
+	m_monster.push_back(Monster(MONSTER::RPLANT, 250, 307, 5000));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 180, 5000));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 480, 5000));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 500, 520, 5000));
+	//second
+
+	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 563, 5000));
+	m_monster.push_back(Monster(MONSTER::TREE, 1392, 404, 5000));
+	m_monster.push_back(Monster(MONSTER::RPLANT, 336, 467, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 624, 728, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 816, 280, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1080, 696, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1200, 696, 5000));
+
+
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
+	//first
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::MIDDLE_UP, 912, 406));
+	m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 280));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 432, 402));
+	//second
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 300, 800));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 576, -100));
 
 }
