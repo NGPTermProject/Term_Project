@@ -467,7 +467,7 @@ public:
 		 pos.setPos(x, y);
 		 velY = 0;
 	 }
-	 int getJumpCount()
+	 int getJumpCount() const 
 	 {
 		 return jumpCount;
 	 }

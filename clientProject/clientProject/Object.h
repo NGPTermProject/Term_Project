@@ -288,7 +288,7 @@ public:
 	 }
 
 	
-	 void getBulletInfo(cs_bullet bullet) {
+	 void getBulletInfo(sc_bullet bullet) {
 		 x = bullet.x;
 		 y = bullet.y;
 		 type = bullet.type;
@@ -514,7 +514,7 @@ public:
 
 	 }
 
-	 void getPlayerInfo(cs_send_player player)
+	 void getPlayerInfo(sc_send_player player)
 	 {
 		 id = player.id;
 		 state = player.state;

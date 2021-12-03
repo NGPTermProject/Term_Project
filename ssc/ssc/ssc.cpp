@@ -11,8 +11,6 @@
 #include <iostream>
 using namespace std;
 
-
-//Server server;
 void InitGameObject();
 
 void err_display(int err_num);
@@ -48,11 +46,11 @@ int MonsterSize[3] = { 4,9,0 };
 int ObstacleSize[3] = { 2,5,0 };
 
 int FirstMapSize = 7;
-int SecondMapSize = 15;
+int SecondMapSize = FirstMapSize + 8;
 int FirstMonsterSize = 4;
-int SecondMonsterSize = 9;
+int SecondMonsterSize = FirstMonsterSize + 5;
 int FirstObstacleSize = 2;
-int SecondObstacleSize = 5;
+int SecondObstacleSize = FirstObstacleSize + 5;
 
 int MapStartSize = 0;
 int MapEndSize = FirstMapSize;
@@ -65,7 +63,6 @@ int ObstacleEndSize = FirstObstacleSize;
 
 bool LoginCheck[2];
 
-
 bool buttonCheck[2];
 int buttonid;
 
@@ -77,7 +74,7 @@ bool GameStart;
 int Current_Stage = 1;
 int Next_Stage = 1;
 
-bool changestage[2]; 
+bool changestage[2];
 
 int main()
 {
@@ -117,9 +114,9 @@ int main()
 	SOCKET clientSock;
 	SOCKADDR_IN clientaddr;
 	int addrlen;
-	
+
 	bool flag = TRUE;
-	
+
 	while (1)
 	{
 		//accept()
@@ -133,7 +130,7 @@ int main()
 		}
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
 
-	
+
 		Client_Count++;
 
 		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)clientSock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
@@ -141,10 +138,10 @@ int main()
 	}
 	DeleteCriticalSection(&cs);
 	closesocket(server_socket);
-	
-	
+
+
 	WSACleanup();
-	
+
 	return 0;
 }
 
@@ -156,15 +153,13 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 	int retval;
 
 	int loginClient = 0;
-	// hero.id 송신
-	//p_id.id = 
+
 	loginClient = Client_Count;
 	p_id.id = Client_Count;
 
 	int cool = 0;
 
 	while (1) {
-		cout << Client_Count << endl;
 		if (Client_Count == 1) {
 			if (p_id.id == 0) {
 				p_id.id = 1;
@@ -178,36 +173,31 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 		}
 		else
 			send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
-
 	}
 
-	
 	//호스트인경우
 	if (loginClient == 0) {
 		recvn(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 		if (p_id.id == 3) {
-			stage_game_info.gamestart= true;
+			stage_game_info.gamestart = true;
 			stage_game_info.stage = 1;
-			cout << "TRUE" << endl;
 		}
 	}
 	//시작 대기
 	while (1) {
 		if (stage_game_info.gamestart) {
-			cout << loginClient << "클라이언트 시작!" << endl;
 			break;
 		}
 	}
 
 	send(clientSock, (char*)&stage_game_info, sizeof(sc_start_game), 0);
-	
+
 
 	while (1) {
 
-	    int StartTime = (int)GetTickCount64();
-		while ((GetTickCount64() - StartTime) <= 10){ }
+		int StartTime = (int)GetTickCount64();
+		while ((GetTickCount64() - StartTime) <= 10) {}
 		{
-			cool++;
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			if (keyinfo.isClick) {
 				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
@@ -260,17 +250,21 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2]) {
 								if (Current_Stage == Next_Stage && m_map.size() != 0) {
 									Next_Stage++;
-									cool = 0;
-									cout << "Stage:" << Next_Stage << endl;
 								}
 							}
 						}
 						check++;
 					}
+					else if (!player[(client_id + 1) % 2].FallingCollsionOtherObject(m_static_map[i])) {
+						EnterCriticalSection(&cs);
+						put[client_id].isPush[i % 2] = false;
+						put[(client_id + 1) % 2].isPush[i % 2] = false;
+						LeaveCriticalSection(&cs);
+					}
 				}
 
 
-				for (int i = MapStartSize+ 2; i < MapEndSize; ++i) {
+				for (int i = MapStartSize + 2; i < MapEndSize; ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
 
@@ -296,6 +290,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			if (keyinfo.jump == true) {
 				player[client_id].Jump();
 			}
+
 			if (c_left[client_id] == true) {
 				if (player[client_id].getVely() == 0)
 					player[client_id].SwitchState(PLAYER::MOVE);
@@ -315,8 +310,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();
-					sc_obs[i].x = m_obstacle[i].getPosX();
-					sc_obs[i].y = m_obstacle[i].getPosY();
+					sc_obs[i % 2].x = m_obstacle[i].getPosX();
+					sc_obs[i % 2].y = m_obstacle[i].getPosY();
 					LeaveCriticalSection(&cs);
 				}
 				if (player[client_id].CollsionByObstacle(m_obstacle[i])) {
@@ -324,8 +319,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					put[client_id].clear = true;
 					put[(client_id + 1) % 2].clear = true;
 					m_map.clear();
+
 					player[0].setStartLine(200, 600);
 					player[1].setStartLine(400, 600);
+
 					LeaveCriticalSection(&cs);
 				}
 			}
@@ -354,7 +351,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 				}
 				//플레이어와 충돌
-				if (player[client_id].CollsionByObstacle(m_bullet[i])&&m_bullet[i].isColl == false) {
+				if (player[client_id].CollsionByObstacle(m_bullet[i]) && m_bullet[i].isColl == false) {
 					EnterCriticalSection(&cs);
 					put[client_id].clear = true;
 					put[(client_id + 1) % 2].clear = true;
@@ -380,8 +377,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			//클라이언트에 전달하기 위한 패킷에 플레이어 정보 전달.
 			player[client_id].setPlayerInfo(sc_p[client_id]);
 
-
-
 			if (Current_Stage != Next_Stage) {
 				EnterCriticalSection(&cs);
 				Current_Stage++;
@@ -396,7 +391,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				m_map.clear();
 				for (int i = 0; i < 2; ++i) {
 					put[client_id].isPush[i] = false;
-					put[(client_id +1 )%2].isPush[i] = false;
+					put[(client_id + 1) % 2].isPush[i] = false;
 				}
 				LeaveCriticalSection(&cs);
 			}
@@ -404,24 +399,20 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
-			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);			
+			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
 			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
 			send(clientSock, (char*)&Current_Stage, sizeof(Current_Stage), 0);
 
-			//초기화
-			for (int i = 0; i < 2; ++i) {
-				put[client_id].isPush[i] = false;
-
-			}
 			put[client_id].isClick = false;
 			put[client_id].AttackMonsterId = -1;
 			put[client_id].clear = false;
 
 		}
-		
+
 	}
 	return 0;
 }
+
 void err_display(int err_num)
 {
 	std::wcout.imbue(std::locale("Korean"));
@@ -449,7 +440,7 @@ void err_quit(const char* msg)
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPTSTR)&lpmsgbuf, 0, NULL
 	);
-	MessageBox(NULL, (LPCTSTR)lpmsgbuf,(LPCWSTR)msg, MB_ICONERROR);
+	MessageBox(NULL, (LPCTSTR)lpmsgbuf, (LPCWSTR)msg, MB_ICONERROR);
 	LocalFree(lpmsgbuf);
 	exit(-1);
 }
@@ -476,7 +467,6 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 
 }
 
-
 void InitGameObject()
 {
 	//server.InitServer();
@@ -499,7 +489,7 @@ void InitGameObject()
 	m_static_map.push_back(Map(MAP::PLAT, 432, 342));
 	m_static_map.push_back(Map(MAP::PLAT, 1392, 510));
 	m_static_map.push_back(Map(MAP::PLAT, 1392, 210));
-	m_static_map.push_back(Map(MAP::LONG, 432, 342));
+	m_static_map.push_back(Map(MAP::PLAT, 250, 342));
 	//second
 
 	m_static_map.push_back(Map(MAP::BUTTON, 1392, 24));
@@ -546,10 +536,16 @@ void InitGameObject()
 	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
 	//first
 
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 790, 600));
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 288, 150));
+
 	m_obstacle.push_back(Obstacle(OBSTACLE::MIDDLE_UP, 912, 406));
 	m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 280));
 	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 432, 402));
 	//second
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 48, 374));
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 1296, 654));
 
 	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 300, 800));
 	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));

@@ -3,21 +3,6 @@
 const short SERVER_PORT = 9000;
 
 const int  MAX_NAME_SIZE = 20;
-const int  MAX_USER = 10;
-
-const char CS_PACKET_LOGIN = 1;
-const char CS_PACKET_MOVE = 2;
-const char CS_MOUSE_INPUT = 3;
-const char CS_CLOSE_ANIMATION = 4;
-const char CS_PUT_BUTTON = 5; 
-
-const char SC_PACKET_LOGIN_OK = 1;
-const char SC_PACKET_MOVE = 2;
-const char SC_PACKET_PUT_OBJECT = 3;
-const char SC_PACKET_REMOVE_OBJECT = 4;
-const char SC_SET_ANIMATION = 5;
-const char SC_CLEAR_STAGE = 6;
-const char SC_PLAYER_COLLISION = 7;
 
 
 #pragma pack (push, 1)
@@ -149,6 +134,7 @@ struct sc_put_object {
 	bool isPush[2];
 	int AttackMonsterId = -1;
 	bool clear = false ;
+	int Stage;
 };
 
 struct sc_login_button {
