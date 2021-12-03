@@ -233,6 +233,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 						}
 						check++;
 					}
+					else if (!player[(client_id + 1) % 2].FallingCollsionOtherObject(m_static_map[i])) {
+						put[client_id].isPush[i] = false;
+						put[(client_id + 1) % 2].isPush[i] = false;
+					}
 				}
 
 
@@ -448,10 +452,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
 			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
 
-			for (int i = 0; i < 2; ++i) {
-				put[client_id].isPush[i] = false;
+			//for (int i = 0; i < 2; ++i) {
+			//	put[client_id].isPush[i] = false;
 
-			}
+			//}
 			put[client_id].isClick = false;
 			put[client_id].AttackMonsterId = -1;
 
