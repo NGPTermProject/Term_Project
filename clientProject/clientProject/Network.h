@@ -4,8 +4,8 @@
 
 //#define SERVERIP "192.168.143.240"
 //#define SERVERIP "192.168.219.100"
-//#define SERVERIP "192.168.35.46"
-#define SERVERIP "127.0.0.1"
+#define SERVERIP "192.168.35.46"
+//#define SERVERIP "127.0.0.1"
 
 #define SERVERPORT 9000
 #define BUFSIZE 512
