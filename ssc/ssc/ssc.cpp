@@ -151,14 +151,14 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 	SOCKET clientSock = (SOCKET)arg;
 
 	int retval;
-
 	int loginClient = 0;
 
+	//현재 들어온 클라이언트 확인하기 위한 변수 
 	loginClient = Client_Count;
 	p_id.id = Client_Count;
 
-	int cool = 0;
-
+	// Clinet_Count가 1이면 2번째 클라이언트이므로 p_id.id가 1이 전송되어야하는데,
+	// 0으로 전달되는 일을 방지하기 위한 코드 --> 생각해보니 여기에 임계영역을 적용해보는건?
 	while (1) {
 		if (Client_Count == 1) {
 			if (p_id.id == 0) {
@@ -175,7 +175,9 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 	}
 
-	//호스트인경우
+
+	//첫번째 클라이언트만 게임 스타트 버튼을 가지고 있기 때문에
+	//loginClient가 0이면 첫번째 클라이언트의 스레드이고 해당 스레드는 버튼의 send를 기다리며 recv를 받는다.
 	if (loginClient == 0) {
 		recvn(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 		if (p_id.id == 3) {
@@ -183,18 +185,25 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			stage_game_info.stage = 1;
 		}
 	}
-	//시작 대기
+
+	//다른 클라이언트의 스레드는 시작 대기 상태로 들어가야 되기때문에 while문을 돌게된다.
+	//버튼이 눌리면 위에서 리시비를 받고 gamestart가 true 상태로 바뀐 후 탈출 가능하다.
 	while (1) {
 		if (stage_game_info.gamestart) {
 			break;
 		}
 	}
 
+	//게임이 시작됨을 클라이언트에게 알린다.
+	//각 클라이언트에게 게임이 시작됨을 알리고, stage를 1로 바꾸어 게임신으로 입장하게 한다.
 	send(clientSock, (char*)&stage_game_info, sizeof(sc_start_game), 0);
 
 
 	while (1) {
 
+		//1초에 100번씩 일정하게 돌아가기 위한 코드 진행
+		// 현재 시간을 GetTickCount64 함수를통해 StartTime에 저장한뒤,
+		// 현재시간보다 10의 차이가 날떄까지 while문을 진행한 뒤 코드 진행을 시작한다.
 		int StartTime = (int)GetTickCount64();
 		while ((GetTickCount64() - StartTime) <= 10) {}
 		{
@@ -247,6 +256,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 							put[(client_id + 1) % 2].isPush[i % 2] = true;
 							LeaveCriticalSection(&cs);
 							//다음스테이지
+							//다른 클라이언트의 push상태를 확인 후 다음 스테이지 진입 할수 있도록 함.
 							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2]) {
 								if (Current_Stage == Next_Stage && m_map.size() != 0) {
 									Next_Stage++;
