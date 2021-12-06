@@ -1,53 +1,62 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(Term_Project.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(Term_Project.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
   main.cpp
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(50,53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(50,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(52,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(52,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(54,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(54,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(56,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(56,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(58,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(58,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(60,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(60,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(138,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(138,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(140,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(140,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(143,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(143,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(200,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(201,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(234,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(234,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(236,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(236,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(241,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(241,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(243,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(243,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(418,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(418,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(423,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(423,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(427,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(427,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(431,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(431,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(507,50): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(507,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(509,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(509,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(514,51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(514,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(516,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(516,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(539,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\Object.h(539,24): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\main.cpp(90,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\source\repos\clientProject\clientProject\main.cpp(148,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\82109\source\repos\clientProject\clientProject\main.cpp(148,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\82109\source\repos\clientProject\clientProject\main.cpp(147,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
-  clientProject.vcxproj -> C:\Users\82109\source\repos\clientProject\x64\Debug\clientProject.exe
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(52,53): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(52,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(54,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(54,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(56,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(56,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(58,55): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(58,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(60,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(60,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(62,52): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(62,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(140,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(140,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(142,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(142,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(145,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(145,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(210,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(211,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(248,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(248,32): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(250,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(250,27): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(255,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(255,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(257,37): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(257,29): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(449,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(449,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(451,58): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(451,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(458,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(458,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(460,59): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(460,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(466,57): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(466,33): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(468,59): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(468,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(474,58): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(474,34): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(476,59): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(476,35): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(577,50): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(577,42): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(579,48): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(579,40): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(584,51): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(584,43): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(586,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(586,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(590,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\Object.h(590,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(129,19): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(204,35): warning C4244: '=': 'ULONGLONG'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(288,20): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(288,12): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\clientProject\main.cpp(287,23): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
+  clientProject.vcxproj -> C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\clientProject\x64\Debug\clientProject.exe
