@@ -21,7 +21,7 @@ Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
 Bullet m_bullet[20];
-
+sc_put put[2];
 vector<Obstacle> m_obstacle;
 
 HANDLE hThread;
@@ -36,7 +36,6 @@ CRITICAL_SECTION cs;
 short client_id;
 bool c_left[2];
 bool c_right[2];
-sc_update put[2];
 
 int MapSize[3] = { 7,15,0 };
 int MonsterSize[3] = { 4,9,0 };
@@ -63,6 +62,8 @@ bool GameStart;
 
 int Current_Stage = 1;
 int Next_Stage = 1;
+
+sc_update update;
 
 int main()
 {
@@ -177,22 +178,25 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 		while ((GetTickCount64() - StartTime) <= 10) {}
 		{
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
-			if (keyinfo.isClick) {
-				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
-				for (int i = 0; i < 2; ++i) {
-					put[i].isClick = true;
-					put[i].x = keyinfo.x;
-					put[i].y = keyinfo.y;
-				}
-			}
+
 
 			EnterCriticalSection(&cs);
 			client_id = keyinfo.id;
+			LeaveCriticalSection(&cs);
 			if (client_id == keyinfo.id) {
 				c_left[client_id] = keyinfo.left;
 				c_right[client_id] = keyinfo.right;
+				
+				if (keyinfo.isClick) {
+					m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
+					
+					for (int i = 0; i < 2; ++i) {
+						put[i].isClick = true;
+						put[i].x = keyinfo.x;
+						put[i].y = keyinfo.y;
+					}
+				}
 			}
-			LeaveCriticalSection(&cs);
 
 			player[client_id].UpdateGravity();
 
@@ -220,10 +224,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 						m_static_map[i].setState(true);
 
 						if (put[client_id].isPush[i % 2] == put[(client_id + 1) % 2].isPush[i % 2]) {
-							EnterCriticalSection(&cs);
 							put[client_id].isPush[i % 2] = true;
 							put[(client_id + 1) % 2].isPush[i % 2] = true;
-							LeaveCriticalSection(&cs);
 							//다음스테이지
 							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2]) {
 								if (Current_Stage == Next_Stage && m_map.size() != 0) {
@@ -235,10 +237,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 						check++;
 					}
 					else if (!player[(client_id + 1) % 2].FallingCollsionOtherObject(m_static_map[i])) {
-						EnterCriticalSection(&cs);
 						put[client_id].isPush[i % 2] = false;
 						put[(client_id + 1) % 2].isPush[i % 2] = false;
-						LeaveCriticalSection(&cs);
 					}
 				}
 
@@ -288,12 +288,13 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();
-					sc_obs[i % 2].x = m_obstacle[i].getPosX();
-					sc_obs[i % 2].y = m_obstacle[i].getPosY();
 					LeaveCriticalSection(&cs);
+					update.obs[i % 2].x = m_obstacle[i].getPosX();
+					update.obs[i % 2].y = m_obstacle[i].getPosY();
+
+					//cout << i % 2 << endl;
 				}
 				if (player[client_id].CollsionByObstacle(m_obstacle[i])) {
-					EnterCriticalSection(&cs);
 					put[client_id].clear = true;
 					put[(client_id + 1) % 2].clear = true;
 					m_map.clear();
@@ -305,7 +306,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 						player[0].setStartLine(200, 600);
 						player[1].setStartLine(400, 600);
 					}
-					LeaveCriticalSection(&cs);
 				}
 			}
 			for (int i = MonsterStartSize; i < MonsterEndSize; ++i) {
@@ -314,13 +314,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				LeaveCriticalSection(&cs);
 
 				if (m_monster[i].getisAttack()) {
-					EnterCriticalSection(&cs);
 					put[0].AttackMonsterId = i;
 					put[1].AttackMonsterId = i;
 					m_bullet[i].InitBullet(m_monster[i]);
 					m_monster[i].setisAttack(false);
-					LeaveCriticalSection(&cs);
-
 				}
 			}
 
@@ -353,16 +350,13 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				}
 
 				// 클라이언트에 전달하기 위한 패킷에 총알 정보 전달.
-				EnterCriticalSection(&cs);
-				m_bullet[i].SetBulletInfo(bullet[i]);
-				LeaveCriticalSection(&cs);
+				m_bullet[i].SetBulletInfo(update.bullet[i]);
 			}
 
 			//클라이언트에 전달하기 위한 패킷에 플레이어 정보 전달.
 			player[client_id].setPlayerInfo(sc_p[client_id]);
 
 			if (Current_Stage != Next_Stage) {
-				EnterCriticalSection(&cs);
 				Current_Stage++;
 				MapStartSize = MapSize[Current_Stage - 2];
 				MapEndSize = MapSize[Current_Stage - 1];
@@ -377,18 +371,23 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					put[client_id].isPush[i] = false;
 					put[(client_id + 1) % 2].isPush[i] = false;
 				}
-				LeaveCriticalSection(&cs);
 			}
 
 			put[client_id].Current_Stage = Current_Stage;
+
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
-			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
+			send(clientSock, (char*)&update.bullet, sizeof(update.bullet), 0);
+			send(clientSock, (char*)&update.obs, sizeof(update.obs), 0);
+
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
-			send(clientSock, (char*)&bullet, sizeof(bullet), 0);
+
+			//send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
+			//send(clientSock, (char*)&bullet, sizeof(bullet), 0);
 
 			put[client_id].isClick = false;
 			put[client_id].AttackMonsterId = -1;
 			put[client_id].clear = false;
+
 		}
 	}
 	return 0;

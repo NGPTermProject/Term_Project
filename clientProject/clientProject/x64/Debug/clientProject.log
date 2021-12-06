@@ -54,10 +54,15 @@ C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\Object.h(586,49)
 C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\Object.h(586,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\Object.h(590,49): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\Object.h(590,41): warning C4244: '인수': 'float'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(114,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(182,29): warning C4244: '=': 'ULONGLONG'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(262,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(262,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
-C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(261,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
-  LINK : C:\Users\82109\Desktop\Term_Project\clientProject\x64\Debug\clientProject.exe을(를) 찾을 수 없거나 마지막 증분 링크에 의해 빌드되지 않았습니다. 전체 링크를 수행하고 있습니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(65,42): warning C4838: 'unsigned __int64'에서 'int'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(65,45): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(66,42): warning C4838: 'unsigned __int64'에서 'int'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(66,45): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(67,44): warning C4838: 'unsigned __int64'에서 'int'(으)로의 변환에는 축소 변환이 필요합니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(67,47): warning C4267: '초기화 중': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(124,16): warning C4244: 'return': 'WPARAM'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(192,29): warning C4244: '=': 'ULONGLONG'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(322,17): warning C4101: 'oldBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(322,9): warning C4101: 'hBrush' :참조되지 않은 지역 변수입니다.
+C:\Users\82109\Desktop\Term_Project\clientProject\clientProject\main.cpp(321,20): warning C4101: 'hBitmap2' :참조되지 않은 지역 변수입니다.
   clientProject.vcxproj -> C:\Users\82109\Desktop\Term_Project\clientProject\x64\Debug\clientProject.exe

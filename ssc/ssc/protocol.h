@@ -48,9 +48,7 @@ struct sc_bullet {
 	bool isStart = false;
 };
 
-struct sc_update {
-	unsigned char size;
-	char packet_type;
+struct sc_put {
 	float x, y;
 	int type;		//무엇이 들어왔는지 알리기 위함, Bullet 중 Bullet의 종류가 다를것이고 Map설치가 될수도있음. 
 	bool isClick;
@@ -58,6 +56,11 @@ struct sc_update {
 	int AttackMonsterId = -1;
 	bool clear = false;
 	int Current_Stage;
+};
+
+struct sc_update {
+	sc_bullet bullet[15];
+	sc_obstacle obs[2];
 };
 
 struct sc_start_game {

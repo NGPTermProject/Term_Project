@@ -46,7 +46,7 @@ vector<Obstacle> m_obstacle;
 Map m_button[2];
 vector<Map> m_static_map;
 
-cs_obstacle cs_obs[2];
+sc_obstacle cs_obs[2];
 
 vector<Monster> m_monster;
 Bullet m_bullet[20];
@@ -62,6 +62,12 @@ int SecondMonsterSize = FirstMonsterSize + 5;
 int FirstObstacleSize = 2;
 int SecondObstacleSize = FirstObstacleSize + 5;
 
+int MapSize[3] = { 7,15,m_static_map.size() };
+int MonsterSize[3] = { 4,9,m_monster.size() };
+int ObstacleSize[3] = { 2,7,m_obstacle.size() };
+
+
+
 bool isConnect = false;
 
 int RedAnim = 0;
@@ -75,6 +81,8 @@ sc_start_game start_game_info;
 bool EnterOtherPlayer;
 
 bool GameStart;
+
+sc_update update;
 
 bool CheckObjectCollision(float x, float y);
 
@@ -182,37 +190,37 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	int StartTime;
 	while (1) {
 		StartTime = GetTickCount64();
-		while (GetTickCount64() - StartTime <= 1) {}
+		while (GetTickCount64() - StartTime <= 5) {}
 		{
 			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			keyinfo.isClick = false;
 			keyinfo.jump = false;
 
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
-
 			for (int i = 0; i < 2; ++i) {
 				p[i].getPlayerInfo(p_info[p_info[i].id]);
 			}
 
-			recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
-			{
+			recvn(sock, (char*)&update.bullet, sizeof(update.bullet), 0);
+			recvn(sock, (char*)&update.obs, sizeof(update.obs), 0);
 
-				for (int i = 0; i < 2; ++i) {
-					if (stage == 1) {
-						m_obstacle[i].x = cs_obs[i].x;
-						m_obstacle[i].y = cs_obs[i].y;
-					}
-					if (stage == 2) {
-						m_obstacle[FirstObstacleSize + i].x = cs_obs[i].x;
-						m_obstacle[FirstObstacleSize + i].y = cs_obs[i].y;
-					}
-					if (stage == 3) {
-						m_obstacle[SecondObstacleSize + i].x = cs_obs[i].x;
-						m_obstacle[SecondObstacleSize + i].y = cs_obs[i].y;
-					}
+			for (int i = 0; i < 2; ++i) {
+				if (stage == 1) {
+					m_obstacle[i].x = update.obs[i].x;
+					m_obstacle[i].y = update.obs[i].y;
+				}
+				if (stage == 2) {
+					m_obstacle[FirstObstacleSize + i].x = update.obs[i].x;
+					m_obstacle[FirstObstacleSize + i].y = update.obs[i].y;
+				}
+				if (stage == 3) {
+					m_obstacle[SecondObstacleSize + i].x = update.obs[i].x;
+					m_obstacle[SecondObstacleSize + i].y = update.obs[i].y;
 				}
 			}
-
+			for (int i = 0; i < 15; ++i) {
+				m_bullet[i].getBulletInfo(update.bullet[i]);
+			}
 			recvn(sock, (char*)&put, sizeof(put), 0);
 			if (put.isClick) {
 				m_map.push_back(Map(MAP::PLAT, put.x, put.y));
@@ -242,12 +250,61 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 				}
 			}
 			stage = put.Current_Stage;
-			if (stage == 0)stage = 1;
 
-			recvn(sock, (char*)&bullet, sizeof(bullet), 0);
-			for (int i = 0; i < 15; ++i) {
-				m_bullet[i].getBulletInfo(bullet[i]);
-			}
+
+
+			//recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
+			//{
+
+			//	for (int i = 0; i < 2; ++i) {
+			//		if (stage == 1) {
+			//			m_obstacle[i].x = cs_obs[i].x;
+			//			m_obstacle[i].y = cs_obs[i].y;
+			//		}
+			//		if (stage == 2) {
+			//			m_obstacle[FirstObstacleSize + i].x = cs_obs[i].x;
+			//			m_obstacle[FirstObstacleSize + i].y = cs_obs[i].y;
+			//		}
+			//		if (stage == 3) {
+			//			m_obstacle[SecondObstacleSize + i].x = cs_obs[i].x;
+			//			m_obstacle[SecondObstacleSize + i].y = cs_obs[i].y;
+			//		}
+			//	}
+			//}
+
+			//recvn(sock, (char*)&put, sizeof(put), 0);
+			//if (put.isClick) {
+			//	m_map.push_back(Map(MAP::PLAT, put.x, put.y));
+			//}
+
+			//if (stage == 1) {
+			//	for (int i = 0; i < 2; ++i)
+			//		m_static_map[i].setState(put.isPush[i]);
+			//}
+			//if (stage == 2) {
+			//	for (int i = FirstMapSize; i < FirstMapSize + 2; ++i)
+			//		m_static_map[i].setState(put.isPush[i % 2]);
+			//}
+			//if (stage == 3) {
+			//	for (int i = SecondMapSize; i < SecondMapSize + 2; ++i)
+			//		m_static_map[i].setState(put.isPush[i % 2]);
+			//}
+
+			//if (put.AttackMonsterId != -1) {
+			//	m_monster[put.AttackMonsterId].Attack();
+
+			//}
+			//if (put.clear) {
+			//	if (m_map.size() != 0) {
+			//		m_map.clear();
+			//		map_current_count = 0;
+			//	}
+			//}
+			//stage = put.Current_Stage;
+			//recvn(sock, (char*)&bullet, sizeof(bullet), 0);
+			//for (int i = 0; i < 15; ++i) {
+			//	m_bullet[i].getBulletInfo(bullet[i]);
+			//}
 		}
 	}
 	closesocket(sock);
@@ -275,7 +332,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch (uMsg) {
 	case WM_CREATE:
-
+		//ÄÜ¼Ö 
+		AllocConsole();
+		_tfreopen(_T("CONOUT$"), _T("w"), stdout);
+		_tfreopen(_T("CONIN$"), _T("r"), stdin);
+		_tfreopen(_T("CONERR$"), _T("w"), stderr);
+		//
 		M_LoadImage();
 
 		p.push_back(Player(200, 600, 0));

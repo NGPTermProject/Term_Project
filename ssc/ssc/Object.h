@@ -538,7 +538,7 @@ public:
 		//isJump = true;
 		isRanding = false;
 		velY = -400.5f;
-		jumpCount++;
+		//jumpCount++;
 		SwitchState(PLAYER::JUMP);
 	}
 
