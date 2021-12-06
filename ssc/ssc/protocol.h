@@ -9,7 +9,7 @@ const char CS_PACKET_LOGIN = 1;
 const char CS_PACKET_MOVE = 2;
 const char CS_MOUSE_INPUT = 3;
 const char CS_CLOSE_ANIMATION = 4;
-const char CS_PUT_BUTTON = 5;
+const char CS_PUT_BUTTON = 5; 
 
 const char SC_PACKET_LOGIN_OK = 1;
 const char SC_PACKET_MOVE = 2;
@@ -37,13 +37,13 @@ struct sc_login_ok {
 
 
 
-struct cs_close_animation {		//애니메이션 동작이 끝났음을 알림. 
+struct cs_close_animation{		//애니메이션 동작이 끝났음을 알림. 
 	unsigned char size;
 	char packet_type;
 	bool isDone;
 };
 
-struct cs_put_button {		//플레이어가 버튼을 누르고 있음을 알림. 
+struct cs_put_button{		//플레이어가 버튼을 누르고 있음을 알림. 
 	unsigned char size;
 	char packet_type;
 	bool isPush;
@@ -54,7 +54,7 @@ struct cs_put_button {		//플레이어가 버튼을 누르고 있음을 알림.
 struct sc_move {
 	unsigned char size;
 	char packet_type;
-	float x, y;
+	float x ,y;
 	int dir;
 };
 
@@ -68,27 +68,27 @@ struct sc_remove_object {
 	int index;
 };
 
-struct sc_set_animation {
+struct sc_set_animation{
 	unsigned char size;
 	char packet_type;
 	int type;			//애니메이션 타입 변경 
 	int animCount = 0;		//애니메이션 진행 카운트 초기화 
 	int maxCount;	//애니메이션의 최대 카운트 변경
-
+ 
 };
 
-struct sc_clear_stage {	//스테이지 변경
+struct sc_clear_stage{	//스테이지 변경
 	unsigned char size;
 	char packet_type;
-	int stage;
-};
+	int stage;			 
+}; 
 
-struct sc_player_collision {	//몬스터에 의한 충돌
+struct sc_player_collision{	//몬스터에 의한 충돌
 	unsigned char size;
 	char packet_type;
-
-	float x, y; 				//플레이어 초기 위치값.
-
+	
+	float x,y; 				//플레이어 초기 위치값.
+	
 };
 
 struct sc_send_player_id {
@@ -98,11 +98,11 @@ struct sc_send_player_id {
 struct sc_send_player {
 	short id;
 	int state;
-
-
+	
+	
 	float x;
 	float y;
-
+	
 	int jumpCount;
 	int dir;
 
@@ -148,7 +148,7 @@ struct sc_put_object {
 	bool isClick;
 	bool isPush[2];
 	int AttackMonsterId = -1;
-	bool clear = false;
+	bool clear = false ;
 	int Current_Stage;
 };
 

@@ -4,12 +4,9 @@
 
 //#define SERVERIP "192.168.143.240"
 //#define SERVERIP "192.168.219.100"
-//#define SERVERIP "192.168.35.46"
-//#define SERVERIP "127.0.0.1"
- 
-//#define SERVERIP "172.20.10.3"
-
 #define SERVERIP "192.168.35.128"
+
+//#define SERVERIP "127.0.0.1"
 
 #define SERVERPORT 9000
 #define BUFSIZE 512
@@ -30,7 +27,7 @@ void err_quit(const char* msg) {
 //소켓 함수 오류 출력
 void err_display(const char* msg) {
 	LPVOID lpMsgBuf;
-	FormatMessage( 
+	FormatMessage(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
 		NULL, WSAGetLastError(),
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
