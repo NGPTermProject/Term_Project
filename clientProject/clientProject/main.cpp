@@ -264,6 +264,7 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			if (stage == 0)stage = 1;
 
 			recvn(sock, (char*)&bullet, sizeof(bullet), 0);
+
 			for (int i = 0; i < 15; ++i) {
 				m_bullet[i].getBulletInfo(bullet[i]);
 			}
@@ -713,6 +714,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					m_static_map[i].draw(memdc1);
 				for (int i = 0; i < FirstMonsterSize; ++i) {
 					m_monster[i].draw(memdc1);
+					if (m_bullet[i].isStart)
+						m_bullet[i].draw(memdc1);
 				}
 				for (int i = 0; i < FirstObstacleSize; ++i) {
 					m_obstacle[i].draw(memdc1);
@@ -723,6 +726,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					m_static_map[i].draw(memdc1);
 				for (int i = FirstMonsterSize; i < SecondMonsterSize; ++i) {
 					m_monster[i].draw(memdc1);
+					if (m_bullet[i].isStart)
+						m_bullet[i].draw(memdc1);
 				}
 				for (int i = FirstObstacleSize; i < SecondObstacleSize; ++i) {
 					m_obstacle[i].draw(memdc1);
@@ -733,6 +738,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					m_static_map[i].draw(memdc1);
 				for (int i = SecondMonsterSize; i < m_monster.size(); ++i) {
 					m_monster[i].draw(memdc1);
+					if (m_bullet[i].isStart)
+						m_bullet[i].draw(memdc1);
 				}
 				for (int i = SecondObstacleSize; i < m_obstacle.size(); ++i) {
 					m_obstacle[i].draw(memdc1);
@@ -745,10 +752,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 
 
-			for (int i = 0; i < 15; ++i) {
-				if (m_bullet[i].isStart)
-					m_bullet[i].draw(memdc1);
-			}
+	
 
 		}
 

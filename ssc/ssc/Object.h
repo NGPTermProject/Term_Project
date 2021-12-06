@@ -322,12 +322,12 @@ public:
 			 x += dx;
 			 y += dy;
 		 }
-	/*	 if (type == MONSTER::PLANT) {
+		 if (type == MONSTER::PLANT) {
 			 x -= dx* 2.f;
 		 }
 		 if (type == MONSTER::RPLANT) {
 			 x += dx * 2.f;
-		 }*/
+		 }
 		 
 	 }
 	 void Update()
