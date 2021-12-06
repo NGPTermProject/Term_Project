@@ -182,7 +182,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				for (int i = 0; i < 2; ++i) {
 					put[i].isClick = true;
 					put[i].x = keyinfo.x;
-					put[i].y = keyinfo.y;
+					put[i].y = keyinfo.y;	
 				}
 			}
 
@@ -381,6 +381,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			}
 
 			put[client_id].Current_Stage = Current_Stage;
+
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);

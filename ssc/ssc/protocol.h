@@ -11,10 +11,8 @@ struct sc_send_player_id {
 struct sc_send_player {
 	short id;
 	int state;
-
 	float x;
 	float y;
-
 	int jumpCount;
 	int dir;
 
@@ -49,6 +47,7 @@ struct sc_bullet {
 };
 
 struct sc_update {
+	
 	unsigned char size;
 	char packet_type;
 	float x, y;
