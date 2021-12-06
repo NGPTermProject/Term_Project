@@ -1,10 +1,10 @@
 ﻿  ssc.cpp
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\Object.h(279,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\Object.h(280,8): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\Object.h(467,18): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\Object.h(467,15): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\ssc.cpp(86,37): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\ssc.cpp(87,38): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\ssc.cpp(88,40): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-C:\Users\82109\Desktop\Term_Project\ssc\ssc\ssc.cpp(156,9): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
-  ssc.vcxproj -> C:\Users\82109\Desktop\Term_Project\ssc\x64\Debug\ssc.exe
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\Object.h(279,7): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\Object.h(280,7): warning C4244: '=': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\Object.h(470,17): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\Object.h(470,14): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\ssc.cpp(70,34): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\ssc.cpp(71,35): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\ssc.cpp(72,37): warning C4267: '=': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\ssc\ssc.cpp(135,6): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
+  ssc.vcxproj -> C:\Users\오성훈\Desktop\git\GitHub\Term_Project\ssc\x64\Debug\ssc.exe
