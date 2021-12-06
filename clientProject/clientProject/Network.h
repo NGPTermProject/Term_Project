@@ -4,7 +4,8 @@
 
 //#define SERVERIP "192.168.143.240"
 //#define SERVERIP "192.168.219.100"
-#define SERVERIP "192.168.20.50"
+//#define SERVERIP "192.168.20.50"
+#define SERVERIP "192.168.35.128"
 
 //#define SERVERIP "127.0.0.1"
 
