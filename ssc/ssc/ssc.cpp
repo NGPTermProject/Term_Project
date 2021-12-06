@@ -298,8 +298,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					put[(client_id + 1) % 2].clear = true;
 					m_map.clear();
 					if (Current_Stage == 3) {
-						player[0].setStartLine(336, 300);
-						player[1].setStartLine(432, 300);
+						player[0].setStartLine(356, 270);
+						player[1].setStartLine(452, 270);
 					}
 					else {
 						player[0].setStartLine(200, 600);
@@ -336,8 +336,8 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					m_map.clear();
 					m_bullet[i].setisColl(true);
 					if (Current_Stage == 3) {
-						player[0].setStartLine(336, 300);
-						player[1].setStartLine(432, 300);
+						player[0].setStartLine(356, 270);
+						player[1].setStartLine(452, 270);
 					}
 					else {
 						player[0].setStartLine(200, 600);

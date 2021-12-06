@@ -76,6 +76,8 @@ bool EnterOtherPlayer;
 
 bool GameStart;
 
+bool CheckObjectCollision(float x, float y);
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
@@ -481,10 +483,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_LBUTTONDOWN:
 		if (map_current_count != map_max_count) {
-			keyinfo.isClick = true;
-			keyinfo.x = LOWORD(lParam);
-			keyinfo.y = HIWORD(lParam);
-			map_current_count++;
+			if (CheckObjectCollision(LOWORD(lParam), HIWORD(lParam))) {
+				keyinfo.isClick = true;
+				keyinfo.x = LOWORD(lParam);
+				keyinfo.y = HIWORD(lParam);
+				map_current_count++;
+			}
 		}
 		break;
 
@@ -570,4 +574,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+
+bool CheckObjectCollision(float x, float y) {
+	for (int i = 0; i < m_map.size(); ++i) {
+		if (m_map[i].x - 48 <= x && x <= m_map[i].x + 48 &&
+			m_map[i].y - 16 <= y && y <= m_map[i].y + 16)
+			return false;
+	}
+	return true;
 }
