@@ -207,8 +207,9 @@ DWORD WINAPI Client_Thread(LPVOID arg)
         int StartTime = (int)GetTickCount64();
         while ((GetTickCount64() - StartTime) <= 10) {}
         {
-            cool++;
             recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
+            
+            EnterCriticalSection(&cs);
             if (keyinfo.isClick) {
                 m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
                 for (int i = 0; i < 2; ++i) {
@@ -217,14 +218,16 @@ DWORD WINAPI Client_Thread(LPVOID arg)
                     put[i].y = keyinfo.y;
                 }
             }
+            LeaveCriticalSection(&cs);
 
             EnterCriticalSection(&cs);
             client_id = keyinfo.id;
+            LeaveCriticalSection(&cs);
+
             if (client_id == keyinfo.id) {
                 c_left[client_id] = keyinfo.left;
                 c_right[client_id] = keyinfo.right;
             }
-            LeaveCriticalSection(&cs);
 
             player[client_id].UpdateGravity();
 
@@ -252,10 +255,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
                         m_static_map[i].setState(true);
 
                         if (put[client_id].isPush[i % 2] == put[(client_id + 1) % 2].isPush[i % 2]) {
-                            EnterCriticalSection(&cs);
+                            //EnterCriticalSection(&cs);
                             put[client_id].isPush[i % 2] = true;
                             put[(client_id + 1) % 2].isPush[i % 2] = true;
-                            LeaveCriticalSection(&cs);
+                            //LeaveCriticalSection(&cs);
                             //다음스테이지
                             if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2]) {
                                 if (Current_Stage == Next_Stage && m_map.size() != 0) {
@@ -267,10 +270,10 @@ DWORD WINAPI Client_Thread(LPVOID arg)
                         check++;
                     }
                     else if (!player[(client_id + 1) % 2].FallingCollsionOtherObject(m_static_map[i])) {
-                        EnterCriticalSection(&cs);
+                        //EnterCriticalSection(&cs);
                         put[client_id].isPush[i % 2] = false;
                         put[(client_id + 1) % 2].isPush[i % 2] = false;
-                        LeaveCriticalSection(&cs);
+                        //LeaveCriticalSection(&cs);
                     }
                 }
 
@@ -326,7 +329,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
                     LeaveCriticalSection(&cs);
                 }
                 if (player[client_id].CollsionByObstacle(m_obstacle[i])) {
-                    EnterCriticalSection(&cs);
+                   //EnterCriticalSection(&cs);
                     put[client_id].clear = true;
                     put[(client_id + 1) % 2].clear = true;
                     m_map.clear();
@@ -338,7 +341,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
                     player[0].setStartLine(200, 600);
                     player[1].setStartLine(400, 600);
                     //   }
-                    LeaveCriticalSection(&cs);
+                  //  LeaveCriticalSection(&cs);
                 }
             }
             for (int i = MonsterStartSize; i < MonsterEndSize; ++i) {
@@ -347,9 +350,9 @@ DWORD WINAPI Client_Thread(LPVOID arg)
                 LeaveCriticalSection(&cs);
 
                 if (m_monster[i].getisAttack()) {
-                    EnterCriticalSection(&cs);
                     put[0].AttackMonsterId = i;
                     put[1].AttackMonsterId = i;
+                    EnterCriticalSection(&cs);
                     m_bullet[i].InitBullet(m_monster[i]);
                     m_monster[i].setisAttack(false);
                     LeaveCriticalSection(&cs);
@@ -406,11 +409,11 @@ DWORD WINAPI Client_Thread(LPVOID arg)
                 ObstacleStartSzie = ObstacleSize[Current_Stage - 2];
                 ObstacleEndSize = ObstacleSize[Current_Stage - 1];
                 m_map.clear();
+                LeaveCriticalSection(&cs);
                 for (int i = 0; i < 2; ++i) {
                     put[client_id].isPush[i] = false;
                     put[(client_id + 1) % 2].isPush[i] = false;
                 }
-                LeaveCriticalSection(&cs);
             }
 
             put[client_id].Current_Stage = Current_Stage;

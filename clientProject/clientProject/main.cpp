@@ -530,6 +530,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         switch (wParam) {
 
         case 1:
+
             //int StartTime;
             if (hostId == 1) {
                 if (Button1)DestroyWindow(Button1);
@@ -663,15 +664,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_LBUTTONDOWN:
+
         if (map_current_count != map_max_count) {
             keyinfo.isClick = true;
             keyinfo.x = LOWORD(lParam);
             keyinfo.y = HIWORD(lParam);
             map_current_count++;
+            m_map.push_back(Map(MAP::PLAT, LOWORD(lParam), HIWORD(lParam)));
             //stage++;
             //m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));    
             //InvalidateRect(hWnd, NULL, false);
         }
+        cout << m_map.size() << boolalpha << keyinfo.isClick << endl;
         break;
 
     case WM_PAINT:
