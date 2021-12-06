@@ -2,25 +2,8 @@
 
 const short SERVER_PORT = 9000;
 
-const int  MAX_NAME_SIZE = 20;
-const int  MAX_USER = 10;
-
-const char CS_PACKET_LOGIN = 1;
-const char CS_PACKET_MOVE = 2;
-const char CS_MOUSE_INPUT = 3;
-const char CS_CLOSE_ANIMATION = 4;
-const char CS_PUT_BUTTON = 5; 
-
-const char SC_PACKET_LOGIN_OK = 1;
-const char SC_PACKET_MOVE = 2;
-const char SC_PACKET_PUT_OBJECT = 3;
-const char SC_PACKET_REMOVE_OBJECT = 4;
-const char SC_SET_ANIMATION = 5;
-const char SC_CLEAR_STAGE = 6;
-const char SC_PLAYER_COLLISION = 7;
-
-
 #pragma pack (push, 1)
+<<<<<<< HEAD
 struct cs_packet_login {
 	unsigned char size;
 	char	packet_type;
@@ -87,6 +70,8 @@ struct sc_player_collision{	//몬스터에 의한 충돌
 	float x,y; 				//플레이어 초기 위치값.
 	
 };
+=======
+>>>>>>> RemotTest2
 
 struct sc_send_player_id {
 	short id;
@@ -95,16 +80,16 @@ struct sc_send_player_id {
 struct sc_send_player {
 	short id;
 	int state;
-	
-	
+
 	float x;
 	float y;
-	
+
 	int jumpCount;
 	int dir;
 
 };
-struct sc_recv_keyinfo {
+
+struct cs_send_keyinfo {
 	short id;
 	bool left = false;
 	bool right = false;
@@ -129,13 +114,10 @@ struct sc_bullet {
 	int	imageSizeX;
 	int	imageSizeY;
 	int anim;
+	bool isStart = false;
 };
 
-struct sc_button {
-	bool isPush[2];
-};
-
-struct sc_put_object {
+struct sc_update {
 	unsigned char size;
 	char packet_type;
 	float x, y;
@@ -143,9 +125,12 @@ struct sc_put_object {
 	bool isClick;
 	bool isPush[2];
 	int AttackMonsterId = -1;
-	int bulletsize = 0;
+	bool clear = false;
+	int Current_Stage;
 };
 
-
-
+struct sc_start_game {
+	bool gamestart;
+	int stage;
+};
 #pragma pack(pop)

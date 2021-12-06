@@ -1,6 +1,4 @@
-﻿//#include "Server.h"
-
-#define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
+﻿#define _WINSOCK_DEPRECATED_NO_WARNINGS // 최신 VC++ 컴파일 시 경고 방지
 #pragma once
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32")
@@ -11,8 +9,7 @@
 #include <iostream>
 using namespace std;
 
-
-//Server server;
+void InitGameObject();
 
 void err_display(int err_num);
 void err_quit(const char* msg);
@@ -23,9 +20,13 @@ vector<Map> m_static_map;
 Map m_button[2];
 vector<Player> player;
 vector<Monster> m_monster;
+<<<<<<< HEAD
 vector<Bullet> vec_bullet;
 <<<<<<< HEAD
 =======
+=======
+Bullet m_bullet[20];
+>>>>>>> RemotTest2
 
 >>>>>>> parent of c122221 (push_bullet)
 vector<Obstacle> m_obstacle;
@@ -37,12 +38,18 @@ int Client_Count = -1;
 sc_send_player_id p_id;
 sc_send_player sc_p[2];
 sc_obstacle sc_obs[2];
+<<<<<<< HEAD
 
 sc_recv_keyinfo keyinfo;
+=======
+sc_bullet bullet[20];
+cs_send_keyinfo keyinfo;
+>>>>>>> RemotTest2
 CRITICAL_SECTION cs;
 short client_id;
 bool c_left[2];
 bool c_right[2];
+<<<<<<< HEAD
 sc_put_object put[2];
 sc_button sc_b;
 <<<<<<< Updated upstream
@@ -74,22 +81,49 @@ int main()
 	m_static_map.push_back(Map(MAP::PLAT, 48, 566));
 	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
 	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
+=======
+sc_update put[2];
 
+int MapSize[3] = { 7,15,0 };
+int MonsterSize[3] = { 4,9,0 };
+int ObstacleSize[3] = { 2,7,0 };
 
-	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
-	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
-	sc_obs[0].x = 100;
-	sc_obs[0].y = 500;
-	sc_obs[1].x = 300;
-	sc_obs[1].y = 500;
+int FirstMapSize = 7;
+int SecondMapSize = FirstMapSize + 8;
+int FirstMonsterSize = 4;
+int SecondMonsterSize = FirstMonsterSize + 5;
+int FirstObstacleSize = 2;
+int SecondObstacleSize = FirstObstacleSize + 5;
+>>>>>>> RemotTest2
 
+int MapStartSize = 0;
+int MapEndSize = FirstMapSize;
 
+int MonsterStartSize = 0;
+int MonsterEndSize = FirstMonsterSize;
+
+int ObstacleStartSzie = 0;
+int ObstacleEndSize = FirstObstacleSize;
+
+<<<<<<< HEAD
 	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
 	m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
 	m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
 	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
+=======
+sc_start_game stage_game_info;
+bool GameStart;
+>>>>>>> RemotTest2
 
+int Current_Stage = 1;
+int Next_Stage = 1;
 
+int main()
+{
+	InitGameObject();
+	MapSize[2] = m_static_map.size();
+	MonsterSize[2] = m_monster.size();
+	ObstacleSize[2] = m_obstacle.size();
 
 	WSADATA wsa;
 	SOCKADDR_IN sock_addr;
@@ -117,8 +151,13 @@ int main()
 	}
 
 	InitializeCriticalSection(&cs);
+<<<<<<< HEAD
 	SOCKET client_sock;
 
+=======
+
+	SOCKET clientSock;
+>>>>>>> RemotTest2
 	SOCKADDR_IN clientaddr;
 	int addrlen;
 
@@ -128,13 +167,14 @@ int main()
 	{
 		//accept()
 		addrlen = sizeof(clientaddr);
-		client_sock = accept(server_socket, (SOCKADDR*)&clientaddr, &addrlen);
-		setsockopt(client_sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
+		clientSock = accept(server_socket, (SOCKADDR*)&clientaddr, &addrlen);
+		setsockopt(clientSock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
 
-		if (client_sock == INVALID_SOCKET) {
+		if (clientSock == INVALID_SOCKET) {
 			//err_display("accept()");
 			std::cout << "!!!" << std::endl;
 		}
+<<<<<<< HEAD
 		printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
 
 <<<<<<< Updated upstream
@@ -171,6 +211,13 @@ int main()
 	}
 	DeleteCriticalSection(&cs);
 
+=======
+		//   printf("Connected Client IP : %s\n", inet_ntoa(clientaddr.sin_addr));
+		Client_Count++;
+		hThread = CreateThread(NULL, 0, Client_Thread, (LPVOID)clientSock, 0, NULL);//HandleClient 쓰레드 실행, clientSock을 매개변수로 전달
+	}
+	DeleteCriticalSection(&cs);
+>>>>>>> RemotTest2
 	closesocket(server_socket);
 
 	WSACleanup();
@@ -185,13 +232,27 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 
 	int retval;
 
-	// hero.id 송신
-	//p_id.id = 
+	int loginClient = 0;
+	loginClient = Client_Count;
 	p_id.id = Client_Count;
-	cout << Client_Count << endl;
-	send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
 
+	while (1) {
+		if (Client_Count == 1) {
+			if (p_id.id == 0) {
+				p_id.id = 1;
+				send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+				break;
+			}
+			else {
+				send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+				break;
+			}
+		}
+		else
+			send(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+	}
 
+<<<<<<< HEAD
 	int StartTime = GetTickCount64();
 	int deltaTime;
 
@@ -202,6 +263,30 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 		deltaTime = NowTime - StartTime;
 
 		if (deltaTime >= 10) {
+=======
+	//호스트인경우
+	if (loginClient == 0) {
+		recvn(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
+		if (p_id.id == 3) {
+			stage_game_info.gamestart = true;
+			stage_game_info.stage = 1;
+		}
+	}
+	//시작 대기
+	while (1) {
+		if (stage_game_info.gamestart) {
+			break;
+		}
+	}
+
+	send(clientSock, (char*)&stage_game_info, sizeof(sc_start_game), 0);
+
+	while (1) {
+
+		int StartTime = (int)GetTickCount64();
+		while ((GetTickCount64() - StartTime) <= 10) {}
+		{
+>>>>>>> RemotTest2
 			recvn(clientSock, (char*)&keyinfo, sizeof(keyinfo), 0);
 			if (keyinfo.isClick) {
 				m_map.push_back(Map(MAP::PLAT, keyinfo.x, keyinfo.y));
@@ -244,6 +329,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			if (player[client_id].getVely() > 0 || player[client_id].getisRanding()) {
 				if (player[client_id].getVely() > 0) player[client_id].SwitchState(PLAYER::FALL);
 				int check = 0;
+
 				for (int i = 0; i < m_map.size(); ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
@@ -255,28 +341,38 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 					}
 				}
 
-				for (int i = 0; i < 2; ++i) {
+				for (int i = MapStartSize; i < MapStartSize + 2; ++i) {
 					// 플레이어 버른 누름
 					if (player[client_id].FallingCollsionOtherObject(m_static_map[i]))
 					{
 						player[client_id].setPlayerRanding(m_static_map[i].y - 16);
 						m_static_map[i].setState(true);
 
-						if (put[client_id].isPush[i] == put[(client_id + 1) % 2].isPush[i]) {
+						if (put[client_id].isPush[i % 2] == put[(client_id + 1) % 2].isPush[i % 2]) {
 							EnterCriticalSection(&cs);
-							put[client_id].isPush[i] = true;
-							put[(client_id + 1) % 2].isPush[i] = true;
+							put[client_id].isPush[i % 2] = true;
+							put[(client_id + 1) % 2].isPush[i % 2] = true;
 							LeaveCriticalSection(&cs);
 							//다음스테이지
-							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2])
-								cout << "NextStage" << endl;
+							if (put[client_id].isPush[(i + 1) % 2] || put[(client_id + 1) % 2].isPush[(i + 1) % 2]) {
+								if (Current_Stage == Next_Stage && m_map.size() != 0) {
+									Next_Stage++;
+									cout << "Stage:" << Next_Stage << endl;
+								}
+							}
 						}
 						check++;
+					}
+					else if (!player[(client_id + 1) % 2].FallingCollsionOtherObject(m_static_map[i])) {
+						EnterCriticalSection(&cs);
+						put[client_id].isPush[i % 2] = false;
+						put[(client_id + 1) % 2].isPush[i % 2] = false;
+						LeaveCriticalSection(&cs);
 					}
 				}
 
 
-				for (int i = 2; i < m_static_map.size(); ++i) {
+				for (int i = MapStartSize + 2; i < MapEndSize; ++i) {
 					if (player[client_id].getVely() > 600) player[client_id].setCollisonHelperY(8);
 					else player[client_id].setCollisonHelperY(0);
 
@@ -300,6 +396,7 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			if (keyinfo.jump == true) {
 				player[client_id].Jump();
 			}
+
 			if (c_left[client_id] == true) {
 				if (player[client_id].getVely() == 0)
 					player[client_id].SwitchState(PLAYER::MOVE);
@@ -314,34 +411,96 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 				player[client_id].move((300 * 0.016f));
 			}
 			///-------------------------------------------------///
+<<<<<<< HEAD
 			for (int i = 0; i < m_obstacle.size(); ++i) {
+=======
+
+			for (int i = ObstacleStartSzie; i < ObstacleEndSize; ++i) {
+>>>>>>> RemotTest2
 				if (m_obstacle[i].type == OBSTACLE::BLADE) {
 					EnterCriticalSection(&cs);
 					m_obstacle[i].Move();
+					sc_obs[i % 2].x = m_obstacle[i].getPosX();
+					sc_obs[i % 2].y = m_obstacle[i].getPosY();
 					LeaveCriticalSection(&cs);
-					sc_obs[i].x = m_obstacle[i].getPosX();
-					sc_obs[i].y = m_obstacle[i].getPosY();
+				}
+				if (player[client_id].CollsionByObstacle(m_obstacle[i])) {
+					EnterCriticalSection(&cs);
+					put[client_id].clear = true;
+					put[(client_id + 1) % 2].clear = true;
+					m_map.clear();
+					if (Current_Stage == 3) {
+						player[0].setStartLine(356, 270);
+						player[1].setStartLine(452, 270);
+					}
+					else {
+						player[0].setStartLine(200, 600);
+						player[1].setStartLine(400, 600);
+					}
+					LeaveCriticalSection(&cs);
 				}
 			}
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 =======
 			for (int i = 0; i < m_monster.size(); ++i) {
+=======
+			for (int i = MonsterStartSize; i < MonsterEndSize; ++i) {
+>>>>>>> RemotTest2
 				EnterCriticalSection(&cs);
 				m_monster[i].Update();
 				LeaveCriticalSection(&cs);
 
 				if (m_monster[i].getisAttack()) {
+					EnterCriticalSection(&cs);
 					put[0].AttackMonsterId = i;
 					put[1].AttackMonsterId = i;
-					vec_bullet.push_back(m_monster[i].Attack());
-					//sc_obstacle s;
-					//bullet.push_back(s);
+					m_bullet[i].InitBullet(m_monster[i]);
 					m_monster[i].setisAttack(false);
+					LeaveCriticalSection(&cs);
+
 				}
 			}
 
+			for (int i = MonsterStartSize; i < MonsterEndSize; ++i) {
+				//충돌 후 터지는 애니메이션 재생
+				if (m_bullet[i].isColl && m_bullet[i].anim >= m_bullet[i].anim_max) {
+					m_bullet[i].DeadAnimation(m_monster[i]);
+				}
+				//플레이어와 충돌
+				if (player[client_id].CollsionByObstacle(m_bullet[i]) && m_bullet[i].isColl == false && m_bullet[i].isStart) {
+					put[client_id].clear = true;
+					put[(client_id + 1) % 2].clear = true;
+					m_map.clear();
+					m_bullet[i].setisColl(true);
+					if (Current_Stage == 3) {
+						player[0].setStartLine(356, 270);
+						player[1].setStartLine(452, 270);
+					}
+					else {
+						player[0].setStartLine(200, 600);
+						player[1].setStartLine(400, 600);
+					}
+				}
+				//총알 생성 후 이동 & 애니메이션
+				if (m_bullet[i].isStart) {
+					EnterCriticalSection(&cs);
+					m_bullet[i].animation();
+					m_bullet[i].Update();
+					LeaveCriticalSection(&cs);
+				}
 
+				// 클라이언트에 전달하기 위한 패킷에 총알 정보 전달.
+				EnterCriticalSection(&cs);
+				m_bullet[i].SetBulletInfo(bullet[i]);
+				LeaveCriticalSection(&cs);
+			}
+
+			//클라이언트에 전달하기 위한 패킷에 플레이어 정보 전달.
+			player[client_id].setPlayerInfo(sc_p[client_id]);
+
+<<<<<<< HEAD
 			//for (int i = 0; i < vec_bullet.size(); ++i) {
 			//	if (vec_bullet[i].isColl && vec_bullet[i].anim == 0) {
 			//		EnterCriticalSection(&cs);
@@ -412,22 +571,46 @@ DWORD WINAPI Client_Thread(LPVOID arg)
 			//	b_check = 0;
 			//	cout << b_check << endl;
 			//}
+=======
+			if (Current_Stage != Next_Stage) {
+				EnterCriticalSection(&cs);
+				Current_Stage++;
+				MapStartSize = MapSize[Current_Stage - 2];
+				MapEndSize = MapSize[Current_Stage - 1];
 
+				MonsterStartSize = MonsterSize[Current_Stage - 2];
+				MonsterEndSize = MonsterSize[Current_Stage - 1];
+>>>>>>> RemotTest2
+
+				ObstacleStartSzie = ObstacleSize[Current_Stage - 2];
+				ObstacleEndSize = ObstacleSize[Current_Stage - 1];
+				m_map.clear();
+				for (int i = 0; i < 2; ++i) {
+					put[client_id].isPush[i] = false;
+					put[(client_id + 1) % 2].isPush[i] = false;
+				}
+				LeaveCriticalSection(&cs);
+			}
+
+			put[client_id].Current_Stage = Current_Stage;
 			send(clientSock, (char*)&sc_p, sizeof(sc_p), 0);
 			send(clientSock, (char*)&sc_obs, sizeof(sc_obs), 0);
 			send(clientSock, (char*)&put[client_id], sizeof(put[client_id]), 0);
 
-			for (int i = 0; i < 2; ++i) {
-				put[client_id].isPush[i] = false;
-
-			}
 			put[client_id].isClick = false;
+<<<<<<< HEAD
 
 		}
 		StartTime = NowTime;
+=======
+			put[client_id].AttackMonsterId = -1;
+			put[client_id].clear = false;
+		}
+>>>>>>> RemotTest2
 	}
 	return 0;
 }
+
 void err_display(int err_num)
 {
 	std::wcout.imbue(std::locale("Korean"));
@@ -480,4 +663,88 @@ int recvn(SOCKET s, char* buf, int len, int flags)
 
 	return (len - left);
 
+}
+
+void InitGameObject()
+{
+	player.push_back(Player(200, 600, 0));
+	player.push_back(Player(400, 600, 1));
+
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
+	m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 566));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 214));
+	m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
+	//first
+
+	m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
+	m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
+	m_static_map.push_back(Map(MAP::PLAT, 500, 550));
+	m_static_map.push_back(Map(MAP::PLAT, 288, 150));
+	m_static_map.push_back(Map(MAP::PLAT, 432, 342));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 510));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 210));
+	m_static_map.push_back(Map(MAP::PLAT, 250, 342));
+	//second
+
+	m_static_map.push_back(Map(MAP::BUTTON, 1392, 24));
+	m_static_map.push_back(Map(MAP::BUTTON, 1296, 664));
+	m_static_map.push_back(Map(MAP::PLAT, 480, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 576, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 384, 374));
+	m_static_map.push_back(Map(MAP::PLAT, 48, 598));
+	m_static_map.push_back(Map(MAP::PLAT, 336, 502));
+	m_static_map.push_back(Map(MAP::PLAT, 624, 758));
+	m_static_map.push_back(Map(MAP::PLAT, 816, 310));
+	m_static_map.push_back(Map(MAP::PLAT, 1080, 726));
+	m_static_map.push_back(Map(MAP::PLAT, 1200, 726));
+	m_static_map.push_back(Map(MAP::PLAT, 1296, 694));
+	m_static_map.push_back(Map(MAP::PLAT, 1104, 54));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 54));
+	m_static_map.push_back(Map(MAP::PLAT, 1392, 434));
+
+
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775, 300));
+	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 531, 300));
+	m_monster.push_back(Monster(MONSTER::PIG, 432, 184, 200));
+	m_monster.push_back(Monster(MONSTER::PIG, 1008, 184, 200));
+	//first
+
+	m_monster.push_back(Monster(MONSTER::RPLANT, 250, 307, 5000));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 180, 5000));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 480, 5000));
+	m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 500, 520, 5000));
+	//second
+
+	m_monster.push_back(Monster(MONSTER::RPLANT, 48, 563, 5000));
+	m_monster.push_back(Monster(MONSTER::TREE, 1392, 404, 5000));
+	m_monster.push_back(Monster(MONSTER::RPLANT, 336, 467, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 624, 728, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 816, 280, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1080, 696, 5000));
+	m_monster.push_back(Monster(MONSTER::PIG, 1200, 696, 5000));
+
+
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
+	//first
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 790, 600));
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 288, 150));
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::MIDDLE_UP, 912, 406));
+	m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 280));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 432, 402));
+	//second
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 48, 374));
+	m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 1296, 654));
+
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 300, 800));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));
+	m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 576, -100));
 }

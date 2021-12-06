@@ -12,16 +12,13 @@
 #include <list>
 
 #include "Image.h"
-#include "Map.h"
 #include "State.h"
 #include "Define.h"
 #include "Object.h"
 #include "Network.h"
 #include "protocol.h"
-//#include "Timer.h"
 
 using namespace std;
-
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
@@ -29,26 +26,19 @@ LPCTSTR lpszWindowName = L"Term Project";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 DWORD WINAPI Recv_Thread(LPVOID arg);
 
-
-//#define NETWORK  //네트워크 기능 켜기
-
 // 시간을 구하기 위한 변수들
 LARGE_INTEGER g_tSecond;
 LARGE_INTEGER g_tTime;
 float         g_fDeltaTime;
 
-int stage = 0;  //0이면 로그인 화면
-short MyId;
-//////////////////////////
-// 로그인 화면에서 키보드 입력하면 id창에 입력
-// id창에 글자가 있을때 엔터 누르면(서버에 송신) 게임 시작
-//////////////////////////
+int stage = 0;
+int MyId;
+int hostId;
+
 vector<Player> p;
 
-bool InitClient();
-bool CheckCollision(float x, float y);	//같은 위치에 블록 생성 안되게
-cs_send_player_id id;
-cs_send_player p_info[2];
+sc_send_player_id id;
+sc_send_player p_info[2];
 cs_send_keyinfo keyinfo;
 sc_put_object put;
 vector<Map> m_map;
@@ -58,24 +48,36 @@ vector<Map> m_static_map;
 
 cs_obstacle cs_obs[2];
 
-<<<<<<< HEAD
-
-void send_login()
-{
-	cs_packet_login packet;
-	packet.size = sizeof(packet);
-	packet.packet_type = CS_PACKET_LOGIN;
-
-	send(sock, reinterpret_cast<char*>(&packet), packet.size, 0);
-=======
 vector<Monster> m_monster;
-vector<Bullet> vec_bullet;
-//vector<cs_obstacle> bullet;
-cs_bullet bullet[50];
->>>>>>> parent of c122221 (push_bullet)
+Bullet m_bullet[20];
+sc_bullet bullet[20];
 
+int map_current_count = 0;
+int map_max_count = 5;
 
-}
+int FirstMapSize = 7;
+int SecondMapSize = FirstMapSize + 8;
+int FirstMonsterSize = 4;
+int SecondMonsterSize = FirstMonsterSize + 5;
+int FirstObstacleSize = 2;
+int SecondObstacleSize = FirstObstacleSize + 5;
+
+bool isConnect = false;
+
+int RedAnim = 0;
+int BlueAnim = 0;
+
+int button = -1;
+bool buttonCheck[2];
+bool isClick;
+int loginID;
+sc_start_game start_game_info;
+bool EnterOtherPlayer;
+
+bool GameStart;
+
+bool CheckObjectCollision(float x, float y);
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hWnd;
@@ -103,9 +105,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 		NULL, (HMENU)NULL,
 		hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
+	CreateThread(NULL, 0, Recv_Thread, NULL, 0, NULL);
 	UpdateWindow(hWnd);
 
-	CreateThread(NULL, 0, Recv_Thread, NULL, 0, NULL);
 
 	while (GetMessage(&Message, 0, 0, 0)) {
 		TranslateMessage(&Message);
@@ -138,64 +140,76 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR) err_quit("connect()");
 
-	send_login();
+	hostId = -1;
 
-	//PlayerID 전달.
-<<<<<<< Updated upstream
-	recvn(sock, (char*)&id, sizeof(cs_send_player_id), 0);
-	MyId = id.id;
-	keyinfo.id = id.id;
-	cout << MyId << endl;
-=======
-	sc_login_ok packet;
-	recvn(sock, reinterpret_cast<char*>(&packet), sizeof(packet), 0);
-	cout << static_cast<int>(packet.packet_type) << endl;
-	if (packet.packet_type == SC_PACKET_LOGIN_OK) {
-		cout << "login succsess" << endl;
-		MyId = packet.id;
-		keyinfo.id = packet.id;
-		cout << MyId << endl;
-	}
-	
-	int StartTime;
->>>>>>> Stashed changes
 	while (1) {
-<<<<<<< HEAD
-
-		recvn(sock, (char*)&p_info, sizeof(p_info), 0);
-
-		for (int i = 0; i < 2; ++i) {
-			p[p_info[i].id].setState(p_info[i].state);
-			p[p_info[i].id].setPos(p_info[i].x, p_info[i].y);
-			p[p_info[i].id].setJumpCount(p_info[i].jumpCount);
-			p[p_info[i].id].setDir(p_info[i].dir);
-
+		//PlayerID 전달.
+		recvn(sock, (char*)&id, sizeof(sc_send_player_id), 0);
+		if (id.id == 1) {
+			EnterOtherPlayer = true;
+			break;
 		}
+		cout << id.id << endl;
+		hostId = id.id;
+		keyinfo.id = id.id;
+		loginID = hostId;
+	}
 
-		recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
-		{
-=======
+
+	if (hostId == 0) {
+		hostId = 0;
+		keyinfo.id = 0;
+		loginID = 0;
+	}
+	if (hostId == -1) {
+		hostId = 1;
+		keyinfo.id = 1;
+		loginID = 1;
+	}
+	cout << hostId << endl;
+
+
+	recvn(sock, (char*)&start_game_info, sizeof(sc_start_game), 0);
+
+	if (start_game_info.gamestart) {
+
+		stage = start_game_info.stage;
+		isConnect = true;
+	}
+
+	//------------------------------//
+
+	int StartTime;
+	while (1) {
 		StartTime = GetTickCount64();
-
-
-		while (GetTickCount64() - StartTime <= 10) { }
+		while (GetTickCount64() - StartTime <= 1) {}
 		{
+			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
+			keyinfo.isClick = false;
+			keyinfo.jump = false;
+
 			recvn(sock, (char*)&p_info, sizeof(p_info), 0);
 
->>>>>>> parent of c122221 (push_bullet)
 			for (int i = 0; i < 2; ++i) {
-				m_obstacle[i].x = cs_obs[i].x;
-				m_obstacle[i].y = cs_obs[i].y;
-
-<<<<<<< HEAD
+				p[i].getPlayerInfo(p_info[p_info[i].id]);
 			}
-		}
-=======
+
 			recvn(sock, (char*)&cs_obs, sizeof(cs_obs), 0);
 			{
+
 				for (int i = 0; i < 2; ++i) {
-					m_obstacle[i].x = cs_obs[i].x;
-					m_obstacle[i].y = cs_obs[i].y;
+					if (stage == 1) {
+						m_obstacle[i].x = cs_obs[i].x;
+						m_obstacle[i].y = cs_obs[i].y;
+					}
+					if (stage == 2) {
+						m_obstacle[FirstObstacleSize + i].x = cs_obs[i].x;
+						m_obstacle[FirstObstacleSize + i].y = cs_obs[i].y;
+					}
+					if (stage == 3) {
+						m_obstacle[SecondObstacleSize + i].x = cs_obs[i].x;
+						m_obstacle[SecondObstacleSize + i].y = cs_obs[i].y;
+					}
 				}
 			}
 
@@ -203,51 +217,41 @@ DWORD WINAPI Recv_Thread(LPVOID arg)
 			if (put.isClick) {
 				m_map.push_back(Map(MAP::PLAT, put.x, put.y));
 			}
-			for (int i = 0; i < 2; ++i)
-				m_static_map[i].setState(put.isPush[i]);
+
+			if (stage == 1) {
+				for (int i = 0; i < 2; ++i)
+					m_static_map[i].setState(put.isPush[i]);
+			}
+			if (stage == 2) {
+				for (int i = FirstMapSize; i < FirstMapSize + 2; ++i)
+					m_static_map[i].setState(put.isPush[i % 2]);
+			}
+			if (stage == 3) {
+				for (int i = SecondMapSize; i < SecondMapSize + 2; ++i)
+					m_static_map[i].setState(put.isPush[i % 2]);
+			}
+
 			if (put.AttackMonsterId != -1) {
-				vec_bullet.push_back(m_monster[put.AttackMonsterId].Attack());
-				//cs_obstacle s;
-				//bullet.push_back(s);
+				m_monster[put.AttackMonsterId].Attack();
+
 			}
-			if (put.bulletsize != vec_bullet.size()) {
-				vec_bullet.erase(vec_bullet.begin() + vec_bullet.size() - 1);
+			if (put.clear) {
+				if (m_map.size() != 0) {
+					m_map.clear();
+					map_current_count = 0;
+				}
 			}
+			stage = put.Current_Stage;
+			if (stage == 0)stage = 1;
 
 			recvn(sock, (char*)&bullet, sizeof(bullet), 0);
-			for (int i = 0; i < vec_bullet.size(); ++i) {
-				//if (bullet[i].isColl) vec_bullet[i].setisColl(true);
-				vec_bullet[i].x = bullet[i].x;
-				vec_bullet[i].y = bullet[i].y;
-				vec_bullet[i].type = bullet[i].type;
-				vec_bullet[i].imageCount = bullet[i].imageCount;
-				vec_bullet[i].imageSizeX = bullet[i].imageSizeX;
-				vec_bullet[i].imageSizeY = bullet[i].imageSizeY;
-				vec_bullet[i].anim = bullet[i].anim;
-				vec_bullet[i].isColl = bullet[i].isColl;
+			for (int i = 0; i < 15; ++i) {
+				m_bullet[i].getBulletInfo(bullet[i]);
 			}
-
->>>>>>> parent of c122221 (push_bullet)
-
-		recvn(sock, (char*)&put, sizeof(put), 0);
-		if (put.isClick) {
-			m_map.push_back(Map(MAP::PLAT, put.x, put.y));
 		}
-		for (int i = 0; i < 2; ++i)
-			m_static_map[i].setState(put.isPush[i]);
-
-		/*	sc_button bt;
-		recvn(sock, (char*)&bt, sizeof(bt), 0);
-		for (int i = 0; i < 2; ++i)
-			m_static_map[i].setState(bt.isPush[i]);*/
-
-
-			//	recvn(sock, (char*)&hero, sizeof(hero), 0);
-			//	recvn(sock, (char*)&boss, sizeof(boss), 0);
-
 	}
 	closesocket(sock);
-	//exit(1);
+	exit(1);
 }
 
 
@@ -259,85 +263,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HBITMAP hBitmap1, hBitmap2;
 	HBRUSH hBrush, oldBrush;
 
-
-
-	// 충돌 박스 
-
-	static vector<Monster> m_monster;
-	static vector<Bullet> vec_bullet;
-
-
 	// 물리
 	static LARGE_INTEGER tTime;
 	static int block_count;
 
-
-	static int map_current_count = 0;
-	static int map_max_count = 5;
+	static HBITMAP buttonBitmap;
+	static HWND Button1;
+	static HWND Button2;
 
 	static bool isJumping = false;
 
-	// 지역변수는 메시지가 발생할 때마다 초기화되므로 값을 계속 유지하기 위해서 static 사용
-	static TCHAR str[512];
-
 	switch (uMsg) {
-		//	if (stage == 0) {
-	case WM_CHAR:  // 키보드 입력
-		int                str_len;
-		str_len = lstrlen(str);
-
-		if ((TCHAR)wParam == '\b') // 백 스페이스일 경우
-			memmove(str + (str_len - 1), str + str_len, sizeof(TCHAR));
-		else if ((TCHAR)wParam == VK_RETURN) {
-			if (str_len != 0) {
-#ifdef NETWORK
-				//id 서버로 보내고 로비로
-				memcpy(buf, str, str_len);
-				retval = send(sock, buf, strlen(buf), 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("send()");
-					break;
-				}
-				//데이터 받기
-				retval = recvn(sock, buf, retval, 0);
-				if (retval == SOCKET_ERROR) {
-					err_display("recv()");
-					break;
-				}
-				else if (retval == 0)
-					break;
-#endif
-				stage = 1;
-			}
-		}
-		else
-		{
-			// WM_CHAR 메시지는 입력된 문자를 wParam으로 전달한다.
-			str[str_len] = (TCHAR)wParam;
-			str[str_len + 1] = 0;
-		}
-		break;
-		//3	}
 	case WM_CREATE:
 
-		// QueryPerformanceCounter(&tTime);
-
-		 //콘솔 
-		AllocConsole();
-		_tfreopen(_T("CONOUT$"), _T("w"), stdout);
-		_tfreopen(_T("CONIN$"), _T("r"), stdin);
-		_tfreopen(_T("CONERR$"), _T("w"), stderr);
-		//
-
-		LoadImage();
+		M_LoadImage();
 
 		p.push_back(Player(200, 600, 0));
 		p.push_back(Player(400, 600, 1));
-
-
-
-		// 여기 부분에 추가.
-
 
 		m_static_map.push_back(Map(MAP::BUTTON, 48, 344));
 		m_static_map.push_back(Map(MAP::BUTTON, 1392, 344));
@@ -346,56 +288,159 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		m_static_map.push_back(Map(MAP::PLAT, 48, 566));
 		m_static_map.push_back(Map(MAP::PLAT, 432, 214));
 		m_static_map.push_back(Map(MAP::PLAT, 1008, 214));
+		//first
+
+		m_static_map.push_back(Map(MAP::BUTTON, 48, 312));
+		m_static_map.push_back(Map(MAP::BUTTON, 432, 312));
+		m_static_map.push_back(Map(MAP::PLAT, 500, 550));
+		m_static_map.push_back(Map(MAP::PLAT, 288, 150));
+		m_static_map.push_back(Map(MAP::PLAT, 432, 342));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 510));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 210));
+		m_static_map.push_back(Map(MAP::PLAT, 250, 342));
+		//second
+
+		m_static_map.push_back(Map(MAP::BUTTON, 1392, 24));
+		m_static_map.push_back(Map(MAP::BUTTON, 1296, 664));
+		m_static_map.push_back(Map(MAP::PLAT, 480, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 576, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 384, 374));
+		m_static_map.push_back(Map(MAP::PLAT, 48, 598));
+		m_static_map.push_back(Map(MAP::PLAT, 336, 502));
+		m_static_map.push_back(Map(MAP::PLAT, 624, 758));
+		m_static_map.push_back(Map(MAP::PLAT, 816, 310));
+		m_static_map.push_back(Map(MAP::PLAT, 1080, 726));
+		m_static_map.push_back(Map(MAP::PLAT, 1200, 726));
+		m_static_map.push_back(Map(MAP::PLAT, 1296, 694));
+		m_static_map.push_back(Map(MAP::PLAT, 1104, 54));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 54));
+		m_static_map.push_back(Map(MAP::PLAT, 1392, 434));
+
+
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 775));
+		m_monster.push_back(Monster(MONSTER::RPLANT, 48, 531));
+		m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
+		m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
+		//first
+
+		m_monster.push_back(Monster(MONSTER::RPLANT, 250, 307));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 180));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 480));
+		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
+		m_monster.push_back(Monster(MONSTER::PIG, 500, 520));
+		//second
+
+		m_monster.push_back(Monster(MONSTER::RPLANT, 48, 563));
+		m_monster.push_back(Monster(MONSTER::TREE, 1392, 404));
+		m_monster.push_back(Monster(MONSTER::RPLANT, 336, 467));
+		m_monster.push_back(Monster(MONSTER::PIG, 624, 728));
+		m_monster.push_back(Monster(MONSTER::PIG, 816, 280));
+		m_monster.push_back(Monster(MONSTER::PIG, 1080, 696));
+		m_monster.push_back(Monster(MONSTER::PIG, 1200, 696));
+
 
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 100, 500));
 		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 300, 500));
 
-		m_monster.push_back(Monster(MONSTER::PLANT, 1392, 780));
-		m_monster.push_back(Monster(MONSTER::PIG, 48, 536));
-		m_monster.push_back(Monster(MONSTER::PIG, 432, 184));
-		m_monster.push_back(Monster(MONSTER::PIG, 1008, 184));
 
+		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 790, 600));
+		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 288, 150));
 
-		//Timer::Reset();
-		SetTimer(hWnd, 1, 10, NULL);
-		//
-		//InitClient();
+		m_obstacle.push_back(Obstacle(OBSTACLE::MIDDLE_UP, 912, 406));
+		m_obstacle.push_back(Obstacle(OBSTACLE::SHORT, 144, 280));
+		m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 432, 402));
+		//second
+
+		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 48, 374));
+		m_obstacle.push_back(Obstacle(OBSTACLE::BLADE, 1296, 654));
+
+		m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 300, 800));
+		m_obstacle.push_back(Obstacle(OBSTACLE::LONG, 1100, 800));
+		m_obstacle.push_back(Obstacle(OBSTACLE::LONG_UP, 576, -100));
+
+		SetTimer(hWnd, 1, 1, NULL);
+
+		buttonBitmap = (HBITMAP)LoadImage(NULL, TEXT("res/frogButtonStrat.bmp"), IMAGE_BITMAP,
+			0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE);
+		Button1 = CreateWindow(L"button", L"PressToPlay",
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_BITMAP,
+			620, 350, 200, 43, hWnd, (HMENU)1, g_hInst, NULL);
+		SendMessage(Button1, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)buttonBitmap);
+
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case 1:
+			id.id = 3;
+			send(sock, (char*)&id, sizeof(sc_send_player_id), 0);
+			DestroyWindow(Button1);
+
+			break;
+		}
 		break;
 
 	case WM_TIMER:
 		switch (wParam) {
 
 		case 1:
-<<<<<<< HEAD
+			if (hostId == 1) {
+				if (Button1)DestroyWindow(Button1);
+			}
+			static bool push = true;
 
-			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
-			keyinfo.isClick = false;
-			keyinfo.jump = false;
-=======
-		
-			send(sock, (char*)&keyinfo, sizeof(keyinfo), 0);
-			keyinfo.isClick = false;
-			//keyinfo.jump = false;
->>>>>>> parent of c122221 (push_bullet)
+			if (GetAsyncKeyState(VK_SPACE) & 0x8000) {
+				if (push) {
+					if (p[hostId].getJumpCount() < 2) {
+						keyinfo.jump = true;
+					}
+					push = false;
+				}
+			}
+			else {
+				push = true;
+			}
 
-			for(int i =0 ; i< 2 ; ++i )
+
+			for (int i = 0; i < 2; ++i)
 				p[i].animation();
 
+			if (stage == 0) {
+				RedAnim += 64;
+				if (RedAnim >= 768)
+					RedAnim = 0;
 
-			for (int i = 0; i < m_monster.size(); ++i) {
-				m_monster[i].animation();
-			}
-			//Bullet 애니메이션
-			for (int i = 0; i < vec_bullet.size(); ++i) {
-
-				vec_bullet[i].animation();
-
-			}
-			for (int i = 0; i < m_obstacle.size(); ++i) {
-				m_obstacle[i].animation();
+				if (EnterOtherPlayer) {
+					BlueAnim += 64;
+					if (BlueAnim >= 768)
+						BlueAnim = 0;
+				}
 			}
 
-
+			if (stage == 1) {
+				for (int i = 0; i < FirstMonsterSize; ++i) {
+					m_monster[i].animation();
+				}
+				for (int i = 0; i < FirstObstacleSize; ++i) {
+					m_obstacle[i].animation();
+				}
+			}
+			else if (stage == 2) {
+				for (int i = FirstMonsterSize; i < SecondMonsterSize; ++i) {
+					m_monster[i].animation();
+				}
+				for (int i = FirstObstacleSize; i < SecondObstacleSize; ++i) {
+					m_obstacle[i].animation();
+				}
+			}
+			else if (stage == 3) {
+				for (int i = SecondMonsterSize; i < m_monster.size(); ++i) {
+					m_monster[i].animation();
+				}
+				for (int i = SecondObstacleSize; i < m_obstacle.size(); ++i) {
+					m_obstacle[i].animation();
+				}
+			}
 			break;
 		}
 
@@ -410,11 +455,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		else {
 			switch (wParam)
 			{
-			case VK_SPACE:
-				if (p[MyId].getJumpCount() < 2) {
-					keyinfo.jump = true;
-				}
-				break;
 			case VK_LEFT:
 				keyinfo.left = true;
 				break;
@@ -437,24 +477,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (wParam == VK_SPACE) {
 			isJumping = false;
 		}
-		keyinfo.jump = false;
+		InvalidateRect(hWnd, NULL, false);
+
 		break;
 
 	case WM_LBUTTONDOWN:
 		if (map_current_count != map_max_count) {
-			if (CheckCollision(LOWORD(lParam), HIWORD(lParam))) {
+			if (CheckObjectCollision(LOWORD(lParam), HIWORD(lParam))) {
 				keyinfo.isClick = true;
 				keyinfo.x = LOWORD(lParam);
 				keyinfo.y = HIWORD(lParam);
 				map_current_count++;
-				//m_map.push_back(Map(MAP::PLAT,LOWORD(lParam), HIWORD(lParam)));	 
-				//InvalidateRect(hWnd, NULL, false);
 			}
 		}
 		break;
 
 	case WM_PAINT:
-	{
+
 		hdc = BeginPaint(hWnd, &ps);
 
 		memdc1 = CreateCompatibleDC(hdc);
@@ -467,23 +506,46 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		if (stage == 0) {
 			img_LoginBG.Draw(memdc1, 0, 0, Window_Size_X, Window_Size_Y, 0, 0, img_Loginbg_width, img_Loginbg_height);
-			img_Login.Draw(memdc1, 675, 320, 150, 15);  //아이디 입력 창
-			RECT rect = { 685, 320, 835, 465 }; // 글을 쓸 공간 지정
-			DrawText(memdc1, str, -1, &rect, DT_VCENTER | DT_WORDBREAK);
-			RECT r = { 590, 320,740,465 };
-			DrawText(memdc1, L"ID: ", -1, &r, DT_CENTER | DT_VCENTER);
+			img_LodingFrogRed.Draw(memdc1, 460, 570, 64, 64, RedAnim, 0, 64, 64);
+			img_LodingFrogBlue.Draw(memdc1, 960, 565, 64, 64, BlueAnim, 64, 64, 64);
+
 		}
 		else {
 
 			//다른 오브젝트 발판 그리기
+
 			for (int i = 0; i < m_map.size(); ++i)
 				m_map[i].draw(memdc1);
 
-			for (int i = 0; i < m_static_map.size(); ++i)
-				m_static_map[i].draw(memdc1);
-
-			for (int i = 0; i < m_monster.size(); ++i) {
-				m_monster[i].draw(memdc1);
+			if (stage == 1) {
+				for (int i = 0; i < FirstMapSize; ++i)
+					m_static_map[i].draw(memdc1);
+				for (int i = 0; i < FirstMonsterSize; ++i) {
+					m_monster[i].draw(memdc1);
+				}
+				for (int i = 0; i < FirstObstacleSize; ++i) {
+					m_obstacle[i].draw(memdc1);
+				}
+			}
+			else if (stage == 2) {
+				for (int i = FirstMapSize; i < SecondMapSize; ++i)
+					m_static_map[i].draw(memdc1);
+				for (int i = FirstMonsterSize; i < SecondMonsterSize; ++i) {
+					m_monster[i].draw(memdc1);
+				}
+				for (int i = FirstObstacleSize; i < SecondObstacleSize; ++i) {
+					m_obstacle[i].draw(memdc1);
+				}
+			}
+			else if (stage == 3) {
+				for (int i = SecondMapSize; i < m_static_map.size(); ++i)
+					m_static_map[i].draw(memdc1);
+				for (int i = SecondMonsterSize; i < m_monster.size(); ++i) {
+					m_monster[i].draw(memdc1);
+				}
+				for (int i = SecondObstacleSize; i < m_obstacle.size(); ++i) {
+					m_obstacle[i].draw(memdc1);
+				}
 			}
 
 			//플레이어 그리기
@@ -491,17 +553,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				p[i].draw(memdc1);
 			}
 
-
-			for (int i = 0; i < vec_bullet.size(); ++i) {
-				vec_bullet[i].draw(memdc1);
-			}
-
-			for (int i = 0; i < m_obstacle.size(); ++i) {
-				m_obstacle[i].draw(memdc1);
+			for (int i = 0; i < 15; ++i) {
+				if (m_bullet[i].isStart)
+					m_bullet[i].draw(memdc1);
 			}
 
 		}
-
 
 		BitBlt(hdc, 0, 0, Window_Size_X, Window_Size_Y, memdc1, 0, 0, SRCCOPY);
 
@@ -510,7 +567,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 
 		break;
-	}
+
 	case WM_DESTROY:
 		KillTimer(hWnd, 1);
 		PostQuitMessage(0);
@@ -520,40 +577,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 
-
-bool InitClient() {
-	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
-		return false;
-
-	//socket()
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock == INVALID_SOCKET)  err_quit("socket()");
-
-	//connect()
-	ZeroMemory(&serveraddr, sizeof(serveraddr));
-	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = inet_addr(SERVERIP);
-	serveraddr.sin_port = htons(SERVERPORT);
-	retval = connect(sock, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
-	if (retval == SOCKET_ERROR) {
-		err_quit("connet()");
-	}
-	return true;
-}
-
-
-bool CheckCollision(float x, float y) {
+bool CheckObjectCollision(float x, float y) {
 	for (int i = 0; i < m_map.size(); ++i) {
 		if (m_map[i].x - 48 <= x && x <= m_map[i].x + 48 &&
-			m_map[i].y - 16 <= y && y <= m_map[i].y + 16) {
+			m_map[i].y - 16 <= y && y <= m_map[i].y + 16)
 			return false;
-		}
-	}
-	for (int i = 0; i < m_static_map.size(); ++i) {
-		if (m_static_map[i].x - 48 <= x && x <= m_static_map[i].x + 48 &&
-			m_static_map[i].y - 16 <= y && y <= m_static_map[i].y + 16) {
-			return false;
-		}
 	}
 	return true;
 }

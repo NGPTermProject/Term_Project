@@ -2,18 +2,13 @@
 #pragma comment(lib, "ws2_32")
 //#include <winsock2.h>
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 //#define SERVERIP "192.168.143.240"
 //#define SERVERIP "192.168.219.100"
 //#define SERVERIP "192.168.35.128"
-//#define SERVERIP "192.168.35.128"
-
->>>>>>> Stashed changes
-=======
->>>>>>> parent of c122221 (push_bullet)
+//#define SERVERIP "192.168.35.46"
 #define SERVERIP "127.0.0.1"
+//#define SERVERIP "172.20.10.3"
+
 #define SERVERPORT 9000
 #define BUFSIZE 512
 
@@ -61,7 +56,9 @@ int recvn(SOCKET s, char* buf, int len, int flags) {
 	return (len - left);
 }
 
+int retval;
+char buf[BUFSIZE + 1];
+
+WSAData wsa;
 SOCKET sock;
 SOCKADDR_IN serveraddr;
-int retval;
-WSADATA wsa;
