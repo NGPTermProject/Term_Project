@@ -250,7 +250,7 @@ public:
 				 img_Bomb.Draw(hdc, x - 32, y - 32, 64, 64, anim, 0, 64, 64);
 			 }
 		 }
-		 else if (type == MONSTER::PLANT) {
+		 else if (type == MONSTER::PLANT || type == MONSTER::RPLANT) {
 			 if (isColl)
 				 img_Bullet_Coll.Draw(hdc, x - 12, y - 12, 24, 24);
 			 else {

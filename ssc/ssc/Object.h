@@ -323,7 +323,10 @@ public:
 			 y += dy;
 		 }
 		 if (type == MONSTER::PLANT) {
-			 x += dx* 5.f;
+			 x -= dx* 2.f;
+		 }
+		 if (type == MONSTER::RPLANT) {
+			 x += dx * 2.f;
 		 }
 		 
 	 }
