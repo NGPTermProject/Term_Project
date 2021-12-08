@@ -1,8 +1,0 @@
-﻿  Server.cpp
-Server.obj : error LNK2019: __imp__bind@12_main 함수에서 참조되는 확인할 수 없는 외부 기호
-Server.obj : error LNK2019: __imp__htons@4_main 함수에서 참조되는 확인할 수 없는 외부 기호
-Server.obj : error LNK2019: __imp__listen@8_main 함수에서 참조되는 확인할 수 없는 외부 기호
-Server.obj : error LNK2019: __imp__WSAStartup@8_main 함수에서 참조되는 확인할 수 없는 외부 기호
-Server.obj : error LNK2019: __imp__WSAAccept@20_main 함수에서 참조되는 확인할 수 없는 외부 기호
-Server.obj : error LNK2019: __imp__WSASocketW@24_main 함수에서 참조되는 확인할 수 없는 외부 기호
-C:\Users\pig75\OneDrive\문서\넷겜플\Term_Project\넷겜플텀프_서버\Server\Debug\Server.exe : fatal error LNK1120: 6개의 확인할 수 없는 외부 참조입니다.
