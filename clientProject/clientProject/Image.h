@@ -69,7 +69,7 @@ static CImage img_Select_T;
 
 static CImage img_LodingFrogRed;
 static CImage img_LodingFrogBlue;
-
+static CImage img_Ending;
 
 
 void M_LoadImage();
@@ -131,4 +131,6 @@ void M_LoadImage()
 
 	img_LodingFrogRed.Load(L"res/Loding_RedMove.png");
 	img_LodingFrogBlue.Load(L"res/Loding_BlueMove.png");
+
+	img_Ending.Load(L"res/Ending.png");
 }

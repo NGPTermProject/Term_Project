@@ -12,13 +12,11 @@
 #include <list>
 
 #include "Image.h"
-#include "Map.h"
 #include "State.h"
 #include "Define.h"
 #include "Object.h"
 #include "Network.h"
 #include "protocol.h"
-//#include "Timer.h"
 
 using namespace std;
 
@@ -78,7 +76,6 @@ bool isConnect = false;
 int RedAnim = 0;
 int BlueAnim = 0;
 
-cs_packet_login login;
 cs_login_button login_button;
 cs_login_info login_info;
 cs_start_game start_game_info;
@@ -299,12 +296,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_CREATE:
 
-		 //ÄÜ¼Ö 
-		AllocConsole();
-		_tfreopen(_T("CONOUT$"), _T("w"), stdout);
-		_tfreopen(_T("CONIN$"), _T("r"), stdin);
-		_tfreopen(_T("CONERR$"), _T("w"), stderr);
-		//
+
 
 		M_LoadImage();
 

@@ -71,7 +71,6 @@ int buttonid;
 
 sc_login_button login_button[2];
 sc_start_game stage_game_info;
-cs_packet_login login;
 bool GameStart;
 
 int Current_Stage = 1;
@@ -179,7 +178,6 @@ DWORD WINAPI Client_Thread(LPVOID arg)
     }
 
 
-    //호스트인경우
     if (loginClient == 0) {
         recvn(clientSock, (char*)&p_id, sizeof(sc_send_player_id), 0);
         if (p_id.id == 3) {
